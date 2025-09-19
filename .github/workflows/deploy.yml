@@ -9,17 +9,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: FTP Deploy (Websupport compatible)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: FTP Deploy to Websupport
+        uses: pressidium/lftp-mirror-action@v1
         with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_PATH }}
-          protocol: ftp
-          port: 21
-          security: loose
-          exclude: |
-            **/.git*
-            **/.github*
-            **/node_modules/**
+          host: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.FTP_USERNAME }}
+          pass: ${{ secrets.FTP_PASSWORD }}
+          remoteDir: ${{ secrets.FTP_PATH }}
+          localDir: './'
+          options: '--only-newer --parallel=10'
