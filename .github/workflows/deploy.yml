@@ -57,7 +57,7 @@ jobs:
           echo "Build contents:"
           ls -la ${{ env.FTP_LOCAL_DIR }}
       
-      # Step 4: Verify frontend files exist
+      # Step 2: Verify frontend files exist
       - name: 📁 Verify Frontend Files
         run: |
           echo "Checking for frontend files..."
@@ -78,7 +78,7 @@ jobs:
           if find . -name "*.js" | grep -q .; then
             echo "✅ JavaScript files found"
           fi
-      # Step 5: Security scan for frontend files
+      # Step 3: Security scan for frontend files
       - name: 🔍 Security Scan
         run: |
           echo "Performing basic security checks..."
@@ -91,7 +91,7 @@ jobs:
             echo "✅ No sensitive files detected"
           fi
       
-      # Step 6: Deploy to FTP server
+      # Step 4: Deploy to FTP server
       - name: 🚀 Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -133,7 +133,7 @@ jobs:
           security: strict
           timeout: 60000
       
-      # Step 7: Post-deployment verification
+      # Step 5: Post-deployment verification
       - name: ✅ Verify Deployment
         run: |
           echo "🎉 Deployment completed successfully!"
