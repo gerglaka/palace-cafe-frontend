@@ -1,173 +1,108 @@
-# GitHub Actions Workflow for FTP Deployment to websupport.sk
+# Static Frontend Deployment to WebSupport FTP
 # File location: .github/workflows/deploy.yml
 
-name: 🚀 Deploy to WebSupport FTP
+name: 🚀 Deploy Static Frontend
 
-# Trigger deployment on push to main branch
+# Deploy on push to main branch
 on:
   push:
     branches: [ main ]
-  workflow_dispatch: # Allow manual deployment trigger
-
-# Security: Define environment variables
-env:
-  FTP_LOCAL_DIR: './'      # Deploy from root directory (for direct HTML/CSS/JS files)
-  FTP_REMOTE_DIR: '/palacebar.sk/web'  # WebSupport hosting directory
+  workflow_dispatch: # Manual trigger option
 
 jobs:
   deploy:
-    name: 🌐 Deploy to Production
+    name: 📤 Deploy to WebSupport
     runs-on: ubuntu-latest
     
     steps:
-      # Step 1: Checkout repository code
-      - name: 📥 Checkout Repository
+      # Step 1: Get the code
+      - name: 📥 Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for better deployment tracking
       
-      # Step 2: Setup Node.js environment (if you're using Node.js)
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      
-      # Step 3: Install dependencies
-      - name: 📦 Install Dependencies
+      # Step 2: Show what we're deploying
+      - name: 📋 List Files to Deploy
         run: |
-          echo "Installing project dependencies..."
-          npm ci --prefer-offline --no-audit
+          echo "🗂️ Files ready for deployment:"
+          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.jpg" -o -name "*.png" -o -name "*.gif" -o -name "*.svg" \) | head -20
+          echo ""
+          echo "📊 File count by type:"
+          echo "HTML files: $(find . -name "*.html" | wc -l)"
+          echo "CSS files: $(find . -name "*.css" | wc -l)" 
+          echo "JS files: $(find . -name "*.js" | wc -l)"
       
-      # Step 4: Build the project (customize based on your build process)
-      - name: 🔨 Build Project
+      # Step 3: Security check
+      - name: 🔒 Security Check
         run: |
-          echo "Building project for production..."
-          npm run build
-          
-          # Verify build output exists
-          if [ ! -d "${{ env.FTP_LOCAL_DIR }}" ]; then
-            echo "❌ Build directory not found: ${{ env.FTP_LOCAL_DIR }}"
-            echo "Available directories:"
-            ls -la
-            exit 1
-          fi
-          
-          echo "✅ Build completed successfully"
-          echo "Build contents:"
-          ls -la ${{ env.FTP_LOCAL_DIR }}
-      
-      # Step 2: Verify frontend files exist
-      - name: 📁 Verify Frontend Files
-        run: |
-          echo "Checking for frontend files..."
-          echo "Repository contents:"
-          ls -la ${{ env.FTP_LOCAL_DIR }}
-          
-          # Check for common frontend files
-          if [ -f "index.html" ]; then
-            echo "✅ index.html found"
+          echo "🔍 Checking for sensitive files..."
+          if find . -name "*.env*" -o -name "*.key" -o -name "config.json" | grep -q .; then
+            echo "⚠️ Warning: Sensitive files detected!"
+            find . -name "*.env*" -o -name "*.key" -o -name "config.json"
           else
-            echo "⚠️ No index.html found in root"
-          fi
-          
-          if find . -name "*.css" | grep -q .; then
-            echo "✅ CSS files found"
-          fi
-          
-          if find . -name "*.js" | grep -q .; then
-            echo "✅ JavaScript files found"
-          fi
-      # Step 3: Security scan for frontend files
-      - name: 🔍 Security Scan
-        run: |
-          echo "Performing basic security checks..."
-          
-          # Check for sensitive files that shouldn't be deployed
-          if find ${{ env.FTP_LOCAL_DIR }} -name "*.env*" -o -name "*.key" -o -name "*.pem" | grep -q .; then
-            echo "⚠️ Warning: Sensitive files found in build directory"
-            find ${{ env.FTP_LOCAL_DIR }} -name "*.env*" -o -name "*.key" -o -name "*.pem"
-          else
-            echo "✅ No sensitive files detected"
+            echo "✅ No sensitive files found"
           fi
       
-      # Step 4: Deploy to FTP server
-      - name: 🚀 Deploy via FTP
+      # Step 4: Deploy via FTP
+      - name: 🚀 Deploy to WebSupport FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
-          # FTP server connection details (stored as repository secrets)
+          # Connection settings
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT }}
           
-          # Deployment configuration
-          local-dir: ${{ env.FTP_LOCAL_DIR }}/
-          server-dir: ${{ env.FTP_REMOTE_DIR }}/
+          # Directory settings
+          local-dir: './'
+          server-dir: '/palacebar.sk/web/'
           
-          # Security and performance settings
-          protocol: ftp
-          state-name: .ftp-deploy-sync-state.json
-          dry-run: false
-          
-          # File handling - optimized for frontend files
+          # What NOT to upload
           exclude: |
             **/.git*
             **/.git*/**
+            **/.github/**
             **/node_modules/**
             **/.DS_Store
-            **/.env*
-            **/*.log
-            **/README.md
-            **/.github/**
-            **/package*.json
-            **/yarn.lock
             **/*.md
+            **/README*
             **/LICENSE
             **/.gitignore
+            **/.env*
+            **/*.log
             **/.vscode/**
             **/.idea/**
+            **/Thumbs.db
           
-          # Deployment options
+          # Deployment settings
           log-level: verbose
           security: strict
-          timeout: 60000
+          dry-run: false
       
-      # Step 5: Post-deployment verification
-      - name: ✅ Verify Deployment
+      # Step 5: Success message
+      - name: ✅ Deployment Complete
         run: |
-          echo "🎉 Deployment completed successfully!"
-          echo "📊 Deployment Summary:"
-          echo "  • Repository: ${{ github.repository }}"
-          echo "  • Branch: ${{ github.ref_name }}"
-          echo "  • Commit: ${{ github.sha }}"
-          echo "  • Deployed to: ${{ secrets.FTP_HOST }}"
-          echo "  • Timestamp: $(date)"
+          echo "🎉 SUCCESS! Your website is now live!"
+          echo ""
+          echo "📍 Deployed to: https://palacebar.sk/"
+          echo "🕒 Time: $(date)"
+          echo "📝 Commit: ${{ github.sha }}"
+          echo ""
+          echo "🌐 Your files are now accessible at:"
+          echo "   • Main page: https://palacebar.sk/"
+          echo "   • Admin login: https://palacebar.sk/admin-login.html"
+          echo "   • Menu: https://palacebar.sk/menu.html"
       
-      # Step 8: Notify on failure (optional)
-      - name: 🚨 Deployment Failed
+      # Step 6: Handle failures
+      - name: ❌ Deployment Failed
         if: failure()
         run: |
-          echo "❌ Deployment failed!"
-          echo "Please check the logs above for error details."
-          echo "Common issues:"
-          echo "  • FTP credentials are incorrect"
-          echo "  • Build process failed"
-          echo "  • Network connectivity issues"
-          echo "  • File permission problems"
-
-# Optional: Add deployment status notifications
-  notify:
-    name: 📧 Send Notifications
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: always() # Run even if deployment fails
-    
-    steps:
-      - name: 📬 Deployment Status
-        run: |
-          if [ "${{ needs.deploy.result }}" == "success" ]; then
-            echo "✅ Deployment successful - Website is live!"
-          else
-            echo "❌ Deployment failed - Please check logs"
-          fi
+          echo "💥 Deployment failed!"
+          echo ""
+          echo "🔧 Common solutions:"
+          echo "   1. Check FTP credentials in repository secrets"
+          echo "   2. Verify server connectivity" 
+          echo "   3. Check file permissions"
+          echo ""
+          echo "🔍 Debug info:"
+          echo "   Repository: ${{ github.repository }}"
+          echo "   Branch: ${{ github.ref }}"
+          echo "   Commit: ${{ github.sha }}"
