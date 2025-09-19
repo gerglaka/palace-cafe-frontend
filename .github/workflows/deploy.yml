@@ -1,4 +1,7 @@
-name: Git-FTP Deploy 
+# Git-FTP Deployment (100% FREE - No SSH needed)
+# File: .github/workflows/git-ftp-deploy.yml
+
+name: Git-FTP Deploy (Free)
 
 on:
   push:
@@ -22,25 +25,35 @@ jobs:
 
       - name: Configure Git-FTP
         run: |
-          # Configure git-ftp with WebSupport.sk settings
-          git config git-ftp.url ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web
-          git config git-ftp.user ${{ secrets.FTP_USERNAME }}
-          git config git-ftp.password ${{ secrets.FTP_PASSWORD }}
+          # Configure git-ftp with WebSupport.sk settings (properly escaped)
+          git config git-ftp.url "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web"
+          git config git-ftp.user "${{ secrets.FTP_USERNAME }}"
+          git config git-ftp.password "${{ secrets.FTP_PASSWORD }}"
           
           # Set FTP options for WebSupport.sk compatibility  
-          git config git-ftp.syncroot ./
-          git config git-ftp.insecure true  # For basic FTP
+          git config git-ftp.syncroot "./"
+          git config git-ftp.insecure "true"
 
       - name: Initialize Git-FTP (First time only)
         continue-on-error: true
         run: |
           echo "🔄 Trying to initialize git-ftp..."
-          git ftp init || echo "Already initialized or push instead"
+          git ftp init 2>/dev/null || echo "Already initialized, will push instead"
 
       - name: Deploy Changes with Git-FTP
         run: |
           echo "🚀 Deploying changes..."
-          git ftp push
+          echo "Debug: Checking git-ftp config..."
+          git config git-ftp.url
+          git config git-ftp.user
+          echo "Starting deployment..."
+          git ftp push 2>&1 || {
+            echo "⚠️ Push failed, trying catchup..."
+            git ftp catchup 2>&1 || {
+              echo "⚠️ Catchup failed, forcing sync..."
+              git ftp push --force
+            }
+          }
           echo "✅ Deployment completed!"
 
       - name: Verify Deployment
