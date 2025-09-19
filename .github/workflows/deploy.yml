@@ -8,14 +8,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4 # Updated to latest version
+        uses: actions/checkout@v4
       - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.6  # Updated to latest for password support
         with:
-          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22 # Default SFTP port
-          remote_path: ${{ secrets.FTP_PATH }} # e.g., /www/ or /public_html/
-          delete: false # Set to true to delete files on server not in repo
-          sftp_only: true
+          server: ${{ secrets.FTP_SERVER }}  # e.g., sftp.websupport.sk or IP
+          password: ${{ secrets.FTP_PASSWORD }}  # Use password for auth (overrides key)
+          port: 22  # SFTP port
+          local_path: './*'  # Upload all files from repo root (adjust if needed)
+          remote_path: ${{ secrets.FTP_PATH }}  # e.g., /www/ or /public_html/
+          sftp_only: true  # Use only SFTP (no SSH shell); remote dir won't auto-create
+          delete_remote_files: false  # Set to true to delete old files on server
+          sftpArgs: '-o ConnectTimeout=10'  # Optional: Increase timeout if needed
