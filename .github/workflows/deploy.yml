@@ -4,16 +4,19 @@ on:
     branches:
       - main
 jobs:
-  sftp-deploy:
+  ftp-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: SFTP Deploy to Websupport
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          remote_path: ${{ secrets.FTP_PATH }}
-          local_path: './'
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftp
+          port: 21
+          security: loose
+          timeout: 30000
