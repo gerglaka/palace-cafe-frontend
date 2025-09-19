@@ -4,19 +4,18 @@ on:
     branches:
       - main
 jobs:
-  ftp-deploy:
+  sftp-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
-      - name: FTP Deploy
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        uses: actions/checkout@v4 # Updated to latest version
+      - name: SFTP Deploy
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          server-dir: ${{ secrets.FTP_PATH }}
-          protocol: ftp
-          port: 21
-          security: loose
-          timeout: 30000
+          port: 22 # Default SFTP port
+          remote_path: ${{ secrets.FTP_PATH }} # e.g., /www/ or /public_html/
+          delete: false # Set to true to delete files on server not in repo
+          sftp_only: true
