@@ -1,7 +1,7 @@
-# Simple cURL FTP Deployment (Should work with WebSupport.sk)
-# File: .github/workflows/simple-deploy.yml
+# LFTP Simple Deployment - Should work with WebSupport.sk
+# File: .github/workflows/lftp-deploy.yml
 
-name: Simple FTP Deploy
+name: LFTP Deploy (Reliable)
 
 on:
   push:
@@ -10,86 +10,122 @@ on:
 
 jobs:
   deploy:
-    name: Upload Files via cURL FTP
+    name: Deploy via LFTP
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Test FTP Connection First
+      - name: Install LFTP
         run: |
-          echo "🔍 Testing FTP connection..."
-          curl -v --ftp-pasv \
-            -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-            "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/" \
-            --max-time 30 \
-            2>&1 | head -20
+          sudo apt-get update -q
+          sudo apt-get install -y lftp
 
-      - name: Upload HTML Files
+      - name: Test Connection & Deploy
         run: |
-          echo "📄 Uploading HTML files..."
-          for file in *.html; do
-            if [ -f "$file" ]; then
-              echo "Uploading: $file"
-              curl --ftp-create-dirs --ftp-pasv \
-                -T "$file" \
-                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
-                --max-time 60
-            fi
-          done
-
-      - name: Upload CSS Files  
-        run: |
-          echo "🎨 Uploading CSS files..."
-          for file in *.css; do
-            if [ -f "$file" ]; then
-              echo "Uploading: $file"
-              curl --ftp-create-dirs --ftp-pasv \
-                -T "$file" \
-                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
-                --max-time 60
-            fi
-          done
-
-      - name: Upload JavaScript Files
-        run: |
-          echo "⚡ Uploading JavaScript files..."
-          for file in *.js; do
-            if [ -f "$file" ]; then
-              echo "Uploading: $file"
-              curl --ftp-create-dirs --ftp-pasv \
-                -T "$file" \
-                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
-                --max-time 60
-            fi
-          done
-
-      - name: Upload Other Files (Images, etc.)
-        run: |
-          echo "📁 Uploading other files..."
-          for file in *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf *.txt; do
-            if [ -f "$file" ]; then
-              echo "Uploading: $file"
-              curl --ftp-create-dirs --ftp-pasv \
-                -T "$file" \
-                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
-                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
-                --max-time 60
-            fi
-          done
-
-      - name: Success Message
-        run: |
-          echo "🎉 Deployment completed successfully!"
-          echo "🌐 Your website is live at: https://palacebar.sk/"
-          echo "📅 Deployment time: $(date)"
-          echo "📝 Files uploaded from commit: ${{ github.sha }}"
+          echo "🔍 Testing and deploying with LFTP..."
           
-          echo ""
-          echo "📋 Uploaded files:"
-          echo "  • HTML: $(ls *.html 2>/dev/null | wc -l) files"
-          echo "  • CSS: $(ls *.css 2>/dev/null | wc -l) files" 
-          echo "  • JS: $(ls *.js 2>/dev/null | wc -l) files"
+          # Create LFTP script with WebSupport.sk optimized settings
+          cat > deploy_script.lftp << 'LFTP_SCRIPT'
+          # Connection settings optimized for WebSupport.sk
+          set ftps:initial-prot ""
+          set ftp:ssl-allow no
+          set ftp:passive-mode yes
+          set net:timeout 30
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          set cmd:fail-exit yes
+          
+          # Connect to WebSupport.sk FTP
+          open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST
+          
+          # Navigate to web directory
+          cd /palacebar.sk/web || (echo "Failed to change directory"; exit 1)
+          
+          # Show current directory
+          pwd
+          ls -la
+          
+          # Upload files with progress
+          lcd .
+          
+          echo "📄 Uploading HTML files..."
+          mput -c *.html
+          
+          echo "🎨 Uploading CSS files..."
+          mput -c *.css
+          
+          echo "⚡ Uploading JS files..."
+          mput -c *.js
+          
+          echo "📁 Uploading other files..."
+          mput -c *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf *.txt 2>/dev/null || echo "No additional files to upload"
+          
+          echo "✅ Upload completed!"
+          ls -la
+          
+          quit
+          LFTP_SCRIPT
+          
+          # Execute LFTP script with credentials
+          FTP_HOST="${{ secrets.FTP_HOST }}" \
+          FTP_USER="${{ secrets.FTP_USERNAME }}" \
+          FTP_PASS="${{ secrets.FTP_PASSWORD }}" \
+          lftp -f deploy_script.lftp
+
+      - name: Verify Upload (Alternative method if main fails)
+        if: failure()
+        run: |
+          echo "🔄 Trying alternative LFTP approach..."
+          
+          lftp -c "
+          set ftps:initial-prot '';
+          set ftp:ssl-allow no;
+          set ftp:passive-mode yes;
+          set net:timeout 15;
+          set net:max-retries 5;
+          set cmd:fail-exit no;
+          
+          open ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }};
+          cd /palacebar.sk/web;
+          
+          put index.html 2>/dev/null || echo 'index.html upload failed';
+          put styles.css 2>/dev/null || echo 'styles.css upload failed';
+          put admin.css 2>/dev/null || echo 'admin.css upload failed';
+          
+          ls -la;
+          quit;
+          "
+
+      - name: Manual FTP Test (If LFTP fails)
+        if: failure()
+        run: |
+          echo "🔄 Trying basic FTP commands as last resort..."
+          
+          # Install traditional FTP client
+          sudo apt-get install -y ftp
+          
+          # Create FTP batch file
+          cat > ftp_batch << 'FTP_COMMANDS'
+          open ${{ secrets.FTP_HOST }}
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          binary
+          passive
+          cd /palacebar.sk/web
+          pwd
+          put index.html
+          put styles.css
+          ls
+          quit
+          FTP_COMMANDS
+          
+          # Execute FTP batch
+          ftp -n < ftp_batch
+
+      - name: Final Status
+        if: always()
+        run: |
+          echo "🎯 Deployment attempt completed!"
+          echo "🌐 Check your website: https://palacebar.sk/"
+          echo "🔧 If still not working, try WebFTP: https://webftp.palacebar.sk/"
+          echo "📅 Time: $(date)"
