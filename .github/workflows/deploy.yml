@@ -1,7 +1,7 @@
-# Git-FTP Deployment (100% FREE - No SSH needed)
-# File: .github/workflows/git-ftp-deploy.yml
+# Simple cURL FTP Deployment (Should work with WebSupport.sk)
+# File: .github/workflows/simple-deploy.yml
 
-name: Git-FTP Deploy (Free)
+name: Simple FTP Deploy
 
 on:
   push:
@@ -10,57 +10,86 @@ on:
 
 jobs:
   deploy:
-    name: Git-FTP Deployment
+    name: Upload Files via cURL FTP
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Get full history for git-ftp
 
-      - name: Install Git-FTP
+      - name: Test FTP Connection First
         run: |
-          sudo apt-get update
-          sudo apt-get install -y git-ftp curl
+          echo "🔍 Testing FTP connection..."
+          curl -v --ftp-pasv \
+            -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+            "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/" \
+            --max-time 30 \
+            2>&1 | head -20
 
-      - name: Configure Git-FTP
+      - name: Upload HTML Files
         run: |
-          # Configure git-ftp with WebSupport.sk settings (properly escaped)
-          git config git-ftp.url "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web"
-          git config git-ftp.user "${{ secrets.FTP_USERNAME }}"
-          git config git-ftp.password "${{ secrets.FTP_PASSWORD }}"
+          echo "📄 Uploading HTML files..."
+          for file in *.html; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              curl --ftp-create-dirs --ftp-pasv \
+                -T "$file" \
+                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
+                --max-time 60
+            fi
+          done
+
+      - name: Upload CSS Files  
+        run: |
+          echo "🎨 Uploading CSS files..."
+          for file in *.css; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              curl --ftp-create-dirs --ftp-pasv \
+                -T "$file" \
+                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
+                --max-time 60
+            fi
+          done
+
+      - name: Upload JavaScript Files
+        run: |
+          echo "⚡ Uploading JavaScript files..."
+          for file in *.js; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              curl --ftp-create-dirs --ftp-pasv \
+                -T "$file" \
+                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
+                --max-time 60
+            fi
+          done
+
+      - name: Upload Other Files (Images, etc.)
+        run: |
+          echo "📁 Uploading other files..."
+          for file in *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf *.txt; do
+            if [ -f "$file" ]; then
+              echo "Uploading: $file"
+              curl --ftp-create-dirs --ftp-pasv \
+                -T "$file" \
+                -u "${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}" \
+                "ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web/$file" \
+                --max-time 60
+            fi
+          done
+
+      - name: Success Message
+        run: |
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Your website is live at: https://palacebar.sk/"
+          echo "📅 Deployment time: $(date)"
+          echo "📝 Files uploaded from commit: ${{ github.sha }}"
           
-          # Set FTP options for WebSupport.sk compatibility  
-          git config git-ftp.syncroot "./"
-          git config git-ftp.insecure "true"
-
-      - name: Initialize Git-FTP (First time only)
-        continue-on-error: true
-        run: |
-          echo "🔄 Trying to initialize git-ftp..."
-          git ftp init 2>/dev/null || echo "Already initialized, will push instead"
-
-      - name: Deploy Changes with Git-FTP
-        run: |
-          echo "🚀 Deploying changes..."
-          echo "Debug: Checking git-ftp config..."
-          git config git-ftp.url
-          git config git-ftp.user
-          echo "Starting deployment..."
-          git ftp push 2>&1 || {
-            echo "⚠️ Push failed, trying catchup..."
-            git ftp catchup 2>&1 || {
-              echo "⚠️ Catchup failed, forcing sync..."
-              git ftp push --force
-            }
-          }
-          echo "✅ Deployment completed!"
-
-      - name: Verify Deployment
-        run: |
-          echo "🎉 Website should be live at: https://palacebar.sk/"
-          echo "📋 Deployment details:"
-          echo "  • Method: Git-FTP (Free)"
-          echo "  • Target: /palacebar.sk/web"
-          echo "  • Time: $(date)"
-          echo "  • Commit: ${{ github.sha }}"
+          echo ""
+          echo "📋 Uploaded files:"
+          echo "  • HTML: $(ls *.html 2>/dev/null | wc -l) files"
+          echo "  • CSS: $(ls *.css 2>/dev/null | wc -l) files" 
+          echo "  • JS: $(ls *.js 2>/dev/null | wc -l) files"
