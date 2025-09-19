@@ -4,20 +4,23 @@ on:
     branches:
       - main
 jobs:
-  sftp-deploy:
+  ftp-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: SFTP Deploy
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.6  # Updated to latest for password support
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          server: ${{ secrets.FTP_SERVER }}  # e.g., sftp.websupport.sk or IP
-          password: ${{ secrets.FTP_PASSWORD }}  # Use password for auth (overrides key)
-          port: 22  # SFTP port
-          local_path: './*'  # Upload all files from repo root (adjust if needed)
-          remote_path: ${{ secrets.FTP_PATH }}  # e.g., /www/ or /public_html/
-          sftp_only: true  # Use only SFTP (no SSH shell); remote dir won't auto-create
-          delete_remote_files: false  # Set to true to delete old files on server
-          sftpArgs: '-o ConnectTimeout=10'  # Optional: Increase timeout if needed
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftp
+          port: 21
+          security: loose
+          timeout: 60000
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**
