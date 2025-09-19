@@ -9,11 +9,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Deploy via FTP
-        uses: sebastianpopp/ftp-action@releases/v2
+      - name: FTP Deploy to Websupport
+        uses: pressidium/lftp-mirror-action@v1
         with:
           host: ${{ secrets.FTP_SERVER }}
           user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          pass: ${{ secrets.FTP_PASSWORD }}
           remoteDir: ${{ secrets.FTP_PATH }}
-          forceSsl: false
+          localDir: './'
+          options: '--only-newer --parallel=10'
