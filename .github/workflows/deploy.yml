@@ -9,11 +9,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Deploy via FTP
-        uses: sebastianpopp/ftp-action@releases/v2
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
-          host: ${{ secrets.FTP_SERVER }}
-          user: ${{ secrets.FTP_USERNAME }}
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          remoteDir: ${{ secrets.FTP_PATH }}
-          forceSsl: false
+          server-dir: ${{ secrets.FTP_PATH }}
+          protocol: ftp
+          port: 21
+          timeout: 60000
+          log-level: verbose
+          exclude: |
+            **/.git*
+            **/.github*
+            **/node_modules/**
+            **/.DS_Store
