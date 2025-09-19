@@ -1,4 +1,4 @@
-name: Deploy Website (Free Methods)
+name: Git-FTP Deploy 
 
 on:
   push:
@@ -6,117 +6,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Method 1: Simple FTP Deploy (Different Action)
-  deploy-simple-ftp:
-    name: Simple FTP Deploy
+  deploy:
+    name: Git-FTP Deployment
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Deploy via Simple FTP
-        uses: kevinpainchaud/simple-ftp-deploy-action@v1.2.1
         with:
-          ftp_host: ${{ secrets.FTP_HOST }}
-          ftp_username: ${{ secrets.FTP_USERNAME }}
-          ftp_password: ${{ secrets.FTP_PASSWORD }}
-          local_source_dir: "./"
-          dest_dir: "/palacebar.sk/web"
-          exclude: "'^\.git/' '^\.github/' '^README\.md$'"
+          fetch-depth: 0  # Get full history for git-ftp
 
-  # Method 2: LFTP-based FTP Deployment (More Compatible)
-  deploy-lftp:
-    name: LFTP FTP Deploy 
-    runs-on: ubuntu-latest
-    needs: deploy-simple-ftp
-    if: failure()
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      
-      - name: Deploy via LFTP FTP
-        uses: airvzxf/ftp-deployment-action@latest
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local_dir: "./"
-          remote_dir: "/palacebar.sk/web"
-          delete: "false"
-          ftp_ssl_allow: "false"  # Disable SSL for compatibility
-          exclude: "'^\.git/' '^\.github/'"
-
-  # Method 3: Pure LFTP Commands (Most Compatible)
-  deploy-raw-lftp:
-    name: Raw LFTP Commands
-    runs-on: ubuntu-latest
-    needs: [deploy-simple-ftp, deploy-lftp]
-    if: failure()
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      
-      - name: Install LFTP
-        run: sudo apt-get update && sudo apt-get install -y lftp
-      
-      - name: Deploy with Raw LFTP
-        run: |
-          lftp -c "
-          set ftps:initial-prot '';
-          set ftp:ssl-allow no;
-          set ftp:passive-mode yes;
-          set net:timeout 10;
-          set net:max-retries 2;
-          connect ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }};
-          cd /palacebar.sk/web;
-          mirror --reverse --delete --exclude .git/ --exclude .github/ --exclude README.md ./;
-          quit;
-          "
-
-  # Method 4: Manual rsync over FTP
-  deploy-rsync-ftp:
-    name: Rsync FTP Alternative
-    runs-on: ubuntu-latest
-    needs: [deploy-simple-ftp, deploy-lftp, deploy-raw-lftp]
-    if: failure()
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-      
-      - name: Install curlftpfs
+      - name: Install Git-FTP
         run: |
           sudo apt-get update
-          sudo apt-get install -y curlftpfs
-      
-      - name: Mount FTP as filesystem and sync
-        run: |
-          mkdir -p /tmp/ftp_mount
-          # Mount FTP as local filesystem
-          curlftpfs -o user=${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }} \
-            ftp://${{ secrets.FTP_HOST }} /tmp/ftp_mount
-          
-          # Create target directory if needed
-          mkdir -p /tmp/ftp_mount/palacebar.sk/web
-          
-          # Sync files using rsync
-          rsync -av --delete \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='README.md' \
-            ./ /tmp/ftp_mount/palacebar.sk/web/
-          
-          # Unmount
-          fusermount -u /tmp/ftp_mount
+          sudo apt-get install -y git-ftp curl
 
-  # Success notification
-  notify-success:
-    name: Deployment Success
-    runs-on: ubuntu-latest
-    needs: [deploy-simple-ftp, deploy-lftp, deploy-raw-lftp, deploy-rsync-ftp]
-    if: success()
-    steps:
-      - name: Success Message
+      - name: Configure Git-FTP
         run: |
-          echo "🎉 Website deployed successfully!"
-          echo "🌐 Live at: https://palacebar.sk/"
-          echo "📅 Time: $(date)"
+          # Configure git-ftp with WebSupport.sk settings
+          git config git-ftp.url ftp://${{ secrets.FTP_HOST }}/palacebar.sk/web
+          git config git-ftp.user ${{ secrets.FTP_USERNAME }}
+          git config git-ftp.password ${{ secrets.FTP_PASSWORD }}
+          
+          # Set FTP options for WebSupport.sk compatibility  
+          git config git-ftp.syncroot ./
+          git config git-ftp.insecure true  # For basic FTP
+
+      - name: Initialize Git-FTP (First time only)
+        continue-on-error: true
+        run: |
+          echo "🔄 Trying to initialize git-ftp..."
+          git ftp init || echo "Already initialized or push instead"
+
+      - name: Deploy Changes with Git-FTP
+        run: |
+          echo "🚀 Deploying changes..."
+          git ftp push
+          echo "✅ Deployment completed!"
+
+      - name: Verify Deployment
+        run: |
+          echo "🎉 Website should be live at: https://palacebar.sk/"
+          echo "📋 Deployment details:"
+          echo "  • Method: Git-FTP (Free)"
+          echo "  • Target: /palacebar.sk/web"
+          echo "  • Time: $(date)"
+          echo "  • Commit: ${{ github.sha }}"
