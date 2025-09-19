@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palace Cafe & Bar - Admin Dashboard</title>
+    
+    <!-- Admin-specific styles -->
+    <link rel="stylesheet" href="admin.css">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Meta tags for security -->
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p>Betöltés...</p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div class="dashboard-container">
+        <!-- Left Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Logo Section -->
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-crown"></i>
+                    <h2>Palace Admin</h2>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" title="Oldalsáv összecsukása">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <!-- User Info -->
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div class="user-details">
+                    <h3 id="adminName">Admin Felhasználó</h3>
+                    <p id="adminRole">Rendszergazda</p>
+                </div>
+                <!--<div class="user-status online">
+                    <i class="fas fa-circle"></i>
+                </div>-->
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="nav-menu">
+                <a href="#dashboard" class="nav-item active" data-app="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Áttekintés</span>
+                </a>
+                
+                <a href="#orders" class="nav-item" data-app="orders">
+                    <i class="fas fa-shopping-cart"></i>
+                    <span>Rendelések</span>
+                    <span class="badge" id="ordersBadge">0</span>
+                </a>
+                
+                <a href="#menu" class="nav-item" data-app="menu">
+                    <i class="fas fa-utensils"></i>
+                    <span>Menü kezelés</span>
+                </a>
+                
+                <a href="#analytics" class="nav-item" data-app="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Statisztikák</span>
+                </a>
+                
+                <a href="#content" class="nav-item" data-app="content">
+                    <i class="fas fa-edit"></i>
+                    <span>Tartalom szerkesztő</span>
+                </a>
+                
+                <a href="#settings" class="nav-item" data-app="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Beállítások</span>
+                </a>
+                
+                <div class="nav-divider"></div>
+                
+                <a href="#logout" class="nav-item logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Kijelentkezés</span>
+                </a>
+            </nav>
+
+            <!-- Quick Actions 
+            <div class="quick-actions">
+                <h4>Gyors műveletek</h4>
+                <button class="quick-btn" id="newOrderBtn">
+                    <i class="fas fa-plus"></i>
+                    Új rendelés
+                </button>
+                <button class="quick-btn" id="refreshDataBtn">
+                    <i class="fas fa-sync"></i>
+                    Adatok frissítése
+                </button>
+            </div>-->
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header Bar -->
+            <header class="content-header">
+                <div class="header-left">
+                    <!-- Mobile menu button -->
+                    <button class="mobile-menu-btn" id="mobileMenuBtn">
+                        <i class="fas fa-bars"></i>
+                    </button>                    
+                    <h1 id="pageTitle">Áttekintés</h1>
+                    <nav class="breadcrumb">
+                        <span id="breadcrumbPath">Dashboard</span>
+                    </nav>
+                </div>
+                
+                <div class="header-right">
+                    <!-- Notifications -->
+                    <div class="notification-bell" id="notificationBell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count" id="notificationCount">3</span>
+
+                        <!-- Notifications Panel (initially hidden) -->
+                        <div class="notifications-panel" id="notificationsPanel">
+                            <div class="notifications-header">
+                                <h4>Értesítések</h4>
+                                <div class="notifications-actions">
+                                    <button class="btn-mark-all-read" id="markAllReadBtn" title="Összes megjelölése olvasottként">
+                                        <i class="fas fa-check-double"></i>
+                                    </button>
+                                    <button class="btn-clear-all" id="clearAllBtn" title="Összes törlése">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="notifications-list" id="notificationsList">
+                                <div class="notifications-empty">
+                                    <i class="fas fa-bell-slash"></i>
+                                    <p>Nincsenek értesítések</p>
+                                </div>
+                            </div>
+
+                            <div class="notifications-footer">
+                                <button class="btn-view-all" id="viewAllBtn">
+                                    Összes megtekintése
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    
+                    <!-- Search -->
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Keresés..." id="globalSearch">
+                    </div>
+                    
+                    <!-- Current Time -->
+                    <div class="current-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="currentTime"></span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Overview App (Default View) -->
+            <div id="dashboard-app" class="app-container active">
+                <!-- Quick Stats Cards -->
+                <section class="stats-grid">
+                    <div class="stat-card primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="todayOrders">--</h3>
+                            <p>Mai rendelések</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +12%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card success">
+                        <div class="stat-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="todayRevenue">--</h3>
+                            <p>Mai bevétel</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +8%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="avgWaitTime">--</h3>
+                            <p>Átl. várakozási idő</p>
+                            <span class="stat-change negative">
+                                <i class="fas fa-arrow-down"></i>
+                                -3 perc
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card info">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="activeCustomers">--</h3>
+                            <p>Aktív ügyfelek</p>
+                            <span class="stat-change positive">
+                                <i class="fas fa-arrow-up"></i>
+                                +5
+                            </span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recent Activity & Quick Actions -->
+                <section class="dashboard-grid">
+                    <!-- Recent Orders -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-history"></i>
+                                Legutóbbi rendelések
+                            </h3>
+                            <button class="btn-secondary" onclick="adminDashboard.loadApp('orders')">
+                                Összes megtekintése
+                            </button>
+                        </div>
+                        <div class="card-content">
+                            <div class="recent-orders-list" id="recentOrdersList">
+                                <!-- Orders will be loaded here -->
+                                <div class="loading-placeholder">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    Rendelések betöltése...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Status -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3>
+                                <i class="fas fa-server"></i>
+                                Rendszer állapot
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="status-list">
+                                <div class="status-item">
+                                    <div class="status-indicator online"></div>
+                                    <span>API szerver</span>
+                                    <span class="status-text">Online</span>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-indicator online"></div>
+                                    <span>Adatbázis</span>
+                                    <span class="status-text">Elérhető</span>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-indicator warning"></div>
+                                    <span>Email szolgáltatás</span>
+                                    <span class="status-text">Lassú</span>
+                                </div>
+                                <div class="status-item">
+                                    <div class="status-indicator online"></div>
+                                    <span>Fizetési rendszer</span>
+                                    <span class="status-text">Működik</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Orders Management App -->
+            <div id="orders-app" class="app-container">
+                <!-- Content will be dynamically loaded by orders-app.js -->
+            </div>
+
+            <div id="menu-app" class="app-container">
+                <!-- Content will be dynamically rendered by MenuApp -->
+            </div>
+
+            <div id="analytics-app" class="app-container">
+                <div class="app-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Statisztikák</h2>
+                    <p>Ez a szekció hamarosan elérhető lesz...</p>
+                </div>
+            </div>
+
+            <div id="content-app" class="app-container">
+                <div class="app-placeholder">
+                    <i class="fas fa-edit"></i>
+                    <h2>Tartalom szerkesztő</h2>
+                    <p>Ez a szekció hamarosan elérhető lesz...</p>
+                </div>
+            </div>
+
+            <div id="settings-app" class="app-container">
+                <div class="app-placeholder">
+                    <i class="fas fa-cog"></i>
+                    <h2>Beállítások</h2>
+                    <p>Ez a szekció hamarosan elérhető lesz...</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Admin Dashboard JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="dashboard-core.js"></script>
+    <script src="dashboard-apps.js"></script>    
+    <script src="stats-app.js"></script> 
+    <script src="orders-app.js"></script>
+    <script src="dashboard-main.js"></script>
+</body>
+</html>

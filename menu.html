@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menü - Palace Cafe & Bar</title>
+    <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
+    <meta name="description" content="Palace Cafe & Bar teljes menüje - Autentikus ízek 2016 óta">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; connect-src 'self' https://palace-cafe-backend-production.up.railway.app http://127.0.0.1:3001; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="assets/images/logos/logo-main.png" as="image">
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <!-- Happy Hour Bar -->
+    <div class="happy-hour-bar" id="happyHourBar">
+        <div class="happy-hour-content">
+            <div class="happy-hour-message">
+                Várunk szeretettel a happy hour-re 12 és 15 óra között!
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="main-header" id="mainHeader">
+        <nav class="nav-container">
+            <!-- Mobile Menu Icon -->
+            <div class="mobile-menu-icon" id="mobileMenuIcon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="index.html">
+                    <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <ul class="nav-menu desktop-nav">
+                <li><a href="menu.html" class="nav-link active">Menü</a></li>
+                <!--<li><a href="about.html" class="nav-link">Rólunk</a></li>-->
+                <li><a href="order.html" class="nav-link highlighted">Rendelj online</a></li>
+            </ul>
+
+            <!-- Language Flags -->
+            <div class="language-flags desktop-only">
+                <a href="menu-sk.html" aria-label="Slovenčina">
+                    <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
+                </a>
+                <a href="menu-en.html" aria-label="English">
+                    <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                </a>
+            </div>
+
+            <!-- Mobile Order Button -->
+            <div class="mobile-order-btn mobile-only">
+                <a href="order.html" class="nav-link highlighted">Rendelj online</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-nav-list">
+                <li><a href="menu.html" class="mobile-nav-link">Menü</a></li>
+                <!--<li><a href="about.html" class="mobile-nav-link">Rólunk</a></li>-->
+                <li class="mobile-flags">
+                    <a href="menu-sk.html" aria-label="Slovenčina">
+                        <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
+                    </a>
+                    <a href="menu-en.html" aria-label="English">
+                        <img src="assets/images/icons/flag-en.png" alt="English" class="mobile-flag-icon">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Menu Hero Section -->
+    <section class="menu-hero-section">
+        <div class="menu-hero-content">
+            <h1 class="menu-hero-title">Menü</h1>
+            <p class="menu-hero-subtitle">Autentikus ízek 2016 óta</p>
+        </div>
+    </section>
+
+    <!-- Category Navigation Bar - Menu Page with 3 Dropdowns -->
+    <nav class="category-nav menu-page-nav" id="categoryNav">
+        <div class="category-nav-container">
+            <ul class="category-nav-list">
+                <li class="category-nav-item dropdown active">
+                    <a href="#" class="dropdown-toggle">Ételek ▼</a>
+                    <div class="dropdown-menu">
+                        <a href="#smashburgers" data-target="smashburgers">SmashBurger</a>
+                        <a href="#hamburgers" data-target="hamburgers">Hamburger</a>
+                        <a href="#qurritos" data-target="qurritos">Qurrito</a>
+                        <a href="#mediterranean" data-target="mediterranean">Mediterrán</a>
+                    </div>
+                </li>
+                                <li class="category-nav-item dropdown">
+                    <a href="#" class="dropdown-toggle">Extrák ▼</a>
+                    <div class="dropdown-menu">
+                        <a href="#sides" data-target="sides">Köretek</a>
+                        <a href="#desserts" data-target="desserts">Desszertek</a>
+                        <a href="#sauces" data-target="sauces">Szószok</a>
+                    </div>
+                </li>
+                <li class="category-nav-item dropdown">
+                    <a href="#" class="dropdown-toggle">Italok ▼</a>
+                    <div class="dropdown-menu">
+                        <a href="#nonalcoholic" data-target="nonalcoholic">Üdítők</a>
+                        <a href="#coffees" data-target="coffees">Kávék</a>
+                        <a href="#lemonades" data-target="lemonades">Limonádék</a>
+                        <a href="#specialty" data-target="specialty">Specialitások</a>
+                        <a href="#cocktails" data-target="cocktails">Koktélok</a>
+                        <a href="#alcohol" data-target="alcohol">Borok & Sörök</a>
+                        <a href="#shots" data-target="shots">Röviditalok</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Menu Content -->
+    <main class="menu-main">
+        
+        <!-- SmashBurgers Category -->
+        <section class="menu-category-section" data-category="smashburgers" id="smashburgers">
+            <div class="category-background bg-smashburgers">
+                <h2 class="category-title">SmashBurger</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="smashburgers-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Hamburgers Category -->
+        <section class="menu-category-section" data-category="hamburgers" id="hamburgers">
+            <div class="category-background bg-hamburgers">
+                <h2 class="category-title">Hamburger</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="hamburgers-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Qurritos Category -->
+        <section class="menu-category-section" data-category="qurritos" id="qurritos">
+            <div class="category-background bg-qurritos">
+                <h2 class="category-title">Qurrito</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="qurritos-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Mediterranean & Tex-Mex Category -->
+        <section class="menu-category-section" data-category="mediterranean" id="mediterranean">
+            <div class="category-background bg-mediterranean">
+                <h2 class="category-title">Mediterrán & Tex-Mex</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="mediterranean-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sides Category -->
+        <section class="menu-category-section" data-category="sides" id="sides">
+            <div class="category-background bg-sides">
+                <h2 class="category-title">Köretek</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="sides-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Desserts Category -->
+        <section class="menu-category-section" data-category="desserts" id="desserts">
+            <div class="category-background bg-desserts">
+                <h2 class="category-title">Desszertek</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="desserts-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sauces Category -->
+        <section class="menu-category-section" data-category="sauces" id="sauces">
+            <div class="category-background bg-sauces">
+                <h2 class="category-title">Szószok</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="sauces-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Non-Alcoholic Drinks Category -->
+        <section class="menu-category-section" data-category="nonalcoholic" id="nonalcoholic">
+            <div class="category-background bg-drinks">
+                <h2 class="category-title">Üdítők</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="nonalcoholic-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Coffees Category -->
+        <section class="menu-category-section" data-category="coffees" id="coffees">
+            <div class="category-background bg-coffees">
+                <h2 class="category-title">Kávék</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="coffees-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Lemonades Category -->
+        <section class="menu-category-section" data-category="lemonades" id="lemonades">
+            <div class="category-background bg-lemonades">
+                <h2 class="category-title">Limonádék</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="lemonades-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Specialty Drinks Category -->
+        <section class="menu-category-section" data-category="specialty" id="specialty">
+            <div class="category-background bg-specialty">
+                <h2 class="category-title">Specialitások</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="specialty-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Cocktails Category -->
+        <section class="menu-category-section" data-category="cocktails" id="cocktails">
+            <div class="category-background bg-cocktails">
+                <h2 class="category-title">Koktélok</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="cocktails-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Alcoholic Drinks Category -->
+        <section class="menu-category-section" data-category="alcohol" id="alcohol">
+            <div class="category-background bg-alcohol">
+                <h2 class="category-title">Borok & Sörök</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="alcohol-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Shots Category -->
+        <section class="menu-category-section" data-category="shots" id="shots">
+            <div class="category-background bg-shots">
+                <h2 class="category-title">Röviditalok</h2>
+            </div>
+            <div class="menu-items-container">
+                <div class="menu-items-grid" id="shots-items">
+                    <!-- Items will be loaded from backend -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Order Online Section -->
+    <section class="order-online-section">
+        <div class="order-online-container">
+            <h2 class="order-title">Megtetszett valami?</h2>
+            <p class="order-subtitle">Rendeld meg könnyedén online és vedd át nálunk!</p>
+            <a href="order.html" class="order-online-btn">
+                <span>Rendelj Online</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <ul class="footer-nav">
+                    <li><a href="menu.html">Menü</a></li>
+                    <!--<li><a href="about.html">Rólunk</a></li>-->
+                    <li><a href="order.html">Rendelj Online</a></li>
+                    <li><a href="privacy.html">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="cookies.html">Sütik</a></li>
+                    <li><a href="terms.html">Felhasználási Feltételek</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-center">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
+                        <img src="photos/facebook-icon.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.instagram.com/palace_cafe_bar/" class="social-icon" aria-label="Instagram">
+                        <img src="photos/instagram-icon.png" alt="Instagram">
+                    </a>
+                    <a href="https://maps.app.goo.gl/iqZTZX4jQcgGJDqq6" class="social-icon" aria-label="Google Maps">
+                        <img src="photos/maps-icon.png" alt="Google Maps">
+                    </a>
+                    <a href="https://www.tiktok.com/@palace.cafe.bar?lang=en-GB" class="social-icon" aria-label="TikTok">
+                        <img src="photos/tiktok-icon.png" alt="TikTok">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="order-system-2.js"></script>
+</body>
+</html>

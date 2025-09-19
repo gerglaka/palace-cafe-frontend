@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palace Cafe & Bar - Autentikus Ízek, Egyedi Élmények</title>
+    <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
+    <meta name="description" content="Palace Cafe & Bar - A legjobb burgerek, quesadillák és tacók a városban. Saját receptek, friss alapanyagok, felejthetetlen ízek.">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: *.googleusercontent.com *.gstatic.com; script-src 'self' 'unsafe-inline'; frame-src https://www.google.com https://maps.google.com https://search.google.com;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="assets/images/logos/logo-main.png" as="image">
+    <link rel="preload" href="assets/images/backgrounds/bg-hero-1.png" as="image">
+</head>
+<body>
+    
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <!-- Happy Hour Bar -->
+    <div class="happy-hour-bar" id="happyHourBar">
+        <div class="happy-hour-content">
+            <div class="happy-hour-message">
+                Várunk szeretettel a happy hour-re 12 és 15 óra között!
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="main-header" id="mainHeader">
+        <nav class="nav-container">
+            <!-- Mobile Menu Icon -->
+            <div class="mobile-menu-icon" id="mobileMenuIcon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="index.html" aria-label="Palace Cafe & Bar kezdőlap">
+                    <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <ul class="nav-menu desktop-nav">
+                <li><a href="menu.html" class="nav-link">Menü</a></li>
+                <!--<li><a href="about.html" class="nav-link">Rólunk</a></li>-->
+                <li><a href="order.html" class="nav-link highlighted">Rendelj online</a></li>
+            </ul>
+
+            <!-- Language Flags -->
+            <div class="language-flags desktop-only">
+                <a href="index-sk.html" aria-label="Slovenčina">
+                    <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
+                </a>
+                <a href="index-en.html" aria-label="English">
+                    <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                </a>
+            </div>
+
+            <!-- Mobile Order Button -->
+            <div class="mobile-order-btn mobile-only">
+                <a href="order.html" class="nav-link highlighted">Rendelj online</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-nav-list">
+                <li><a href="menu.html" class="mobile-nav-link">Menü</a></li>
+                <!--<li><a href="about.html" class="mobile-nav-link">Rólunk</a></li>-->
+                <li class="mobile-flags">
+                    <a href="index-sk.html" aria-label="Slovenčina">
+                        <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
+                    </a>
+                    <a href="index-en.html" aria-label="English">
+                        <img src="assets/images/icons/flag-en.png" alt="English" class="mobile-flag-icon">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="heroSection">
+        <div class="hero-background">
+            <div class="hero-slide active" style="background-image: url('assets/images/backgrounds/bg-hero-1.png')"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/backgrounds/bg-hero-2.png')"></div>
+            <div class="hero-slide" style="background-image: url('assets/images/backgrounds/bg-hero-3.png')"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-text-container">
+                <h1 class="hero-title" id="heroTitle">Ez nem csak egy burger. Ez a MI burgerünk.</h1>
+                <p class="hero-subtitle" id="heroSubtitle">Fedezd fel a saját recept alapján készült kedvencünket – friss, szaftos, felejthetetlen.</p>
+                <a href="order.html" class="hero-cta-button">Rendelj most!</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Welcome Section -->
+    <section class="welcome-section" id="welcomeSection">
+        <div class="welcome-container">
+            <div class="welcome-left">
+                <div class="welcome-title-container" id="welcomeTitle">
+                    <div class="welcome-small">Üdvözöljük</div>
+                    <div class="welcome-large">Palace</div>
+                    <div class="welcome-medium">Cafe & Bárban</div>
+                </div>
+            </div>
+            
+            <div class="welcome-right">
+                <div class="story-container" id="storyContainer">
+                    <h3 class="story-title">Nyitvatartás</h3>
+                    <div class="story-text">
+                        <p><strong>Hétfő - Csütörtök:</strong> 11:00 - 22:00</p>
+                        <p><strong>Péntek - Szombat:</strong> 11:00 - 23:00</p>
+                        <p><strong>Vasárnap:</strong> 12:00 - 21:00</p>
+                        <br>
+                        <p><strong>Happy Hour:</strong> Hétfő-Péntek 12:00-15:00</p>
+                        <p>Különleges ajánlatok és kedvezmények!</p>
+                    </div>
+                </div>
+            </div>
+        </div>    
+        
+        <div class="welcome-bottom"> 
+            <div class="story-continuation">
+                <p>Tudjuk, hogy sok helyen lehet enni, de nálunk máshogy szól minden. Mert nem csak főzünk – meg akarjuk mutatni, mit jelent igazán jót enni.</p>
+                <p>Ez a mi ízvilágunk. És most már a tiéd is lehet.</p>
+            </div>
+        </div>
+
+        <!-- Food Categories Carousel -->
+        <div class="food-categories" id="foodCategories">
+            <div class="category-carousel">
+                <div class="category-item active" data-category="0">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/backgrounds/bg-hamburgers.jpg" alt="Burger háttér">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-burger-plate.png" alt="Burger tányéron">
+                        </div>
+                    </div>
+                    <h4 class="category-name">Hamburgerek</h4>
+                </div>
+
+                <div class="category-item" data-category="1">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/menu/hot-qurrito.JPG" alt="Quesadilla háttér">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-quesadilla-plate.png" alt="Quesadilla tányéron">
+                        </div>
+                    </div>
+                    <h4 class="category-name">Qurritók</h4>
+                </div>
+
+                <div class="category-item" data-category="2">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/menu/taco-beef.JPG" alt="Tacos háttér">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-tacos-plate.png" alt="Tacos tányéron">
+                        </div>
+                    </div>
+                    <h4 class="category-name">Tacók</h4>
+                </div>
+            </div>
+
+            <div class="category-indicators">
+                <div class="indicator active" data-category="0"></div>
+                <div class="indicator" data-category="1"></div>
+                <div class="indicator" data-category="2"></div>
+            </div>
+            <a href="menu.html" class="menu-button">Menü</a>
+        </div>
+        
+        <!-- Location with Google Maps -->
+        <div class="maps-bar">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2665.7!2d18.1269!3d47.7638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476bad5b8e4b1111%3A0x123456789!2sN%C3%A1mestie%20gen.%20Klapku%209%2C%20945%2001%20Kom%C3%A1rno%2C%20Slovakia!5e0!3m2!1sen!2sus!4v1726396800000!5m2!1sen!2sus"
+                width="100%" 
+                height="300" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Palace Cafe & Bar Location">
+            </iframe>
+        </div>  
+
+    </section>
+
+        <!-- Gallery Section -->
+    <section class="gallery-section" id="gallerySection">
+        <div class="gallery-container">
+            <h2 class="gallery-title">Kövess minket Instagrammon!</h2>
+
+            <!-- Static Instagram-style Grid -->
+            <div class="instagram-grid">
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post1.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post2.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post3.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post4.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post5.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+                <div class="instagram-item">
+                    <img src="assets/images/instagram/post6.jpg" alt="Palace Cafe Instagram" loading="lazy">
+                    <div class="instagram-overlay">
+                        <div class="instagram-icon">📷</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="instagram-cta">
+                <a href="https://www.instagram.com/palace_cafe_bar/" target="_blank" class="instagram-button" rel="noopener noreferrer">
+                    <!--<svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" stroke="currentColor" stroke-width="2"/>
+                        <path d="m16 11.37-4-4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="m12 15-4-4 4-4 4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>-->
+                    Kövess minket Instagrammon
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <ul class="footer-nav">
+                    <li><a href="menu.html">Menü</a></li>
+                    <!--<li><a href="about.html">Rólunk</a></li>-->
+                    <li><a href="order.html">Rendelj Online</a></li>
+                    <li><a href="privacy.html">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="cookies.html">Sütik</a></li>
+                    <li><a href="terms.html">Felhasználási Feltételek</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-center">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
+                        <img src="photos/facebook-icon.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.instagram.com/palace_cafe_bar/" class="social-icon" aria-label="Instagram">
+                        <img src="photos/instagram-icon.png" alt="Instagram">
+                    </a>
+                    <a href="https://maps.app.goo.gl/iqZTZX4jQcgGJDqq6" class="social-icon" aria-label="Google Maps">
+                        <img src="photos/maps-icon.png" alt="Google Maps">
+                    </a>
+                    <a href="https://www.tiktok.com/@palace.cafe.bar?lang=en-GB" class="social-icon" aria-label="TikTok">
+                        <img src="photos/tiktok-icon.png" alt="TikTok">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="order-system-2.js"></script>
+</body>
+</html>

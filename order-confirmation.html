@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rendelés visszaigazolás - Palace Cafe & Bar</title>
+    <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
+    <meta name="description" content="Rendelésedet megerősítése - Palace Cafe & Bar">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Security Headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    
+    <!-- No indexing for order confirmation pages -->
+    <meta name="robots" content="noindex, nofollow">
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </button>
+
+    <!-- Happy Hour Bar -->
+    <div class="happy-hour-bar" id="happyHourBar">
+        <div class="happy-hour-content">
+            <div class="happy-hour-message">
+                Várunk szeretettel a happy hour-re 12 és 15 óra között!
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="main-header" id="mainHeader">
+        <nav class="nav-container">
+            <!-- Mobile Menu Icon -->
+            <div class="mobile-menu-icon" id="mobileMenuIcon">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+
+            <!-- Logo -->
+            <div class="logo-container">
+                <a href="/">
+                    <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
+                </a>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <ul class="nav-menu desktop-nav">
+                <li><a href="menu.html" class="nav-link">Menü</a></li>
+                <!--<li><a href="about.html" class="nav-link">Rólunk</a></li>-->
+                <li><a href="order.html" class="nav-link highlighted">Rendelj online</a></li>
+            </ul>
+
+            <!-- Language Flags -->
+            <div class="language-flags desktop-only">
+                <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
+                <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+            </div>
+
+            <!-- Mobile Order Button -->
+            <div class="mobile-order-btn mobile-only">
+                <a href="order.html" class="nav-link highlighted">Rendelj online</a>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Dropdown -->
+        <div class="mobile-menu" id="mobileMenu">
+            <ul class="mobile-nav-list">
+                <li><a href="/menu" class="mobile-nav-link">Menü</a></li>
+                <!--<li><a href="/rolunk" class="mobile-nav-link">Rólunk</a></li>-->
+                <li class="mobile-flags">
+                    <img src="photos/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
+                    <img src="photos/flag-uk.png" alt="English" class="mobile-flag-icon">
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Order Confirmation Hero Section -->
+    <section class="conf-hero-section">
+        <div class="conf-hero-background">
+            <img src="photos/confirmation-hero.jpg" alt="Rendelés megerősítve" class="conf-hero-image">
+            <div class="conf-hero-overlay"></div>
+        </div>
+        <div class="conf-hero-content">
+            <div class="conf-success-icon">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" fill="var(--eucalyptus-green)"/>
+                    <path d="m9 12 2 2 4-4" stroke="var(--cream-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h1 class="conf-hero-title">Köszönjük a rendelésedet!</h1>
+            <p class="conf-hero-subtitle">Rendelésedet sikeresen leadva és feldolgozás alatt áll</p>
+        </div>
+    </section>
+
+    <!-- Order Confirmation Main Content -->
+    <main class="conf-main">
+        <div class="conf-container">
+            
+            <!-- Order Status Card -->
+            <section class="conf-section conf-status-card">
+                <div class="conf-status-header">
+                    <div class="conf-status-info">
+                        <h2 class="conf-order-number">Rendelés száma: <span id="orderNumber">#PCB-Loading...</span></h2>
+                        <div class="conf-order-status">
+                            <span class="conf-status-badge conf-confirmed" id="statusBadge">Megerősítve</span>
+                            <span class="conf-status-time" id="orderTime">Betöltés...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Progress -->
+                <div class="conf-rolling-status-container">
+                    <div class="conf-rolling-viewport">
+                        <div class="conf-status-roller" id="statusRoller">
+                            <!-- Status items will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Timer Display -->
+                    <div class="conf-timer-display" id="timerDisplay" style="display: none;">
+                        <div class="conf-timer-content">
+                            <div class="conf-timer-label">Elkészül</div>
+                            <div class="conf-timer-value" id="timerValue">--</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Description -->
+                    <div class="conf-status-description" id="statusDescription">
+                        Rendelés feldolgozás alatt...
+                    </div>
+                </div>
+            </section>
+
+            <div class="conf-content">
+                <!-- Left Column -->
+                <div class="conf-left">
+                    
+                    <!-- Order Details -->
+                    <section class="conf-section conf-order-details">
+                        <h2 class="conf-section-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Rendelés részletei
+                        </h2>
+                        <div class="conf-order-items" id="orderItems">
+                            <!-- Order items will be populated by JavaScript -->
+                            <div class="conf-loading-placeholder">
+                                <div class="conf-loading-spinner"></div>
+                                <p>Rendelés részletek betöltése...</p>
+                            </div>
+                        </div>
+                        <div class="conf-order-summary">
+                            <div class="conf-summary-row">
+                                <span>Részösszeg:</span>
+                                <span id="subtotalAmount">€0.00</span>
+                            </div>
+                            <div class="conf-summary-row conf-delivery-fee" id="deliveryFeeRow" style="display: none;">
+                                <span>Szállítási díj:</span>
+                                <span id="deliveryFeeAmount">€2.50</span>
+                            </div>
+                            <div class="conf-summary-row conf-total">
+                                <span>Összesen:</span>
+                                <span id="totalAmount">€0.00</span>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Delivery/Pickup Information -->
+                    <section class="conf-section conf-delivery-pickup-info">
+                        <h2 class="conf-section-title" id="deliveryPickupTitle">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" id="deliveryPickupIcon">
+                                <path d="M19 7h-3V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v7H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1v1a1 1 0 0 0 1 1h1.5a1 1 0 0 0 1-1v-1h8v1a1 1 0 0 0 1 1H17a1 1 0 0 0 1-1v-1h1a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-1V8a1 1 0 0 0-1-1zM6 7h8v1H6V7z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <span id="deliveryPickupText">Átvétel</span>
+                        </h2>
+                        <div class="conf-delivery-pickup-details" id="deliveryPickupDetails">
+                            <!-- Details will be populated by JavaScript -->
+                            <div class="conf-loading-placeholder">
+                                <div class="conf-loading-spinner"></div>
+                                <p>Szállítási információk betöltése...</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Customer Information -->
+                    <section class="conf-section conf-customer-details">
+                        <h2 class="conf-section-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 21V19A4 4 0 0 0 16 15H8A4 4 0 0 0 4 19V21" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Kapcsolati adatok
+                        </h2>
+                        <div class="conf-customer-info" id="customerInfo">
+                            <!-- Customer info will be populated by JavaScript -->
+                            <div class="conf-loading-placeholder">
+                                <div class="conf-loading-spinner"></div>
+                                <p>Vásárló adatok betöltése...</p>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <!-- Right Column -->
+                <div class="conf-right">
+                    
+                    <!-- Payment Information -->
+                    <section class="conf-section conf-payment-info">
+                        <h2 class="conf-section-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <rect x="1" y="4" width="22" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
+                                <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Fizetési információ
+                        </h2>
+                        <div class="conf-payment-details" id="paymentDetails">
+                            <!-- Payment details will be populated by JavaScript -->
+                            <div class="conf-loading-placeholder">
+                                <div class="conf-loading-spinner"></div>
+                                <p>Fizetési adatok betöltése...</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Contact & Support -->
+                    <section class="conf-section conf-contact-support">
+                        <h2 class="conf-section-title">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M22 16.92V19A2 2 0 0 1 20.11 21 19.79 19.79 0 0 1 2 3.11 2 2 0 0 1 5 1H7.09A2 2 0 0 1 9 2.56L10.26 5.5A2 2 0 0 1 9.81 7.81L8.09 9.53A14 14 0 0 0 14.47 15.91L16.19 14.19A2 2 0 0 1 18.5 13.74L21.44 15A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Kérdésed van?
+                        </h2>
+                        <div class="conf-contact-details">
+                            <div class="conf-contact-item">
+                                <div class="conf-contact-icon">📞</div>
+                                <div class="conf-contact-info">
+                                    <div class="conf-contact-label">Telefon:</div>
+                                    <div class="conf-contact-value">+421 xxx xxx xxx</div>
+                                </div>
+                            </div>
+                            <div class="conf-contact-item">
+                                <div class="conf-contact-icon">✉️</div>
+                                <div class="conf-contact-info">
+                                    <div class="conf-contact-label">Email:</div>
+                                    <div class="conf-contact-value">info@palacecafe.sk</div>
+                                </div>
+                            </div>
+                            <div class="conf-contact-item">
+                                <div class="conf-contact-icon">🕐</div>
+                                <div class="conf-contact-info">
+                                    <div class="conf-contact-label">Nyitvatartás:</div>
+                                    <div class="conf-contact-value">
+                                        Sze-Csü: 11:00-20:00<br>
+                                        Pé-Szo: 11:00-22:00
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <section class="conf-actions">
+                <div class="conf-action-buttons">
+                    <button class="conf-action-btn conf-secondary" onclick="window.print()">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <polyline points="6,9 6,2 18,2 18,9" stroke="currentColor" stroke-width="2"/>
+                            <path d="M6 18H4A2 2 0 0 1 2 16V11A2 2 0 0 1 4 9H20A2 2 0 0 1 22 11V16A2 2 0 0 1 20 18H18" stroke="currentColor" stroke-width="2"/>
+                            <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Rendelés nyomtatása
+                    </button>
+                    <a href="/menu" class="conf-action-btn conf-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Újabb rendelés
+                    </a>
+                    <a href="/" class="conf-action-btn conf-primary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9L12 2L21 9V20A2 2 0 0 1 19 22H5A2 2 0 0 1 3 20V9Z" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Vissza a főoldalra
+                    </a>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-left">
+                <ul class="footer-nav">
+                    <li><a href="/menu">Menü</a></li>
+                    <!--<li><a href="/rolunk">Rólunk</a></li>-->
+                    <li><a href="/rendeles">Rendelj Online</a></li>
+                    <li><a href="/adatvedelmi-nyilatkozat">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="/sutik">Sütik</a></li>
+                    <li><a href="/felhasznalasi-feltetelek">Felhasználási Feltételek</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-center">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
+            </div>
+
+            <div class="footer-right">
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
+                        <img src="photos/facebook-icon.png" alt="Facebook">
+                    </a>
+                    <a href="https://www.instagram.com/palace_cafe_bar/" class="social-icon" aria-label="Instagram">
+                        <img src="photos/instagram-icon.png" alt="Instagram">
+                    </a>
+                    <a href="https://maps.app.goo.gl/iqZTZX4jQcgGJDqq6" class="social-icon" aria-label="Google Maps">
+                        <img src="photos/maps-icon.png" alt="Google Maps">
+                    </a>
+                    <a href="https://www.tiktok.com/@palace.cafe.bar?lang=en-GB" class="social-icon" aria-label="TikTok">
+                        <img src="photos/tiktok-icon.png" alt="TikTok">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Error Toast Notification -->
+    <div class="conf-toast" id="errorToast" style="display: none;">
+        <div class="conf-toast-content">
+            <div class="conf-toast-icon conf-error">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2"/>
+                    <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="conf-toast-message" id="errorMessage">Hiba történt a rendelés betöltése során</div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+    <script src="order-confirmation.js"></script>
+    <script src="script.js"></script>
+    
+</body>
+</html>

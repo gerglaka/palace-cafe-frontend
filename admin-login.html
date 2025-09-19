@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Bejelentkezés - Palace Cafe & Bar</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="admin-login-container">
+        <div class="admin-login-form">
+            <h2>Admin Bejelentkezés</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="email">Email *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Jelszó *</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="admin-login-btn">Bejelentkezés</button>
+            </form>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+            const submitBtn = document.querySelector('.admin-login-btn');
+
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Bejelentkezés...';
+
+            try {
+                const response = await fetch('https://palace-cafe-backend-production.up.railway.app/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'Bejelentkezési hiba');
+                }
+
+                // Store JWT and expiry in localStorage
+                localStorage.setItem('adminToken', result.data.token);
+                            
+                // Calculate expiry (24 hours from now, matching your JWT)
+                const expiryDate = new Date();
+                expiryDate.setTime(expiryDate.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
+                localStorage.setItem('adminTokenExpiry', expiryDate.toISOString());
+                            
+                // Redirect to admin dashboard
+                window.location.href = '/admin-dashboard.html';
+            } catch (error) {
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Bejelentkezés';
+            }
+        });
+    </script>
+</body>
+</html>
