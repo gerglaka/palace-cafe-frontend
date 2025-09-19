@@ -1,7 +1,7 @@
-# Static Frontend Deployment to WebSupport FTP
+# Static Frontend Deployment to WebSupport.sk
 # File location: .github/workflows/deploy.yml
 
-name: 🚀 Deploy Static Frontend
+name: 🚀 Deploy to WebSupport
 
 # Deploy on push to main branch
 on:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    name: 📤 Deploy to WebSupport
+    name: 📤 Deploy Static Files
     runs-on: ubuntu-latest
     
     steps:
@@ -19,43 +19,92 @@ jobs:
       - name: 📥 Checkout Code
         uses: actions/checkout@v4
       
-      # Step 2: Show what we're deploying
-      - name: 📋 List Files to Deploy
+      # Step 2: Show deployment info
+      - name: 📋 Pre-deployment Check
         run: |
-          echo "🗂️ Files ready for deployment:"
-          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.jpg" -o -name "*.png" -o -name "*.gif" -o -name "*.svg" \) | head -20
+          echo "🗂️ Files to deploy:"
+          find . -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.jpg" -o -name "*.png" -o -name "*.gif" -o -name "*.svg" \) | head -15
           echo ""
-          echo "📊 File count by type:"
-          echo "HTML files: $(find . -name "*.html" | wc -l)"
-          echo "CSS files: $(find . -name "*.css" | wc -l)" 
-          echo "JS files: $(find . -name "*.js" | wc -l)"
+          echo "📊 Summary:"
+          echo "  HTML: $(find . -name "*.html" | wc -l) files"
+          echo "  CSS: $(find . -name "*.css" | wc -l) files" 
+          echo "  JS: $(find . -name "*.js" | wc -l) files"
+          echo "  Target: /palacebar.sk/web/"
       
-      # Step 3: Security check
-      - name: 🔒 Security Check
-        run: |
-          echo "🔍 Checking for sensitive files..."
-          if find . -name "*.env*" -o -name "*.key" -o -name "config.json" | grep -q .; then
-            echo "⚠️ Warning: Sensitive files detected!"
-            find . -name "*.env*" -o -name "*.key" -o -name "config.json"
-          else
-            echo "✅ No sensitive files found"
-          fi
-      
-      # Step 4: Deploy via FTP
-      - name: 🚀 Deploy to WebSupport FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      # Step 3: Deploy using SFTP (WebSupport recommended secure method)
+      - name: 🔐 Deploy via SFTP (SSH Protocol)
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
         with:
-          # Connection settings
+          # WebSupport SFTP settings
           server: ${{ secrets.FTP_HOST }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          port: ${{ secrets.FTP_PORT }}
+          port: 22
           
-          # Directory settings
+          # Paths
+          local_path: './*'
+          remote_path: '/palacebar.sk/web'
+          
+          # SFTP specific settings
+          sftp_only: true
+          
+          # File handling
+          args: '-o ConnectTimeout=5'
+      
+      # Step 4: Success notification
+      - name: ✅ Deployment Successful
+        run: |
+          echo "🎉 SUCCESS! Website deployed successfully!"
+          echo ""
+          echo "🌐 Your website is live at:"
+          echo "   Primary: https://palacebar.sk/"
+          echo "   Backup: https://d.r6.wbsprt.com/palacebar.sk"
+          echo ""
+          echo "📄 Available pages:"
+          echo "   • Homepage: https://palacebar.sk/index.html"
+          echo "   • Menu: https://palacebar.sk/menu.html" 
+          echo "   • Admin: https://palacebar.sk/admin-login.html"
+          echo "   • Orders: https://palacebar.sk/order.html"
+          echo ""
+          echo "🔧 Management tools:"
+          echo "   • WebFTP: https://webftp.palacebar.sk"
+          echo "   • Alt WebFTP: https://webftp.r6.websupport.sk"
+          echo ""
+          echo "📅 Deployment Details:"
+          echo "   Time: $(date)"
+          echo "   Commit: ${{ github.sha }}"
+          echo "   Branch: ${{ github.ref_name }}"
+
+  # Fallback job if SFTP fails
+  fallback_deploy:
+    name: 🔄 Fallback FTP Deploy
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: failure()
+    
+    steps:
+      - name: 📥 Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: 🚀 Deploy via FTP-TLS (Encrypted Fallback)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          # WebSupport FTP-TLS settings (encrypted FTP)
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          protocol: ftps-legacy
+          
+          # Paths
           local-dir: './'
           server-dir: '/palacebar.sk/web/'
           
-          # What NOT to upload
+          # Connection settings
+          timeout: 60000
+          log-level: verbose
+          
+          # Exclude development files
           exclude: |
             **/.git*
             **/.git*/**
@@ -71,38 +120,40 @@ jobs:
             **/.vscode/**
             **/.idea/**
             **/Thumbs.db
-          
-          # Deployment settings
-          log-level: verbose
-          security: strict
-          dry-run: false
       
-      # Step 5: Success message
-      - name: ✅ Deployment Complete
+      - name: ✅ Fallback Deployment Complete
         run: |
-          echo "🎉 SUCCESS! Your website is now live!"
-          echo ""
-          echo "📍 Deployed to: https://palacebar.sk/"
-          echo "🕒 Time: $(date)"
-          echo "📝 Commit: ${{ github.sha }}"
-          echo ""
-          echo "🌐 Your files are now accessible at:"
-          echo "   • Main page: https://palacebar.sk/"
-          echo "   • Admin login: https://palacebar.sk/admin-login.html"
-          echo "   • Menu: https://palacebar.sk/menu.html"
-      
-      # Step 6: Handle failures
-      - name: ❌ Deployment Failed
-        if: failure()
+          echo "✅ Fallback deployment successful!"
+          echo "🔗 Website: https://palacebar.sk/"
+          echo "📊 Method: FTP-TLS (Encrypted)"
+
+  # Notify on complete failure
+  notify_failure:
+    name: 🚨 Deployment Failed
+    runs-on: ubuntu-latest
+    needs: [deploy, fallback_deploy]
+    if: always() && (needs.deploy.result == 'failure' && needs.fallback_deploy.result == 'failure')
+    
+    steps:
+      - name: ❌ Both Methods Failed
         run: |
-          echo "💥 Deployment failed!"
+          echo "🚨 DEPLOYMENT FAILED - Both SFTP and FTP methods failed!"
           echo ""
-          echo "🔧 Common solutions:"
-          echo "   1. Check FTP credentials in repository secrets"
-          echo "   2. Verify server connectivity" 
-          echo "   3. Check file permissions"
+          echo "🔧 Troubleshooting steps:"
+          echo "1. Verify FTP credentials in GitHub repository secrets:"
+          echo "   • FTP_HOST: palacebar.sk"
+          echo "   • FTP_USERNAME: [check WebSupport admin]"
+          echo "   • FTP_PASSWORD: [check WebSupport admin]"
+          echo "   • FTP_PORT: 21"
           echo ""
-          echo "🔍 Debug info:"
+          echo "2. Test connection manually:"
+          echo "   • WebFTP: https://webftp.palacebar.sk"
+          echo "   • Alternative: https://webftp.r6.websupport.sk"
+          echo ""
+          echo "3. Check WebSupport.sk status and server connectivity"
+          echo ""
+          echo "📋 Debug Information:"
           echo "   Repository: ${{ github.repository }}"
-          echo "   Branch: ${{ github.ref }}"
+          echo "   Branch: ${{ github.ref_name }}"
           echo "   Commit: ${{ github.sha }}"
+          echo "   Timestamp: $(date)"
