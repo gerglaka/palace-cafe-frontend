@@ -2266,9 +2266,8 @@ class PalaceCheckout {
             const total = this.calculateTotal();
 
             console.log('💰 Processing payment for total:', total);
-            console.log('💰 Amount in cents:', Math.round(total * 100));
 
-            // Step 1: Submit the payment element (required for modern Stripe API)
+            // Step 1: Submit the payment element
             console.log('📤 Submitting payment element...');
             const {error: submitError} = await this.stripeElements.submit();
 
@@ -2276,8 +2275,6 @@ class PalaceCheckout {
                 console.error('❌ Payment element submission error:', submitError);
                 throw new Error(submitError.message);
             }
-
-            console.log('✅ Payment element submitted successfully');
 
             // Step 2: Create payment intent
             console.log('📤 Creating payment intent...');
@@ -2300,31 +2297,20 @@ class PalaceCheckout {
             });
 
             const paymentIntent = await paymentIntentResponse.json();
-            console.log('📦 Payment intent response:', paymentIntent);
 
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
 
-            // Step 3: Confirm payment
+            // Step 3: Confirm payment (simplified approach)
             console.log('🔐 Confirming payment...');
             const {error: confirmError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
                 clientSecret: paymentIntent.data.clientSecret,
                 confirmParams: {
-                    return_url: `${window.location.origin}/order-confirmation.html`,
-                    payment_method_data: {
-                        billing_details: {
-                            name: orderData.customerName,
-                            email: orderData.customerEmail,
-                            phone: orderData.customerPhone,
-                        }
-                    }
-                },
-                redirect: 'if_required'
+                    return_url: `${window.location.origin}/order-confirmation.html`
+                }
             });
-
-            console.log('🔐 Payment confirmation result:', confirmError ? 'ERROR' : 'SUCCESS');
 
             if (confirmError) {
                 console.error('❌ Payment confirmation error:', confirmError);
@@ -2333,7 +2319,7 @@ class PalaceCheckout {
 
             console.log('✅ Payment confirmed, creating order...');
 
-            // Step 4: Confirm order creation
+            // Step 4: Create order
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
@@ -2346,10 +2332,8 @@ class PalaceCheckout {
             });
 
             const confirmResult = await confirmResponse.json();
-            console.log('📋 Order creation response:', confirmResult);
 
             if (confirmResult.success) {
-                console.log('🎉 Order created successfully!');
                 this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
             } else {
