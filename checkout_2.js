@@ -2290,7 +2290,14 @@ class PalaceCheckout {
             const {error: confirmError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
                 confirmParams: {
-                    return_url: `${window.location.origin}/order-confirmation.html`
+                    return_url: `${window.location.origin}/order-confirmation.html`,
+                    payment_method_data: {
+                        billing_details: {
+                            name: orderData.customerName,
+                            email: orderData.customerEmail,
+                            phone: orderData.customerPhone,
+                        }
+                    }
                 },
                 redirect: 'if_required'
             });
