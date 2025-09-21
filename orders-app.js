@@ -210,7 +210,7 @@ class OrdersApp extends BaseApp {
                         ${this.getStatusText(order.status)}
                     </div>
                 </div>
-                
+                                
                 <div class="order-customer">
                     <i class="fas fa-user"></i>
                     <span>${this.escapeHtml(order.customerName)}</span>
@@ -218,6 +218,7 @@ class OrdersApp extends BaseApp {
                         <i class="fas fa-${order.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
                         ${order.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
                     </span>
+                    ${this.getPaymentStatusBadge(order.paymentMethod)}
                 </div>
                 
                 <div class="order-items">
@@ -244,6 +245,27 @@ class OrdersApp extends BaseApp {
                 this.openOrderModal(orderId);
             });
         });
+    }
+
+    /**
+     * Get payment status badge HTML
+     */
+    getPaymentStatusBadge(paymentMethod) {
+        if (paymentMethod === 'CARD') {
+            return `
+                <span class="payment-status paid">
+                    <i class="fas fa-credit-card"></i>
+                    FIZETVE
+                </span>
+            `;
+        } else {
+            return `
+                <span class="payment-status pending">
+                    <i class="fas fa-money-bill-wave"></i>
+                    KÉSZPÉNZ
+                </span>
+            `;
+        }
     }
 
     renderOrderTime(order) {

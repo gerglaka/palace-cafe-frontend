@@ -5305,3 +5305,44 @@ body {
     border-radius: 8px;
     border-left: 3px solid var(--palace-gold);
 }
+
+
+/* Payment Status Badges */
+.payment-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-left: 8px;
+}
+
+.payment-status.paid {
+    background: rgba(39, 174, 96, 0.15);
+    color: var(--admin-success);
+    border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.payment-status.pending {
+    background: rgba(243, 156, 18, 0.15);
+    color: var(--admin-warning);
+    border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.payment-status i {
+    font-size: 9px;
+}
+
+/* Update order-customer to handle flex layout better */
+.order-customer {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    color: var(--dark-gray);
+    font-size: 14px;
+    flex-wrap: wrap;
+}
