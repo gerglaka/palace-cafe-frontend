@@ -134,22 +134,37 @@ class PalaceCheckout {
     async initializeStripe() {
         try {
             console.log('🔄 Initializing Stripe...');
-
+            console.log('API URL:', `${this.config.apiBaseUrl}/stripe/config`);
+            
             // Get Stripe config from your backend
             const response = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
+            console.log('Response status:', response.status);
+            console.log('Response headers:', response.headers);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
             const config = await response.json();
-
             console.log('📦 Stripe config received:', config);
-
-            if (config.success && config.data.publishableKey) {
+            
+            if (config.success && config.data?.publishableKey) {
+                // Check if Stripe library is loaded
+                if (typeof Stripe === 'undefined') {
+                    throw new Error('Stripe library not loaded');
+                }
+                
                 this.stripe = Stripe(config.data.publishableKey);
                 console.log('✅ Stripe initialized with key:', config.data.publishableKey);
+                return true;
             } else {
-                throw new Error('Failed to get Stripe configuration');
+                throw new Error(`Invalid config response: ${JSON.stringify(config)}`);
             }
         } catch (error) {
             console.error('❌ Stripe initialization failed:', error);
-            this.showNotification('Card payment unavailable', 'error');
+            console.error('Error details:', error.message);
+            this.showNotification('Card payment unavailable: ' + error.message, 'error');
+            return false;
         }
     }
 
@@ -894,7 +909,7 @@ class PalaceCheckout {
         console.log('Elements object:', this.stripeElements);
         console.log('Card element:', this.cardElement);
         console.log('Card container:', document.getElementById('card-element'));
-        
+
         if (this.stripe && this.cardElement) {
             console.log('✅ Stripe is working!');
             this.showNotification('Stripe setup successful!', 'success');
