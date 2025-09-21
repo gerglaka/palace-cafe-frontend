@@ -939,60 +939,46 @@ class PalaceCheckout {
      * Setup Stripe Elements
      */
     setupStripeElements() {
-        console.log('🔧 Setting up Stripe Elements...');
+        console.log('Setting up Stripe Payment Element...');
 
         if (!this.stripe) {
-            console.error('❌ Stripe not initialized');
+            console.error('Stripe not initialized');
             this.showNotification('Card payment not available', 'error');
             return;
         }
 
         const cardElementContainer = document.getElementById('card-element');
         if (!cardElementContainer) {
-            console.error('❌ Card element container not found');
+            console.error('Card element container not found');
             return;
         }
 
         // Clear existing elements
-        if (this.cardElement) {
-            this.cardElement.destroy();
-            this.cardElement = null;
+        if (this.paymentElement) {
+            this.paymentElement.destroy();
+            this.paymentElement = null;
         }
 
-        // Create elements instance if not exists
-        if (!this.stripeElements) {
-            this.stripeElements = this.stripe.elements();
-        }
-
-        // Create card element with better styling
-        this.cardElement = this.stripeElements.create('card', {
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#1d665d',
-                    fontFamily: 'Poppins, sans-serif',
-                    '::placeholder': {
-                        color: '#94a3b8',
-                    },
-                },
-                invalid: {
-                    color: '#dc2626',
-                    iconColor: '#dc2626'
-                }
-            },
-            hidePostalCode: true // Since you collect address separately
+        // Create elements instance with Payment Element
+        this.stripeElements = this.stripe.elements({
+            mode: 'payment',
+            amount: Math.round(this.calculateTotal() * 100), // Amount in cents
+            currency: 'eur',
         });
 
-        // Mount card element
-        this.cardElement.mount('#card-element');
-        console.log('✅ Card element mounted');
+        // Create Payment Element (includes Apple Pay, Google Pay, etc.)
+        this.paymentElement = this.stripeElements.create('payment');
 
-        // Handle real-time validation errors from the card Element
-        this.cardElement.on('change', ({error}) => {
+        // Mount payment element
+        this.paymentElement.mount('#card-element');
+        console.log('Payment element mounted');
+
+        // Handle errors
+        this.paymentElement.on('change', (event) => {
             const displayError = document.getElementById('card-errors');
             if (displayError) {
-                if (error) {
-                    displayError.textContent = error.message;
+                if (event.error) {
+                    displayError.textContent = event.error.message;
                     displayError.style.display = 'block';
                 } else {
                     displayError.textContent = '';
@@ -1000,12 +986,13 @@ class PalaceCheckout {
                 }
             }
         });
+    } 
 
-        // Handle element ready
-        this.cardElement.on('ready', () => {
-            console.log('✅ Stripe card element ready');
-        });
-    }  
+    calculateTotal() {
+        const subtotal = this.calculateSubtotal();
+        const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
+        return subtotal + deliveryFee;
+    }
     
     /**
      * Handle payment method change
@@ -1013,18 +1000,18 @@ class PalaceCheckout {
     handlePaymentChange(method) {
         console.log('🔄 Handling payment change to:', method);
         this.state.paymentMethod = method;
-        
+
         // Update UI
         const paymentOptions = document.querySelectorAll('.payment-option');
         paymentOptions.forEach(option => {
             option.classList.remove('active');
         });
-        
+
         const selectedOption = document.querySelector(`[data-payment="${method}"]`);
         if (selectedOption) {
             selectedOption.classList.add('active');
         }
-        
+
         // Show/hide card payment section
         const cardSection = document.getElementById('cardPaymentSection');
         if (cardSection) {
@@ -1039,10 +1026,10 @@ class PalaceCheckout {
                     }
                     return;
                 }
-                
+
                 console.log('📱 Showing Stripe card section');
                 cardSection.style.display = 'block';
-                
+
                 setTimeout(() => {
                     this.setupStripeElements();
                 }, 100);
@@ -2209,17 +2196,17 @@ class PalaceCheckout {
      * Process Stripe payment
      */
     async processStripePayment() {
-        if (!this.stripe || !this.cardElement) {
+        if (!this.stripe || !this.paymentElement) {
             this.showNotification('Card payment not available', 'error');
             return;
         }
-
+    
         this.setLoadingState(true);
-
+    
         try {
             const orderData = this.prepareOrderData();
-            const total = this.calculateSubtotal() + (this.state.orderType === 'delivery' ? this.config.deliveryFee : 0);
-
+            const total = this.calculateTotal();
+        
             // Step 1: Create payment intent
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
@@ -2238,29 +2225,26 @@ class PalaceCheckout {
                     }
                 })
             });
-
+        
             const paymentIntent = await paymentIntentResponse.json();
-
+        
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
-
-            // Step 2: Confirm payment with card
-            const {error} = await this.stripe.confirmCardPayment(paymentIntent.data.clientSecret, {
-                payment_method: {
-                    card: this.cardElement,
-                    billing_details: {
-                        name: orderData.customerName,
-                        email: orderData.customerEmail,
-                        phone: orderData.customerPhone,
-                    }
-                }
+        
+            // Step 2: Confirm payment with Payment Element
+            const {error} = await this.stripe.confirmPayment({
+                elements: this.stripeElements,
+                confirmParams: {
+                    return_url: window.location.origin + '/order-confirmation.html'
+                },
+                redirect: 'if_required'
             });
-
+        
             if (error) {
                 throw new Error(error.message);
             }
-
+        
             // Step 3: Confirm order creation
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
@@ -2272,16 +2256,16 @@ class PalaceCheckout {
                     orderData: orderData
                 })
             });
-
+        
             const confirmResult = await confirmResponse.json();
-
+        
             if (confirmResult.success) {
                 this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
             } else {
                 throw new Error(confirmResult.error || 'Failed to create order');
             }
-
+        
         } catch (error) {
             console.error('Stripe payment error:', error);
             this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
