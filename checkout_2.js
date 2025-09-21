@@ -2250,11 +2250,11 @@ class PalaceCheckout {
         }
     }
 
-        /**
-         * Process Stripe payment
-         */
+    /**
+     * Process Stripe payment
+     */
     async processStripePayment() {
-        if (!this.stripe) {
+        if (!this.stripe || !this.paymentElement) {
             this.showNotification('Card payment not available', 'error');
             return;
         }
@@ -2268,7 +2268,7 @@ class PalaceCheckout {
             console.log('💰 Processing payment for total:', total);
             console.log('💰 Amount in cents:', Math.round(total * 100));
 
-            // Step 1: Create payment intent FIRST
+            // Step 1: Create payment intent
             console.log('📤 Sending payment intent request...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
@@ -2295,21 +2295,11 @@ class PalaceCheckout {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
 
-            // Step 2: Check if we need to recreate Payment Element with clientSecret
-            if (!this.paymentElement || !this.stripeElements._merchantSuite?.clientSecret) {
-                console.log('🔄 Creating Payment Element with clientSecret...');
-                this.setupStripeElements(paymentIntent.data.clientSecret);
-
-                // Show message to user that they need to enter card details
-                this.showNotification('Please enter your card details to complete the payment.', 'info');
-                this.setLoadingState(false);
-                return; // Exit and let user enter card details
-            }
-
-            // Step 3: Confirm payment with existing Payment Element
-            console.log('🔐 Confirming payment with Stripe...');
+            // Step 2: Submit payment directly (no element recreation)
+            console.log('🔐 Submitting payment...');
             const {error: submitError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
+                clientSecret: paymentIntent.data.clientSecret,
                 confirmParams: {
                     return_url: `${window.location.origin}/order-confirmation.html`,
                     payment_method_data: {
@@ -2319,7 +2309,8 @@ class PalaceCheckout {
                             phone: orderData.customerPhone,
                         }
                     }
-                }
+                },
+                redirect: 'if_required'
             });
 
             console.log('🔐 Payment confirmation result:', submitError ? 'ERROR' : 'SUCCESS');
@@ -2331,7 +2322,7 @@ class PalaceCheckout {
 
             console.log('✅ Payment confirmed, creating order...');
 
-            // Step 4: Confirm order creation
+            // Step 3: Confirm order creation
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
