@@ -9042,3 +9042,139 @@ body {
     box-shadow: 0 12px 40px rgba(220, 39, 67, 0.3);
 }
 
+/* Stripe Payment Form Styles */
+.card-payment-section {
+    margin: 1.5rem 0;
+    padding: 1.5rem;
+    background: rgba(29, 102, 93, 0.05);
+    border-radius: 12px;
+    border: 2px solid rgba(29, 102, 93, 0.2);
+    transition: var(--transition-smooth);
+}
+
+.card-form-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card-form-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--eucalyptus-green);
+    margin: 0 0 1rem 0;
+}
+
+.stripe-elements-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.stripe-card-element {
+    padding: 1rem;
+    background: var(--cream-white);
+    border: 2px solid rgba(29, 102, 93, 0.2);
+    border-radius: 8px;
+    transition: var(--transition-smooth);
+}
+
+.stripe-card-element:focus-within {
+    border-color: var(--eucalyptus-green);
+    box-shadow: 0 0 0 3px rgba(29, 102, 93, 0.1);
+}
+
+.stripe-error {
+    color: var(--rustic-red);
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background: rgba(56, 20, 26, 0.1);
+    border-radius: 6px;
+    display: none;
+}
+
+.stripe-error.show {
+    display: block;
+}
+
+.card-security-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--eucalyptus-green);
+    margin-top: 0.5rem;
+}
+
+.security-icon {
+    font-size: 1rem;
+}
+
+/* Payment Option Updates */
+.payment-option[data-payment="stripe"] {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.payment-option[data-payment="stripe"]:hover .payment-content {
+    border-color: var(--eucalyptus-green);
+    background: rgba(29, 102, 93, 0.05);
+}
+
+.payment-option[data-payment="stripe"].active .payment-content {
+    border-color: var(--eucalyptus-green);
+    background: rgba(29, 102, 93, 0.1);
+    box-shadow: 0 4px 15px rgba(29, 102, 93, 0.2);
+}
+
+/* Remove the "Coming Soon" styling */
+.payment-options .payment-option[data-payment="stripe"]:after {
+    display: none;
+}
+
+/* Loading State for Order Button */
+.btn-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.loading-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.place-order-btn .btn-text,
+.place-order-btn .btn-icon {
+    transition: opacity 0.3s ease;
+}
+
+.place-order-btn.loading .btn-text,
+.place-order-btn.loading .btn-icon {
+    opacity: 0;
+}
+
+.place-order-btn.loading .btn-loading {
+    display: flex;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-payment-section {
+        margin: 1rem 0;
+        padding: 1rem;
+    }
+    
+    .stripe-card-element {
+        padding: 0.75rem;
+    }
+}

@@ -354,7 +354,7 @@
                             </svg>
                             Fizetés
                         </h2>
-                        
+                    
                         <div class="payment-options">
                             <label class="payment-option active" data-payment="cash">
                                 <input type="radio" name="paymentMethod" value="cash" checked>
@@ -366,20 +366,38 @@
                                     </div>
                                 </div>
                             </label>
-                            
-                            <!-- Placeholder for Stripe - Will be added later -->
-                            <label class="payment-option" data-payment="stripe" style="opacity: 0.5; cursor: not-allowed;">
-                                <input type="radio" name="paymentMethod" value="stripe" disabled>
+                        
+                            <label class="payment-option" data-payment="stripe">
+                                <input type="radio" name="paymentMethod" value="stripe">
                                 <div class="payment-content">
                                     <div class="payment-icon">💳</div>
                                     <div>
                                         <h3>Bankkártya</h3>
-                                        <p>Hamarosan elérhető</p>
+                                        <p>Azonnali online fizetés</p>
                                     </div>
                                 </div>
                             </label>
                         </div>
-
+                    
+                        <!-- Stripe Card Payment Form (Hidden by default) -->
+                        <div class="card-payment-section" id="cardPaymentSection" style="display: none;">
+                            <div class="card-form-container">
+                                <h4 class="card-form-title">Kártyaadatok</h4>
+                                <div class="stripe-elements-container">
+                                    <!-- Stripe Elements will be mounted here -->
+                                    <div id="card-element" class="stripe-card-element">
+                                        <!-- A Stripe Element will be inserted here. -->
+                                    </div>
+                                    <!-- Used to display form errors. -->
+                                    <div id="card-errors" class="stripe-error" role="alert"></div>
+                                </div>
+                                <div class="card-security-info">
+                                    <div class="security-icon">🔒</div>
+                                    <span>Biztonságos fizetés SSL titkosítással</span>
+                                </div>
+                            </div>
+                        </div>
+                    
                         <!-- Legal Checkboxes -->
                         <div class="legal-checkboxes">
                             <label class="checkbox-label">
@@ -389,7 +407,7 @@
                                     Elfogadom az <a href="/felhasznalasi-feltetelek" target="_blank">Általános Szerződési Feltételeket</a> *
                                 </span>
                             </label>
-                            
+                        
                             <label class="checkbox-label">
                                 <input type="checkbox" id="privacyAccept" required>
                                 <span class="checkbox-custom"></span>
@@ -397,7 +415,7 @@
                                     Hozzájárulok személyes adataim kezeléséhez az <a href="/adatvedelmi-nyilatkozat" target="_blank">Adatvédelmi Tájékoztató</a> szerint *
                                 </span>
                             </label>
-                            
+                        
                             <label class="checkbox-label">
                                 <input type="checkbox" id="marketingAccept">
                                 <span class="checkbox-custom"></span>
@@ -406,7 +424,7 @@
                                 </span>
                             </label>
                         </div>
-
+                    
                         <!-- Order Summary -->
                         <div class="order-summary-final">
                             <div class="summary-total">
@@ -414,10 +432,14 @@
                                 <span class="final-amount" id="finalAmount">€0.00</span>
                             </div>
                         </div>
-
+                    
                         <!-- Submit Button -->
                         <button type="button" class="place-order-btn" id="placeOrderBtn" disabled>
                             <span class="btn-text">Rendelés leadása</span>
+                            <div class="btn-loading" id="orderLoading" style="display: none;">
+                                <div class="loading-spinner"></div>
+                                <span>Feldolgozás...</span>
+                            </div>
                             <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
                             </svg>
@@ -548,5 +570,6 @@
 
     <script src="checkout_2.js"></script>
     <script src="script.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </body>
 </html>
