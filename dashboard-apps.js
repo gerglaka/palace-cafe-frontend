@@ -3561,7 +3561,7 @@ class InvoicesApp extends BaseApp {
 
 // Make globally available for onclick handlers
 window.InvoicesApp = InvoicesApp;
-window.invoicesApp = null; // Will be set when app is created                                
+//window.invoicesApp = null; // Will be set when app is created                                
 
 
 /**

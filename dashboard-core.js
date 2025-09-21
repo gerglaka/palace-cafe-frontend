@@ -55,6 +55,7 @@ class AdminDashboard {
         
         // Make orders app globally accessible for onclick handlers
         window.ordersApp = this.apps.orders;
+        window.invoicesApp = this.apps.invoices;
 
         // Event listeners and security
         this.setupEventListeners();
