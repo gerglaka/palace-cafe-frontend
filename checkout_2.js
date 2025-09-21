@@ -2302,11 +2302,12 @@ class PalaceCheckout {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
 
-            // Step 3: Confirm payment (simplified approach)
+            // Step 3: Confirm payment WITHOUT redirect
             console.log('🔐 Confirming payment...');
-            const {error: confirmError} = await this.stripe.confirmPayment({
+            const {error: confirmError, paymentIntent: confirmedPI} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
                 clientSecret: paymentIntent.data.clientSecret,
+                redirect: 'if_required', // This prevents automatic redirect
                 confirmParams: {
                     return_url: `${window.location.origin}/order-confirmation.html`
                 }
@@ -2317,9 +2318,15 @@ class PalaceCheckout {
                 throw new Error(confirmError.message);
             }
 
-            console.log('✅ Payment confirmed, creating order...');
+            // Check payment status
+            if (confirmedPI && confirmedPI.status === 'succeeded') {
+                console.log('✅ Payment confirmed successfully!');
+            } else {
+                console.log('⚠️ Payment status:', confirmedPI?.status);
+            }
 
-            // Step 4: Create order
+            // Step 4: Create order (this should now execute)
+            console.log('📋 Creating order...');
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
@@ -2331,9 +2338,19 @@ class PalaceCheckout {
                 })
             });
 
+            console.log('📋 Response status:', confirmResponse.status);
+
+            if (!confirmResponse.ok) {
+                const errorText = await confirmResponse.text();
+                console.error('📋 Response error:', errorText);
+                throw new Error(`Order creation failed: ${confirmResponse.status}`);
+            }
+
             const confirmResult = await confirmResponse.json();
+            console.log('📋 Order creation response:', confirmResult);
 
             if (confirmResult.success) {
+                console.log('🎉 Order created successfully!');
                 this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
             } else {
