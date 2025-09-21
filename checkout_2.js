@@ -133,13 +133,17 @@ class PalaceCheckout {
      */
     async initializeStripe() {
         try {
+            console.log('🔄 Initializing Stripe...');
+
             // Get Stripe config from your backend
             const response = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
             const config = await response.json();
 
+            console.log('📦 Stripe config received:', config);
+
             if (config.success && config.data.publishableKey) {
                 this.stripe = Stripe(config.data.publishableKey);
-                console.log('✅ Stripe initialized');
+                console.log('✅ Stripe initialized with key:', config.data.publishableKey);
             } else {
                 throw new Error('Failed to get Stripe configuration');
             }
@@ -428,7 +432,10 @@ class PalaceCheckout {
         // Payment method selection
         const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
         paymentRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => this.handlePaymentChange(e.target.value));
+            radio.addEventListener('change', (e) => {
+                console.log('💳 Payment method changed to:', e.target.value);
+                this.handlePaymentChange(e.target.value);
+            });
         });
 
         // Form validation
@@ -884,45 +891,79 @@ class PalaceCheckout {
      * Setup Stripe Elements
      */
     setupStripeElements() {
+        console.log('🔧 Setting up Stripe Elements...');
+        
         if (!this.stripe) {
-            console.error('Stripe not initialized');
+            console.error('❌ Stripe not initialized');
+            this.showNotification('Card payment not available', 'error');
             return;
         }
-
-        // Create elements instance
-        this.stripeElements = this.stripe.elements();
-
-        // Create card element
+    
+        const cardElementContainer = document.getElementById('card-element');
+        if (!cardElementContainer) {
+            console.error('❌ Card element container not found');
+            return;
+        }
+    
+        // Clear existing elements
+        if (this.cardElement) {
+            this.cardElement.destroy();
+            this.cardElement = null;
+        }
+    
+        // Create elements instance if not exists
+        if (!this.stripeElements) {
+            this.stripeElements = this.stripe.elements();
+        }
+    
+        // Create card element with better styling
         this.cardElement = this.stripeElements.create('card', {
             style: {
                 base: {
                     fontSize: '16px',
-                    color: '#424770',
+                    color: '#1d665d',
+                    fontFamily: 'Poppins, sans-serif',
                     '::placeholder': {
-                        color: '#aab7c4',
+                        color: '#94a3b8',
                     },
                 },
+                invalid: {
+                    color: '#dc2626',
+                    iconColor: '#dc2626'
+                }
             },
+            hidePostalCode: true // Since you collect address separately
         });
-
+    
         // Mount card element
         this.cardElement.mount('#card-element');
-
+        console.log('✅ Card element mounted');
+    
         // Handle real-time validation errors from the card Element
         this.cardElement.on('change', ({error}) => {
             const displayError = document.getElementById('card-errors');
-            if (error) {
-                displayError.textContent = error.message;
-            } else {
-                displayError.textContent = '';
+            if (displayError) {
+                if (error) {
+                    displayError.textContent = error.message;
+                    displayError.style.display = 'block';
+                } else {
+                    displayError.textContent = '';
+                    displayError.style.display = 'none';
+                }
             }
         });
-    }    
+    
+        // Handle element ready
+        this.cardElement.on('ready', () => {
+            console.log('✅ Stripe card element ready');
+        });
+    }  
     
     /**
      * Handle payment method change
      */
     handlePaymentChange(method) {
+        console.log('🔄 Handling payment change to:', method);
         this.state.paymentMethod = method;
 
         // Update UI
@@ -940,11 +981,19 @@ class PalaceCheckout {
         const cardSection = document.getElementById('cardPaymentSection');
         if (cardSection) {
             if (method === 'stripe') {
+                console.log('📱 Showing Stripe card section');
                 cardSection.style.display = 'block';
-                this.setupStripeElements();
+
+                // Add small delay to ensure DOM is ready
+                setTimeout(() => {
+                    this.setupStripeElements();
+                }, 100);
             } else {
+                console.log('💵 Hiding card section');
                 cardSection.style.display = 'none';
             }
+        } else {
+            console.error('❌ Card payment section not found');
         }
     }
 
