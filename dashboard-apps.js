@@ -3174,7 +3174,7 @@ class InvoicesApp extends BaseApp {
                                 <span>${this.formatCurrency(invoice.totalNet || 0)}</span>
                             </div>
                             <div class="total-row">
-                                <span>ÁFA (${invoice.vatRate || 27}%):</span>
+                                <span>ÁFA (${invoice.vatRate || 19}%):</span>
                                 <span>${this.formatCurrency(invoice.totalVat || 0)}</span>
                             </div>
                             <div class="total-row final-total">
