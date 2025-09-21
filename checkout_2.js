@@ -938,7 +938,7 @@ class PalaceCheckout {
     /**
      * Setup Stripe Elements
      */
-    setupStripeElements() {
+    setupStripeElements(clientSecret = null) {
         console.log('🔧 Setting up Stripe Payment Element...');
 
         if (!this.stripe) {
@@ -962,30 +962,40 @@ class PalaceCheckout {
             this.stripeElements = null;
         }
 
-        // Calculate total amount in cents
-        const totalInEuros = this.calculateTotal();
-        const totalInCents = Math.round(totalInEuros * 100);
+        // If no clientSecret provided, create elements with amount (for initial display)
+        if (!clientSecret) {
+            const totalInEuros = this.calculateTotal();
+            const totalInCents = Math.round(totalInEuros * 100);
 
-        console.log(`💰 Total: €${totalInEuros} = ${totalInCents} cents`);
+            console.log(`💰 Total: €${totalInEuros} = ${totalInCents} cents`);
 
-        // Validate minimum amount
-        if (totalInCents < 50) { // Stripe minimum is 50 cents
-            console.error('❌ Amount below Stripe minimum');
-            this.showNotification('Order total must be at least €0.50', 'error');
-            return;
+            if (totalInCents < 50) {
+                console.error('❌ Amount below Stripe minimum');
+                this.showNotification('Order total must be at least €0.50', 'error');
+                return;
+            }
+
+            // Create elements instance with Payment Element
+            this.stripeElements = this.stripe.elements({
+                mode: 'payment',
+                amount: totalInCents,
+                currency: 'eur',
+                appearance: {
+                    theme: 'stripe',
+                },
+            });
+        } else {
+            // Create elements with actual clientSecret
+            console.log('🔑 Using clientSecret for Payment Element');
+            this.stripeElements = this.stripe.elements({
+                clientSecret: clientSecret,
+                appearance: {
+                    theme: 'stripe',
+                },
+            });
         }
 
-        // Create elements instance with Payment Element
-        this.stripeElements = this.stripe.elements({
-            mode: 'payment',
-            amount: totalInCents,
-            currency: 'eur',
-            appearance: {
-                theme: 'stripe',
-            },
-        });
-
-        // Create Payment Element (includes Apple Pay, Google Pay, etc.)
+        // Create Payment Element
         this.paymentElement = this.stripeElements.create('payment');
 
         // Mount payment element
@@ -2244,20 +2254,20 @@ class PalaceCheckout {
      * Process Stripe payment
      */
     async processStripePayment() {
-        if (!this.stripe || !this.paymentElement) {
+        if (!this.stripe) {
             this.showNotification('Card payment not available', 'error');
             return;
         }
-
+    
         this.setLoadingState(true);
-
+    
         try {
             const orderData = this.prepareOrderData();
             const total = this.calculateTotal();
-
+        
             console.log('💰 Processing payment for total:', total);
             console.log('💰 Amount in cents:', Math.round(total * 100));
-
+        
             // Step 1: Create payment intent
             console.log('📤 Sending payment intent request...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
@@ -2277,15 +2287,22 @@ class PalaceCheckout {
                     }
                 })
             });
-
+        
             const paymentIntent = await paymentIntentResponse.json();
             console.log('📦 Payment intent response:', paymentIntent);
-
+        
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
-
-            // Step 2: Submit payment for confirmation (Payment Element approach)
+        
+            // Step 2: Recreate Payment Element with actual clientSecret
+            console.log('🔄 Recreating Payment Element with clientSecret...');
+            this.setupStripeElements(paymentIntent.data.clientSecret);
+        
+            // Wait a moment for element to be ready
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        
+            // Step 3: Confirm payment
             console.log('🔐 Confirming payment with Stripe...');
             const {error: submitError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
@@ -2300,17 +2317,17 @@ class PalaceCheckout {
                     }
                 }
             });
-
+        
             console.log('🔐 Payment confirmation result:', submitError ? 'ERROR' : 'SUCCESS');
-
+            
             if (submitError) {
                 console.error('❌ Payment confirmation error:', submitError);
                 throw new Error(submitError.message);
             }
-
+        
             console.log('✅ Payment confirmed, creating order...');
-
-            // Step 3: Confirm order creation on our backend
+        
+            // Step 4: Confirm order creation
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
@@ -2321,10 +2338,10 @@ class PalaceCheckout {
                     orderData: orderData
                 })
             });
-
+        
             const confirmResult = await confirmResponse.json();
             console.log('📋 Order creation response:', confirmResult);
-
+        
             if (confirmResult.success) {
                 console.log('🎉 Order created successfully!');
                 this.clearCartFromStorage();
@@ -2332,7 +2349,7 @@ class PalaceCheckout {
             } else {
                 throw new Error(confirmResult.error || 'Failed to create order');
             }
-
+        
         } catch (error) {
             console.error('❌ Stripe payment error:', error);
             this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
