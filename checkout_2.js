@@ -34,6 +34,11 @@ class PalaceCheckout {
         this.customizationOptions = null; // Will be loaded from API
         this.currentItem = null;
 
+        // Stripe initialization
+        this.stripe = null;
+        this.stripeElements = null;
+        this.cardElement = null;
+
         // State management
         this.state = {
             cart: [],
@@ -92,6 +97,8 @@ class PalaceCheckout {
             // Generate time slots
             this.generateTimeSlots();
             
+            await this.loadDrinkSuggestions();
+
             // Load drink suggestions from backend
             await this.loadDrinkSuggestions();
             this.displayDrinkSuggestions();
@@ -119,6 +126,27 @@ class PalaceCheckout {
             return array[0].toString(36);
         }
         return Math.random().toString(36).substring(2, 15);
+    }
+
+    /**
+     * Initialize Stripe
+     */
+    async initializeStripe() {
+        try {
+            // Get Stripe config from your backend
+            const response = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
+            const config = await response.json();
+
+            if (config.success && config.data.publishableKey) {
+                this.stripe = Stripe(config.data.publishableKey);
+                console.log('✅ Stripe initialized');
+            } else {
+                throw new Error('Failed to get Stripe configuration');
+            }
+        } catch (error) {
+            console.error('❌ Stripe initialization failed:', error);
+            this.showNotification('Card payment unavailable', 'error');
+        }
     }
 
     /**
@@ -851,27 +879,72 @@ class PalaceCheckout {
         date.setHours(hours, minutes, 0, 0);
         return date.toISOString();
     }
+    
+    /**
+     * Setup Stripe Elements
+     */
+    setupStripeElements() {
+        if (!this.stripe) {
+            console.error('Stripe not initialized');
+            return;
+        }
+
+        // Create elements instance
+        this.stripeElements = this.stripe.elements();
+
+        // Create card element
+        this.cardElement = this.stripeElements.create('card', {
+            style: {
+                base: {
+                    fontSize: '16px',
+                    color: '#424770',
+                    '::placeholder': {
+                        color: '#aab7c4',
+                    },
+                },
+            },
+        });
+
+        // Mount card element
+        this.cardElement.mount('#card-element');
+
+        // Handle real-time validation errors from the card Element
+        this.cardElement.on('change', ({error}) => {
+            const displayError = document.getElementById('card-errors');
+            if (error) {
+                displayError.textContent = error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
+    }    
+    
     /**
      * Handle payment method change
      */
     handlePaymentChange(method) {
         this.state.paymentMethod = method;
-        
+
         // Update UI
         const paymentOptions = document.querySelectorAll('.payment-option');
         paymentOptions.forEach(option => {
             option.classList.remove('active');
         });
-        
+
         const selectedOption = document.querySelector(`[data-payment="${method}"]`);
         if (selectedOption) {
             selectedOption.classList.add('active');
         }
-        
-        // Future: Show/hide card processing section
+
+        // Show/hide card payment section
         const cardSection = document.getElementById('cardPaymentSection');
         if (cardSection) {
-            cardSection.style.display = method === 'stripe' ? 'block' : 'none';
+            if (method === 'stripe') {
+                cardSection.style.display = 'block';
+                this.setupStripeElements();
+            } else {
+                cardSection.style.display = 'none';
+            }
         }
     }
 
@@ -2019,21 +2092,112 @@ class PalaceCheckout {
             return;
         }
 
-        // Prepare order data
-        const orderData = this.prepareOrderData();
-        
-        // Show loading state
+        // Check payment method and route accordingly
+        if (this.state.paymentMethod === 'stripe') {
+            await this.processStripePayment();
+        } else {
+            await this.processCashOrder();
+        }
+    }
+
+    /**
+     * Process Stripe payment
+     */
+    async processStripePayment() {
+        if (!this.stripe || !this.cardElement) {
+            this.showNotification('Card payment not available', 'error');
+            return;
+        }
+
         this.setLoadingState(true);
 
         try {
-            // Submit order to backend
-            const response = await this.submitOrder(orderData);
-            
-            if (response.success) {
-                // Clear cart data
+            const orderData = this.prepareOrderData();
+            const total = this.calculateSubtotal() + (this.state.orderType === 'delivery' ? this.config.deliveryFee : 0);
+
+            // Step 1: Create payment intent
+            const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    amount: total,
+                    currency: 'eur',
+                    orderData: {
+                        customerName: orderData.customerName,
+                        customerEmail: orderData.customerEmail,
+                        customerPhone: orderData.customerPhone,
+                        orderType: orderData.orderType,
+                        deliveryAddress: orderData.deliveryAddress
+                    }
+                })
+            });
+
+            const paymentIntent = await paymentIntentResponse.json();
+
+            if (!paymentIntent.success) {
+                throw new Error(paymentIntent.error || 'Failed to create payment intent');
+            }
+
+            // Step 2: Confirm payment with card
+            const {error} = await this.stripe.confirmCardPayment(paymentIntent.data.clientSecret, {
+                payment_method: {
+                    card: this.cardElement,
+                    billing_details: {
+                        name: orderData.customerName,
+                        email: orderData.customerEmail,
+                        phone: orderData.customerPhone,
+                    }
+                }
+            });
+
+            if (error) {
+                throw new Error(error.message);
+            }
+
+            // Step 3: Confirm order creation
+            const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    paymentIntentId: paymentIntent.data.paymentIntentId,
+                    orderData: orderData
+                })
+            });
+
+            const confirmResult = await confirmResponse.json();
+
+            if (confirmResult.success) {
                 this.clearCartFromStorage();
-                
-                // Redirect to success page
+                window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
+            } else {
+                throw new Error(confirmResult.error || 'Failed to create order');
+            }
+
+        } catch (error) {
+            console.error('Stripe payment error:', error);
+            this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
+        } finally {
+            this.setLoadingState(false);
+        }
+    }
+
+    /**
+     * Process cash order 
+     */
+    async processCashOrder() {
+        const orderData = this.prepareOrderData();
+
+        this.setLoadingState(true);
+
+        try {
+            const response = await this.submitOrder(orderData);
+
+            if (response.success) {
+                this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${response.data.orderNumber}`;
             } else {
                 throw new Error(response.message || 'Hiba történt a rendelés leadásakor');
