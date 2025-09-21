@@ -2285,9 +2285,9 @@ class PalaceCheckout {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
 
-            // Step 2: Confirm payment with Payment Element
+            // Step 2: Submit payment for confirmation (Payment Element approach)
             console.log('🔐 Confirming payment with Stripe...');
-            const {error: confirmError} = await this.stripe.confirmPayment({
+            const {error: submitError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
                 confirmParams: {
                     return_url: `${window.location.origin}/order-confirmation.html`,
@@ -2298,19 +2298,19 @@ class PalaceCheckout {
                             phone: orderData.customerPhone,
                         }
                     }
-                },
-                redirect: 'if_required'
+                }
             });
 
-            console.log('🔐 Payment confirmation result:', confirmError ? 'ERROR' : 'SUCCESS');
-            if (confirmError) {
-                console.error('❌ Payment confirmation error:', confirmError);
-                throw new Error(confirmError.message);
+            console.log('🔐 Payment confirmation result:', submitError ? 'ERROR' : 'SUCCESS');
+
+            if (submitError) {
+                console.error('❌ Payment confirmation error:', submitError);
+                throw new Error(submitError.message);
             }
 
             console.log('✅ Payment confirmed, creating order...');
 
-            // Step 3: Confirm order creation
+            // Step 3: Confirm order creation on our backend
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
