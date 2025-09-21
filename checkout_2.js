@@ -2248,22 +2248,17 @@ class PalaceCheckout {
             this.showNotification('Card payment not available', 'error');
             return;
         }
-    
+
         this.setLoadingState(true);
-    
+
         try {
             const orderData = this.prepareOrderData();
             const total = this.calculateTotal();
-            
+
             console.log('💰 Processing payment for total:', total);
             console.log('💰 Amount in cents:', Math.round(total * 100));
-        
-            // Validate amount before sending
-            if (total < 0.50) {
-                throw new Error('Order total must be at least €0.50');
-            }
-        
-            // Step 1: Create payment intent with detailed logging
+
+            // Step 1: Create payment intent
             console.log('📤 Sending payment intent request...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
@@ -2282,16 +2277,55 @@ class PalaceCheckout {
                     }
                 })
             });
-        
+
             const paymentIntent = await paymentIntentResponse.json();
             console.log('📦 Payment intent response:', paymentIntent);
-        
+
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
-        
-            // Rest of your payment processing...
-            
+
+            // Step 2: Confirm payment with Payment Element
+            console.log('🔐 Confirming payment with Stripe...');
+            const {error: confirmError} = await this.stripe.confirmPayment({
+                elements: this.stripeElements,
+                confirmParams: {
+                    return_url: `${window.location.origin}/order-confirmation.html`
+                },
+                redirect: 'if_required'
+            });
+
+            console.log('🔐 Payment confirmation result:', confirmError ? 'ERROR' : 'SUCCESS');
+            if (confirmError) {
+                console.error('❌ Payment confirmation error:', confirmError);
+                throw new Error(confirmError.message);
+            }
+
+            console.log('✅ Payment confirmed, creating order...');
+
+            // Step 3: Confirm order creation
+            const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    paymentIntentId: paymentIntent.data.paymentIntentId,
+                    orderData: orderData
+                })
+            });
+
+            const confirmResult = await confirmResponse.json();
+            console.log('📋 Order creation response:', confirmResult);
+
+            if (confirmResult.success) {
+                console.log('🎉 Order created successfully!');
+                this.clearCartFromStorage();
+                window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
+            } else {
+                throw new Error(confirmResult.error || 'Failed to create order');
+            }
+
         } catch (error) {
             console.error('❌ Stripe payment error:', error);
             this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
