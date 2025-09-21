@@ -34,10 +34,6 @@ class PalaceCheckout {
         this.customizationOptions = null; // Will be loaded from API
         this.currentItem = null;
 
-        this.stripe = null;
-        this.cardElement = null;
-        this.stripePublishableKey = null;
-
         // State management
         this.state = {
             cart: [],
@@ -68,9 +64,6 @@ class PalaceCheckout {
 
             await this.loadCustomizationOptions();
 
-           //Initialize stripe
-            await this.initializeStripe();
-
             // Initialize order type to pickup
             this.state.orderType = 'pickup';
             const pickupRadio = document.querySelector('input[name="orderType"][value="pickup"]');
@@ -84,8 +77,6 @@ class PalaceCheckout {
             
             // Setup event listeners
             this.setupEventListeners();
-
-            console.log('✅ Palace Checkout system initialized successfully');
 
             // Initialize time selection to ASAP
             this.state.selectedTime = 'asap';
@@ -173,85 +164,6 @@ class PalaceCheckout {
         setTimeout(() => {
             window.location.href = 'order.html'; // Adjust path as needed
         }, 2000);
-    }
-
-    /**
-     * Initialize Stripe payment system
-     */
-    async initializeStripe() {
-        try {
-            console.log('💳 Initializing Stripe...');
-            
-            // Get Stripe configuration from backend
-            const configResponse = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
-            const config = await configResponse.json();
-            
-            if (!config.success) {
-                throw new Error('Failed to load Stripe configuration');
-            }
-            
-            this.stripePublishableKey = config.data.publishableKey;
-            
-            // Initialize Stripe
-            this.stripe = Stripe(this.stripePublishableKey);
-            
-            // Create card element
-            this.setupStripeElements();
-            
-            console.log('✅ Stripe initialized successfully');
-            
-        } catch (error) {
-            console.error('❌ Stripe initialization failed:', error);
-            // Disable card payment option
-            const stripeOption = document.querySelector('[data-payment="stripe"]');
-            if (stripeOption) {
-                stripeOption.style.opacity = '0.5';
-                stripeOption.style.cursor = 'not-allowed';
-                const input = stripeOption.querySelector('input');
-                if (input) input.disabled = true;
-            }
-        }
-    }
-
-    /**
-     * Set up Stripe Elements for card input
-     */
-    setupStripeElements() {
-        const elements = this.stripe.elements();
-        
-        // Create card element with custom styling
-        this.cardElement = elements.create('card', {
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#333333',
-                    fontFamily: 'Poppins, Arial, sans-serif',
-                    '::placeholder': {
-                        color: '#999999',
-                    },
-                },
-                invalid: {
-                    color: '#38141A',
-                    iconColor: '#38141A'
-                }
-            },
-            hidePostalCode: true // We collect address separately
-        });
-
-        // Mount the card element
-        this.cardElement.mount('#card-element');
-
-        // Handle real-time validation errors from the card Element
-        this.cardElement.on('change', ({error}) => {
-            const displayError = document.getElementById('card-errors');
-            if (error) {
-                displayError.textContent = error.message;
-                displayError.classList.add('show');
-            } else {
-                displayError.textContent = '';
-                displayError.classList.remove('show');
-            }
-        });
     }
 
     /**
@@ -491,14 +403,6 @@ class PalaceCheckout {
             radio.addEventListener('change', (e) => this.handlePaymentChange(e.target.value));
         });
 
-        // Payment method change
-        const paymentOptions = document.querySelectorAll('input[name="paymentMethod"]');
-        paymentOptions.forEach(option => {
-            option.addEventListener('change', (e) => {
-                this.handlePaymentMethodChange(e.target.value);
-            });
-        });        
-
         // Form validation
         this.setupFormValidation();
 
@@ -511,9 +415,7 @@ class PalaceCheckout {
         // Place order button
         const placeOrderBtn = document.getElementById('placeOrderBtn');
         if (placeOrderBtn) {
-            placeOrderBtn.addEventListener('click', () => {
-                this.handleOrderSubmission();
-            });
+            placeOrderBtn.addEventListener('click', this.handlePlaceOrder.bind(this));
         }
 
         // Modal controls
@@ -530,289 +432,6 @@ class PalaceCheckout {
                 return message;
             }
         });
-    }
-
-    /**
-     * Handle payment method selection
-     */
-    handlePaymentMethodChange(method) {
-        console.log('💳 Payment method changed to:', method);
-        
-        this.state.paymentMethod = method;
-        
-        // Update UI
-        const paymentOptions = document.querySelectorAll('.payment-option');
-        paymentOptions.forEach(option => {
-            option.classList.remove('active');
-        });
-        
-        const selectedOption = document.querySelector(`[data-payment="${method}"]`);
-        if (selectedOption) {
-            selectedOption.classList.add('active');
-        }
-        
-        // Show/hide card payment section
-        const cardSection = document.getElementById('cardPaymentSection');
-        if (cardSection) {
-            if (method === 'stripe') {
-                cardSection.style.display = 'block';
-                // Focus on card element after a brief delay
-                setTimeout(() => {
-                    if (this.cardElement) {
-                        this.cardElement.focus();
-                    }
-                }, 100);
-            } else {
-                cardSection.style.display = 'none';
-            }
-        }
-    }
-
-    /**
-     * Handle order submission (update your existing method)
-     */
-    async handleOrderSubmission() {
-        console.log('📋 Processing order submission...');
-        
-        try {
-            // Validate form
-            if (!this.validateOrderForm()) {
-                return;
-            }
-
-            // Show loading state
-            this.showOrderLoading(true);
-            
-            if (this.state.paymentMethod === 'stripe') {
-                await this.processStripePayment();
-            } else {
-                await this.processCashOrder();
-            }
-            
-        } catch (error) {
-            console.error('❌ Order submission failed:', error);
-            this.showError(error.message || 'Failed to process order. Please try again.');
-            this.showOrderLoading(false);
-        }
-    }
-
-    /**
-     * Process Stripe payment
-     */
-    async processStripePayment() {
-        console.log('💳 Processing Stripe payment...');
-        
-        try {
-            // Prepare order data
-            const orderData = this.prepareOrderData();
-            
-            // Create payment intent
-            const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    amount: orderData.total,
-                    currency: 'eur',
-                    orderData: {
-                        customerName: orderData.customerName,
-                        customerEmail: orderData.customerEmail,
-                        customerPhone: orderData.customerPhone,
-                        orderType: orderData.orderType,
-                        deliveryAddress: orderData.deliveryAddress
-                    }
-                })
-            });
-
-            const paymentIntentResult = await paymentIntentResponse.json();
-            
-            if (!paymentIntentResult.success) {
-                throw new Error(paymentIntentResult.error || 'Failed to create payment intent');
-            }
-
-            // Confirm payment with Stripe
-            const {error} = await this.stripe.confirmCardPayment(
-                paymentIntentResult.data.clientSecret,
-                {
-                    payment_method: {
-                        card: this.cardElement,
-                        billing_details: {
-                            name: orderData.customerName,
-                            email: orderData.customerEmail,
-                            phone: orderData.customerPhone,
-                        }
-                    }
-                }
-            );
-
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            console.log('✅ Payment confirmed with Stripe');
-
-            // Confirm payment and create order in backend
-            const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    paymentIntentId: paymentIntentResult.data.paymentIntentId,
-                    orderData: orderData
-                })
-            });
-
-            const confirmResult = await confirmResponse.json();
-            
-            if (!confirmResult.success) {
-                throw new Error(confirmResult.error || 'Failed to confirm payment');
-            }
-
-            console.log('🎉 Stripe order completed successfully');
-            
-            // Redirect to confirmation page
-            this.redirectToConfirmation(confirmResult.data.orderNumber);
-            
-        } catch (error) {
-            console.error('❌ Stripe payment failed:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Process cash order 
-     */
-    async processCashOrder() {
-        console.log('💵 Processing cash order...');
-        
-        try {
-            const orderData = this.prepareOrderData();
-            
-            const response = await fetch(`${this.config.apiBaseUrl}/orders`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            const result = await response.json();
-            
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to create order');
-            }
-
-            console.log('🎉 Cash order completed successfully');
-            
-            // Redirect to confirmation page
-            this.redirectToConfirmation(result.data.orderNumber);
-            
-        } catch (error) {
-            console.error('❌ Cash order failed:', error);
-            throw error;
-        }
-    }
-
-    /**
-     * Show/hide loading state on order button
-     */
-    showOrderLoading(isLoading) {
-        const orderBtn = document.getElementById('placeOrderBtn');
-        const btnText = orderBtn.querySelector('.btn-text');
-        const btnIcon = orderBtn.querySelector('.btn-icon');
-        const btnLoading = orderBtn.querySelector('.btn-loading');
-        
-        if (isLoading) {
-            orderBtn.classList.add('loading');
-            orderBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnIcon.style.display = 'none';
-            btnLoading.style.display = 'flex';
-        } else {
-            orderBtn.classList.remove('loading');
-            orderBtn.disabled = false;
-            btnText.style.display = 'inline';
-            btnIcon.style.display = 'inline';
-            btnLoading.style.display = 'none';
-        }
-    }
-
-    /**
-     * Validate order form (update your existing method)
-     */
-    validateOrderForm() {
-        // Check required fields
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        
-        if (!firstName || !lastName || !phone || !email) {
-            this.showError('Kérjük, töltse ki az összes kötelező mezőt');
-            return false;
-        }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            this.showError('Kérjük, adjon meg érvényes email címet');
-            return false;
-        }
-
-        // Validate delivery address if needed
-        if (this.state.orderType === 'delivery') {
-            const street = document.getElementById('street').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const postalCode = document.getElementById('postalCode').value.trim();
-            
-            if (!street || !city || !postalCode) {
-                this.showError('Kérjük, töltse ki a szállítási címet');
-                return false;
-            }
-        }
-
-        // Check legal checkboxes
-        const termsAccept = document.getElementById('termsAccept').checked;
-        const privacyAccept = document.getElementById('privacyAccept').checked;
-        
-        if (!termsAccept || !privacyAccept) {
-            this.showError('Kérjük, fogadja el a szerződési feltételeket és az adatvédelmi nyilatkozatot');
-            return false;
-        }
-
-        // Validate cart
-        if (!this.state.cart || this.state.cart.length === 0) {
-            this.showError('A kosár üres. Kérjük, adjon hozzá termékeket a rendeléshez.');
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Show error message to user
-     */
-    showError(message) {
-        // You can implement this with a modal, toast, or alert
-        // For now, using alert - you can replace with a better UI element
-        alert(message);
-        
-        // Or create a toast notification
-        console.error('Order Error:', message);
-    }
-
-    /**
-     * Redirect to confirmation page
-     */
-    redirectToConfirmation(orderNumber) {
-        // Clear cart data
-        localStorage.removeItem('orderItems');
-        localStorage.removeItem('cartData');
-        
-        // Redirect to confirmation page with order number
-        window.location.href = `order-confirmation.html?order=${orderNumber}`;
     }
 
     /**
@@ -2428,67 +2047,58 @@ class PalaceCheckout {
     }
 
     /**
-     * Prepare order data for submission 
+     * Prepare order data for submission
      */
     prepareOrderData() {
-        // Get form data
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-        
-        // Get delivery information
-        let deliveryAddress = null;
-        let deliveryNotes = null;
-        
-        if (this.state.orderType === 'delivery') {
-            const street = document.getElementById('street').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const postalCode = document.getElementById('postalCode').value.trim();
-            const notes = document.getElementById('deliveryNotes').value.trim();
-            
-            deliveryAddress = `${street}, ${city} ${postalCode}`;
-            deliveryNotes = notes || null;
-        }
-
-        // Get scheduled time
-        let scheduledFor = null;
-        const timeType = document.querySelector('input[name="timeType"]:checked').value;
-        if (timeType === 'scheduled') {
-            const timeInput = document.getElementById('orderTimeInput').value;
-            if (timeInput) {
-                // Convert time to proper date format
-                scheduledFor = this.parseScheduledTime(timeInput);
-            }
-        }
-
-        // Calculate totals
-        const subtotal = this.calculateSubtotal();
-        const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
-        const total = subtotal + deliveryFee;
+        const formData = this.collectFormData();
 
         return {
-            customerName: `${firstName} ${lastName}`,
-            customerPhone: phone,
-            customerEmail: email,
-            orderType: this.state.orderType.toUpperCase(),
-            deliveryAddress,
-            deliveryNotes,
-            specialNotes: null,
-            items: this.state.cart.map(item => ({
-                menuItemId: item.id,
-                quantity: item.quantity,
-                selectedSauce: item.customization?.sauce || null,
-                friesUpgrade: item.customization?.fries || null,
-                extras: item.customization?.extras || [],
-                removeItems: item.customization?.remove || [],
-                specialNotes: item.customization?.specialInstructions || null
-            })),
-            scheduledFor,
-            paymentMethod: this.state.paymentMethod.toUpperCase(),
-            subtotal,
-            deliveryFee,
-            total
+            // Customer information (backend format)
+            customerName: `${this.sanitizeInput(formData.firstName)} ${this.sanitizeInput(formData.lastName)}`.trim(),
+            customerPhone: formData.phone,
+            customerEmail: formData.email || null,
+
+            // Order type and payment
+            orderType: this.state.orderType.toUpperCase(), // 'PICKUP' or 'DELIVERY'
+            paymentMethod: this.state.paymentMethod.toUpperCase(), // 'CASH' or 'CARD' (for future)
+
+            // Delivery information (only if delivery)
+            deliveryAddress: this.state.orderType === 'delivery' ? 
+                `${this.sanitizeInput(formData.street)}, ${this.sanitizeInput(formData.city)} ${formData.postalCode}`.trim() : null,
+            deliveryNotes: this.state.orderType === 'delivery' ? 
+                this.sanitizeInput(formData.deliveryNotes || '') || null : null,
+
+            // Scheduled time (if not ASAP)
+            scheduledFor: this.getScheduledDateTime(),
+
+            // Order items (backend format)
+            items: this.state.cart.map(item => {
+                // Extract menu item ID (remove any prefixes like 'drink-')
+                let menuItemId = item.originalId || item.id;
+                if (typeof menuItemId === 'string' && menuItemId.includes('-')) {
+                    // Try to extract numeric ID from strings like 'drink-123' or 'PCB-123-456'
+                    const numericMatch = menuItemId.match(/\d+/);
+                    menuItemId = numericMatch ? parseInt(numericMatch[0]) : parseInt(menuItemId);
+                }
+
+                return {
+                    menuItemId: parseInt(menuItemId),
+                    quantity: item.quantity,
+                    selectedSauce: item.customization?.sauce || null,
+                    friesUpgrade: item.customization?.fries === 'regular' ? null : item.customization?.fries || null,
+                    extras: item.customization?.extras || [],
+                    removeItems: item.customization?.removeInstructions ? 
+                        [item.customization.removeInstructions] : [],
+                    specialNotes: this.sanitizeInput(
+                        item.customization?.specialInstructions || 
+                        item.specialNotes || 
+                        ''
+                    ) || null
+                };
+            }),
+
+            // General order notes
+            specialNotes: null // Can be used for overall order notes if needed
         };
     }
 
