@@ -2250,25 +2250,25 @@ class PalaceCheckout {
         }
     }
 
-    /**
-     * Process Stripe payment
-     */
+        /**
+         * Process Stripe payment
+         */
     async processStripePayment() {
         if (!this.stripe) {
             this.showNotification('Card payment not available', 'error');
             return;
         }
-    
+
         this.setLoadingState(true);
-    
+
         try {
             const orderData = this.prepareOrderData();
             const total = this.calculateTotal();
-        
+
             console.log('💰 Processing payment for total:', total);
             console.log('💰 Amount in cents:', Math.round(total * 100));
-        
-            // Step 1: Create payment intent
+
+            // Step 1: Create payment intent FIRST
             console.log('📤 Sending payment intent request...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
@@ -2287,22 +2287,26 @@ class PalaceCheckout {
                     }
                 })
             });
-        
+
             const paymentIntent = await paymentIntentResponse.json();
             console.log('📦 Payment intent response:', paymentIntent);
-        
+
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
-        
-            // Step 2: Recreate Payment Element with actual clientSecret
-            console.log('🔄 Recreating Payment Element with clientSecret...');
-            this.setupStripeElements(paymentIntent.data.clientSecret);
-        
-            // Wait a moment for element to be ready
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        
-            // Step 3: Confirm payment
+
+            // Step 2: Check if we need to recreate Payment Element with clientSecret
+            if (!this.paymentElement || !this.stripeElements._merchantSuite?.clientSecret) {
+                console.log('🔄 Creating Payment Element with clientSecret...');
+                this.setupStripeElements(paymentIntent.data.clientSecret);
+
+                // Show message to user that they need to enter card details
+                this.showNotification('Please enter your card details to complete the payment.', 'info');
+                this.setLoadingState(false);
+                return; // Exit and let user enter card details
+            }
+
+            // Step 3: Confirm payment with existing Payment Element
             console.log('🔐 Confirming payment with Stripe...');
             const {error: submitError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
@@ -2317,16 +2321,16 @@ class PalaceCheckout {
                     }
                 }
             });
-        
+
             console.log('🔐 Payment confirmation result:', submitError ? 'ERROR' : 'SUCCESS');
-            
+
             if (submitError) {
                 console.error('❌ Payment confirmation error:', submitError);
                 throw new Error(submitError.message);
             }
-        
+
             console.log('✅ Payment confirmed, creating order...');
-        
+
             // Step 4: Confirm order creation
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
@@ -2338,10 +2342,10 @@ class PalaceCheckout {
                     orderData: orderData
                 })
             });
-        
+
             const confirmResult = await confirmResponse.json();
             console.log('📋 Order creation response:', confirmResult);
-        
+
             if (confirmResult.success) {
                 console.log('🎉 Order created successfully!');
                 this.clearCartFromStorage();
@@ -2349,7 +2353,7 @@ class PalaceCheckout {
             } else {
                 throw new Error(confirmResult.error || 'Failed to create order');
             }
-        
+
         } catch (error) {
             console.error('❌ Stripe payment error:', error);
             this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
