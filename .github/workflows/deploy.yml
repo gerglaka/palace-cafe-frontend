@@ -1,7 +1,7 @@
-# Simple FTP Deployment for WebSupport.sk
-# File location: .github/workflows/deploy.yml
+# LFTP Simple Deployment - Should work with WebSupport.sk
+# File: .github/workflows/lftp-deploy.yml
 
-name: 🚀 Deploy to WebSupport
+name: LFTP Deploy (Reliable)
 
 on:
   push:
@@ -10,111 +10,122 @@ on:
 
 jobs:
   deploy:
-    name: 📤 FTP Deploy
+    name: Deploy via LFTP
     runs-on: ubuntu-latest
-    
     steps:
-      - name: 📥 Checkout Code
+      - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: 📋 Show Files
-        run: |
-          echo "🗂️ Deploying these files:"
-          find . -name "*.html" -o -name "*.css" -o -name "*.js" | head -10
-          echo "Total files: $(find . -name "*.html" -o -name "*.css" -o -name "*.js" | wc -l)"
-      
-      # Method 1: Try basic FTP without encryption
-      - name: 🚀 Deploy via Basic FTP
-        id: basic_ftp
-        continue-on-error: true
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          protocol: ftp
-          
-          local-dir: './'
-          server-dir: '/palacebar.sk/web/'
-          
-          # Basic settings
-          timeout: 30000
-          log-level: verbose
-          security: loose
-          
-          exclude: |
-            **/.git*
-            **/.github/**
-            **/.DS_Store
-            **/*.md
-            **/README*
-            **/.env*
-            **/*.log
-      
-      # Method 2: Alternative FTP action if first fails
-      - name: 🔄 Alternative FTP Deploy
-        if: steps.basic_ftp.outcome == 'failure'
-        uses: sebastianpopp/ftp-action@releases/v2
-        with:
-          host: ${{ secrets.FTP_HOST }}
-          user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          remoteDir: '/palacebar.sk/web'
-          localDir: './'
-      
-      - name: ✅ Success Message
-        run: |
-          echo "🎉 Deployment completed!"
-          echo ""
-          echo "🌐 Your website should be live at:"
-          echo "   • https://palacebar.sk/"
-          echo "   • https://d.r6.wbsprt.com/palacebar.sk (backup URL)"
-          echo ""
-          echo "📋 Deployed files:"
-          echo "   • HTML pages: $(find . -name "*.html" | wc -l)"
-          echo "   • CSS files: $(find . -name "*.css" | wc -l)"
-          echo "   • JS files: $(find . -name "*.js" | wc -l)"
-          echo ""
-          echo "🔧 If issues persist, try WebFTP:"
-          echo "   • https://webftp.palacebar.sk"
-          echo "   • https://webftp.r6.websupport.sk"
 
-  # Troubleshooting job
-  debug:
-    name: 🔍 Debug Info
-    runs-on: ubuntu-latest
-    needs: deploy
-    if: failure()
-    
-    steps:
-      - name: ❌ Troubleshooting Guide
+      - name: Install LFTP
         run: |
-          echo "🔧 TROUBLESHOOTING WEBSUPPORT.SK FTP CONNECTION"
-          echo "================================================"
-          echo ""
-          echo "1. ✅ CHECK YOUR GITHUB SECRETS:"
-          echo "   Go to: Repository → Settings → Secrets → Actions"
-          echo "   Required secrets:"
-          echo "   • FTP_HOST: palacebar.sk"  
-          echo "   • FTP_USERNAME: [your_ftp_username]"
-          echo "   • FTP_PASSWORD: [your_ftp_password]"
-          echo "   • FTP_PORT: 21"
-          echo ""
-          echo "2. ✅ VERIFY FTP CREDENTIALS:"
-          echo "   Test at: https://webftp.palacebar.sk"
-          echo "   Alternative: https://webftp.r6.websupport.sk"
-          echo ""
-          echo "3. ✅ WEBSUPPORT.SK REQUIREMENTS:"
-          echo "   • Protocol: FTP (unencrypted) - Port 21"
-          echo "   • Directory: /palacebar.sk/web/"
-          echo "   • May not support FTPS/SFTP on basic plans"
-          echo ""
-          echo "4. ✅ COMMON FIXES:"
-          echo "   • Ensure FTP account is created in WebSupport admin"
-          echo "   • Check if domain is properly pointed to WebSupport"
-          echo "   • Try connecting manually first via WebFTP"
-          echo ""
-          echo "5. 📧 CONTACT WEBSUPPORT.SK:"
-          echo "   If issues persist, contact WebSupport.sk support"
-          echo "   They can verify FTP settings and server status"
+          sudo apt-get update -q
+          sudo apt-get install -y lftp
+
+      - name: Test Connection & Deploy
+        run: |
+          echo "🔍 Testing and deploying with LFTP..."
+          
+          # Create LFTP script with WebSupport.sk optimized settings
+          cat > deploy_script.lftp << 'LFTP_SCRIPT'
+          # Connection settings optimized for WebSupport.sk
+          set ftps:initial-prot ""
+          set ftp:ssl-allow no
+          set ftp:passive-mode yes
+          set net:timeout 30
+          set net:max-retries 3
+          set net:reconnect-interval-base 5
+          set cmd:fail-exit yes
+          
+          # Connect to WebSupport.sk FTP
+          open -u $FTP_USER,$FTP_PASS ftp://$FTP_HOST
+          
+          # Navigate to web directory
+          cd /palacebar.sk/web || (echo "Failed to change directory"; exit 1)
+          
+          # Show current directory
+          pwd
+          ls -la
+          
+          # Upload files with progress
+          lcd .
+          
+          echo "📄 Uploading HTML files..."
+          mput -c *.html
+          
+          echo "🎨 Uploading CSS files..."
+          mput -c *.css
+          
+          echo "⚡ Uploading JS files..."
+          mput -c *.js
+          
+          echo "📁 Uploading other files..."
+          mput -c *.png *.jpg *.jpeg *.gif *.svg *.ico *.pdf *.txt 2>/dev/null || echo "No additional files to upload"
+          
+          echo "✅ Upload completed!"
+          ls -la
+          
+          quit
+          LFTP_SCRIPT
+          
+          # Execute LFTP script with credentials
+          FTP_HOST="${{ secrets.FTP_HOST }}" \
+          FTP_USER="${{ secrets.FTP_USERNAME }}" \
+          FTP_PASS="${{ secrets.FTP_PASSWORD }}" \
+          lftp -f deploy_script.lftp
+
+      - name: Verify Upload (Alternative method if main fails)
+        if: failure()
+        run: |
+          echo "🔄 Trying alternative LFTP approach..."
+          
+          lftp -c "
+          set ftps:initial-prot '';
+          set ftp:ssl-allow no;
+          set ftp:passive-mode yes;
+          set net:timeout 15;
+          set net:max-retries 5;
+          set cmd:fail-exit no;
+          
+          open ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }};
+          cd /palacebar.sk/web;
+          
+          put index.html 2>/dev/null || echo 'index.html upload failed';
+          put styles.css 2>/dev/null || echo 'styles.css upload failed';
+          put admin.css 2>/dev/null || echo 'admin.css upload failed';
+          
+          ls -la;
+          quit;
+          "
+
+      - name: Manual FTP Test (If LFTP fails)
+        if: failure()
+        run: |
+          echo "🔄 Trying basic FTP commands as last resort..."
+          
+          # Install traditional FTP client
+          sudo apt-get install -y ftp
+          
+          # Create FTP batch file
+          cat > ftp_batch << 'FTP_COMMANDS'
+          open ${{ secrets.FTP_HOST }}
+          user ${{ secrets.FTP_USERNAME }} ${{ secrets.FTP_PASSWORD }}
+          binary
+          passive
+          cd /palacebar.sk/web
+          pwd
+          put index.html
+          put styles.css
+          ls
+          quit
+          FTP_COMMANDS
+          
+          # Execute FTP batch
+          ftp -n < ftp_batch
+
+      - name: Final Status
+        if: always()
+        run: |
+          echo "🎯 Deployment attempt completed!"
+          echo "🌐 Check your website: https://palacebar.sk/"
+          echo "🔧 If still not working, try WebFTP: https://webftp.palacebar.sk/"
+          echo "📅 Time: $(date)"
