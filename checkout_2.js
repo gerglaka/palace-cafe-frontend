@@ -107,6 +107,11 @@ class PalaceCheckout {
             this.updateCartDisplay();
             this.updateOrderSummary();
             this.validateForm();
+
+            // Initialize Stripe (non-blocking)
+            this.initializeStripe().catch(error => {
+                console.warn('Stripe initialization failed, card payments disabled:', error);
+            });            
             
             
             console.log('✅ Palace Checkout system initialized successfully!');
@@ -134,38 +139,49 @@ class PalaceCheckout {
     async initializeStripe() {
         try {
             console.log('🔄 Initializing Stripe...');
+
+            // Wait for Stripe library to load
+            await this.waitForStripe();
+
             console.log('API URL:', `${this.config.apiBaseUrl}/stripe/config`);
-            
+
             // Get Stripe config from your backend
             const response = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-            
+
             const config = await response.json();
             console.log('📦 Stripe config received:', config);
-            
+
             if (config.success && config.data?.publishableKey) {
-                // Check if Stripe library is loaded
-                if (typeof Stripe === 'undefined') {
-                    throw new Error('Stripe library not loaded');
-                }
-                
                 this.stripe = Stripe(config.data.publishableKey);
-                console.log('✅ Stripe initialized with key:', config.data.publishableKey);
+                console.log('✅ Stripe initialized successfully');
                 return true;
             } else {
                 throw new Error(`Invalid config response: ${JSON.stringify(config)}`);
             }
         } catch (error) {
             console.error('❌ Stripe initialization failed:', error);
-            console.error('Error details:', error.message);
-            this.showNotification('Card payment unavailable: ' + error.message, 'error');
+            this.showNotification('Card payment temporarily unavailable', 'error');
             return false;
         }
+    }
+
+    /**
+     * Wait for Stripe library to load
+     */
+    async waitForStripe(maxAttempts = 10) {
+        for (let i = 0; i < maxAttempts; i++) {
+            if (typeof Stripe !== 'undefined') {
+                console.log('✅ Stripe library loaded');
+                return true;
+            }
+            console.log(`⏳ Waiting for Stripe library... attempt ${i + 1}`);
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        throw new Error('Stripe library failed to load');
     }
 
     /**
@@ -997,26 +1013,36 @@ class PalaceCheckout {
     handlePaymentChange(method) {
         console.log('🔄 Handling payment change to:', method);
         this.state.paymentMethod = method;
-
+        
         // Update UI
         const paymentOptions = document.querySelectorAll('.payment-option');
         paymentOptions.forEach(option => {
             option.classList.remove('active');
         });
-
+        
         const selectedOption = document.querySelector(`[data-payment="${method}"]`);
         if (selectedOption) {
             selectedOption.classList.add('active');
         }
-
+        
         // Show/hide card payment section
         const cardSection = document.getElementById('cardPaymentSection');
         if (cardSection) {
             if (method === 'stripe') {
+                if (!this.stripe) {
+                    this.showNotification('Card payment is not available yet. Please try again in a moment.', 'warning');
+                    // Switch back to cash
+                    const cashOption = document.querySelector('input[name="paymentMethod"][value="cash"]');
+                    if (cashOption) {
+                        cashOption.checked = true;
+                        this.handlePaymentChange('cash');
+                    }
+                    return;
+                }
+                
                 console.log('📱 Showing Stripe card section');
                 cardSection.style.display = 'block';
-
-                // Add small delay to ensure DOM is ready
+                
                 setTimeout(() => {
                     this.setupStripeElements();
                 }, 100);
@@ -1024,8 +1050,6 @@ class PalaceCheckout {
                 console.log('💵 Hiding card section');
                 cardSection.style.display = 'none';
             }
-        } else {
-            console.error('❌ Card payment section not found');
         }
     }
 
