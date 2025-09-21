@@ -887,35 +887,52 @@ class PalaceCheckout {
         return date.toISOString();
     }
     
+    // Temporary test method
+    testStripe() {
+        console.log('🧪 Testing Stripe setup...');
+        console.log('Stripe object:', this.stripe);
+        console.log('Elements object:', this.stripeElements);
+        console.log('Card element:', this.cardElement);
+        console.log('Card container:', document.getElementById('card-element'));
+        
+        if (this.stripe && this.cardElement) {
+            console.log('✅ Stripe is working!');
+            this.showNotification('Stripe setup successful!', 'success');
+        } else {
+            console.log('❌ Stripe setup failed');
+            this.showNotification('Stripe setup failed', 'error');
+        }
+    }
+
     /**
      * Setup Stripe Elements
      */
     setupStripeElements() {
         console.log('🔧 Setting up Stripe Elements...');
-        
+
         if (!this.stripe) {
             console.error('❌ Stripe not initialized');
             this.showNotification('Card payment not available', 'error');
             return;
         }
-    
+
         const cardElementContainer = document.getElementById('card-element');
         if (!cardElementContainer) {
             console.error('❌ Card element container not found');
             return;
         }
-    
+
         // Clear existing elements
         if (this.cardElement) {
             this.cardElement.destroy();
             this.cardElement = null;
         }
-    
+
         // Create elements instance if not exists
         if (!this.stripeElements) {
             this.stripeElements = this.stripe.elements();
         }
-    
+
         // Create card element with better styling
         this.cardElement = this.stripeElements.create('card', {
             style: {
@@ -934,11 +951,11 @@ class PalaceCheckout {
             },
             hidePostalCode: true // Since you collect address separately
         });
-    
+
         // Mount card element
         this.cardElement.mount('#card-element');
         console.log('✅ Card element mounted');
-    
+
         // Handle real-time validation errors from the card Element
         this.cardElement.on('change', ({error}) => {
             const displayError = document.getElementById('card-errors');
@@ -952,7 +969,7 @@ class PalaceCheckout {
                 }
             }
         });
-    
+
         // Handle element ready
         this.cardElement.on('ready', () => {
             console.log('✅ Stripe card element ready');
