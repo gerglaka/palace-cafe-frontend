@@ -939,17 +939,17 @@ class PalaceCheckout {
      * Setup Stripe Elements
      */
     setupStripeElements() {
-        console.log('Setting up Stripe Payment Element...');
+        console.log('🔧 Setting up Stripe Payment Element...');
 
         if (!this.stripe) {
-            console.error('Stripe not initialized');
+            console.error('❌ Stripe not initialized');
             this.showNotification('Card payment not available', 'error');
             return;
         }
 
         const cardElementContainer = document.getElementById('card-element');
         if (!cardElementContainer) {
-            console.error('Card element container not found');
+            console.error('❌ Card element container not found');
             return;
         }
 
@@ -958,12 +958,31 @@ class PalaceCheckout {
             this.paymentElement.destroy();
             this.paymentElement = null;
         }
+        if (this.stripeElements) {
+            this.stripeElements = null;
+        }
+
+        // Calculate total amount in cents
+        const totalInEuros = this.calculateTotal();
+        const totalInCents = Math.round(totalInEuros * 100);
+
+        console.log(`💰 Total: €${totalInEuros} = ${totalInCents} cents`);
+
+        // Validate minimum amount
+        if (totalInCents < 50) { // Stripe minimum is 50 cents
+            console.error('❌ Amount below Stripe minimum');
+            this.showNotification('Order total must be at least €0.50', 'error');
+            return;
+        }
 
         // Create elements instance with Payment Element
         this.stripeElements = this.stripe.elements({
             mode: 'payment',
-            amount: Math.round(this.calculateTotal() * 100), // Amount in cents
+            amount: totalInCents,
             currency: 'eur',
+            appearance: {
+                theme: 'stripe',
+            },
         });
 
         // Create Payment Element (includes Apple Pay, Google Pay, etc.)
@@ -971,7 +990,7 @@ class PalaceCheckout {
 
         // Mount payment element
         this.paymentElement.mount('#card-element');
-        console.log('Payment element mounted');
+        console.log('✅ Payment element mounted');
 
         // Handle errors
         this.paymentElement.on('change', (event) => {
@@ -986,12 +1005,36 @@ class PalaceCheckout {
                 }
             }
         });
-    } 
+
+        // Handle element ready
+        this.paymentElement.on('ready', () => {
+            console.log('✅ Stripe payment element ready');
+        });
+    }
 
     calculateTotal() {
         const subtotal = this.calculateSubtotal();
         const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
         return subtotal + deliveryFee;
+    }
+
+    /**
+     * Update Stripe Payment Element amount when cart changes
+     */
+    updateStripeAmount() {
+        if (!this.stripeElements || !this.paymentElement) {
+            return;
+        }
+
+        const totalInEuros = this.calculateTotal();
+        const totalInCents = Math.round(totalInEuros * 100);
+
+        console.log(`🔄 Updating Stripe amount: €${totalInEuros} = ${totalInCents} cents`);
+
+        // Update the elements with new amount
+        this.stripeElements.update({
+            amount: totalInCents,
+        });
     }
     
     /**
@@ -1433,6 +1476,11 @@ class PalaceCheckout {
         if (deliveryFeeEl) deliveryFeeEl.textContent = `€${deliveryFee.toFixed(2)}`;
         if (totalAmountEl) totalAmountEl.textContent = `€${total.toFixed(2)}`;
         if (finalAmountEl) finalAmountEl.textContent = `€${total.toFixed(2)}`;
+
+        // Update Stripe amount if payment method is stripe
+        if (this.state.paymentMethod === 'stripe') {
+            this.updateStripeAmount();
+        }
     }
 
 
@@ -2206,8 +2254,17 @@ class PalaceCheckout {
         try {
             const orderData = this.prepareOrderData();
             const total = this.calculateTotal();
+            
+            console.log('💰 Processing payment for total:', total);
+            console.log('💰 Amount in cents:', Math.round(total * 100));
         
-            // Step 1: Create payment intent
+            // Validate amount before sending
+            if (total < 0.50) {
+                throw new Error('Order total must be at least €0.50');
+            }
+        
+            // Step 1: Create payment intent with detailed logging
+            console.log('📤 Sending payment intent request...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
                 headers: {
@@ -2227,47 +2284,16 @@ class PalaceCheckout {
             });
         
             const paymentIntent = await paymentIntentResponse.json();
+            console.log('📦 Payment intent response:', paymentIntent);
         
             if (!paymentIntent.success) {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
         
-            // Step 2: Confirm payment with Payment Element
-            const {error} = await this.stripe.confirmPayment({
-                elements: this.stripeElements,
-                confirmParams: {
-                    return_url: window.location.origin + '/order-confirmation.html'
-                },
-                redirect: 'if_required'
-            });
-        
-            if (error) {
-                throw new Error(error.message);
-            }
-        
-            // Step 3: Confirm order creation
-            const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    paymentIntentId: paymentIntent.data.paymentIntentId,
-                    orderData: orderData
-                })
-            });
-        
-            const confirmResult = await confirmResponse.json();
-        
-            if (confirmResult.success) {
-                this.clearCartFromStorage();
-                window.location.href = `/order-confirmation.html?order=${confirmResult.data.orderNumber}`;
-            } else {
-                throw new Error(confirmResult.error || 'Failed to create order');
-            }
-        
+            // Rest of your payment processing...
+            
         } catch (error) {
-            console.error('Stripe payment error:', error);
+            console.error('❌ Stripe payment error:', error);
             this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
         } finally {
             this.setLoadingState(false);
