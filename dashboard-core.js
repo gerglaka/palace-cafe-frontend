@@ -38,6 +38,7 @@ class AdminDashboard {
             orders: new OrdersApp(),
             menu: new MenuApp(),
             analytics: typeof StatsApp !== 'undefined' ? new StatsApp() : new BaseApp('analytics'),
+            invoices: new InvoicesApp(),
             content: new ContentApp(),
             settings: new SettingsApp()
         };
@@ -47,6 +48,7 @@ class AdminDashboard {
             orders: new OrdersApp(),
             menu: new MenuApp(),
             analytics: typeof StatsApp !== 'undefined' ? new StatsApp() : new BaseApp('analytics'),
+            invoices: new InvoicesApp(),
             content: new ContentApp(),
             settings: new SettingsApp()
         };
