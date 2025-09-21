@@ -2032,6 +2032,1537 @@ class MenuApp extends BaseApp {
 // Make globally available
 window.MenuApp = MenuApp;
 
+/**
+ * Palace Cafe & Bar - Invoices Management App
+ * Complete invoice administration system
+ * 
+ * @author Palace Development Team
+ * @version 1.0.0
+ */
+
+'use strict';
+
+class InvoicesApp extends BaseApp {
+    constructor() {
+        super('invoices');
+
+        this.config = {
+            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api/admin',
+            itemsPerPage: 20
+        };
+        
+        // State management
+        this.state = {
+            currentSection: 'overview', // 'overview', 'management', 'reports'
+            invoices: [],
+            totalInvoices: 0,
+            currentPage: 1,
+            searchQuery: '',
+            filters: {
+                dateRange: 'month',
+                paymentMethod: 'all',
+                orderType: 'all',
+                startDate: null,
+                endDate: null
+            },
+            sortBy: 'createdAt',
+            sortOrder: 'desc',
+            selectedInvoices: new Set(),
+            overview: {
+                todayInvoices: 0,
+                monthlyInvoices: 0,
+                todayRevenue: 0,
+                monthlyRevenue: 0,
+                paymentBreakdown: {}
+            }
+        };
+
+        // Modal listeners tracking
+        this.modalEventListeners = [];
+    }
+
+    async initialize() {
+        console.log('📄 Initializing Invoices Management App...');
+        
+        this.render();
+        await this.loadInitialData();
+        this.setupEventListeners();
+        
+        console.log('✅ Invoices Management App initialized');
+    }
+
+    render() {
+        if (!this.container) return;
+        
+        this.container.innerHTML = `
+            <!-- Invoices Management Header -->
+            <div class="invoices-management-header">
+                <div class="invoices-title">
+                    <h2>📄 Számlák kezelése</h2>
+                    <p>Számlák áttekintése, keresése és exportálása</p>
+                </div>
+                
+                <div class="invoices-section-tabs">
+                    <button class="tab-btn active" data-section="overview">
+                        <i class="fas fa-chart-pie"></i>
+                        Áttekintés
+                    </button>
+                    <button class="tab-btn" data-section="management">
+                        <i class="fas fa-list"></i>
+                        Számlák
+                    </button>
+                    <button class="tab-btn" data-section="reports">
+                        <i class="fas fa-download"></i>
+                        Exportálás
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overview Section -->
+            <div id="overview-section" class="invoices-section active">
+                <div class="overview-cards">
+                    <div class="overview-card revenue">
+                        <div class="card-icon">
+                            <i class="fas fa-euro-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="todayRevenue">€0.00</h3>
+                            <p>Mai bevétel</p>
+                            <div class="trend neutral">
+                                <span id="todayInvoicesCount">0 számla</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overview-card orders">
+                        <div class="card-icon">
+                            <i class="fas fa-calendar-month"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="monthlyRevenue">€0.00</h3>
+                            <p>Havi bevétel</p>
+                            <div class="trend positive">
+                                <span id="monthlyInvoicesCount">0 számla</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overview-card avg-order">
+                        <div class="card-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="cardPaymentPercentage">0%</h3>
+                            <p>Kártyás fizetés</p>
+                            <div class="trend neutral">
+                                <span id="cardPaymentCount">0 számla</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overview-card prep-time">
+                        <div class="card-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="cashPaymentPercentage">0%</h3>
+                            <p>Készpénzes fizetés</p>
+                            <div class="trend neutral">
+                                <span id="cashPaymentCount">0 számla</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-invoices-section">
+                    <div class="section-header">
+                        <h3>
+                            <i class="fas fa-history"></i>
+                            Legutóbbi számlák
+                        </h3>
+                        <button class="btn-secondary" id="viewAllInvoicesBtn">
+                            Összes megtekintése
+                        </button>
+                    </div>
+                    
+                    <div class="recent-invoices-list" id="recentInvoicesList">
+                        <div class="loading-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Számlák betöltése...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Section -->
+            <div id="management-section" class="invoices-section">
+                <div class="management-header">
+                    <h3>
+                        <i class="fas fa-list"></i>
+                        Számlák kezelése
+                    </h3>
+                    
+                    <div class="management-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" 
+                                   id="invoiceSearch" 
+                                   placeholder="Keresés számla száma, ügyfél neve alapján...">
+                        </div>
+                        
+                        <select id="dateRangeFilter" class="filter-select">
+                            <option value="today">Ma</option>
+                            <option value="week">Ez a hét</option>
+                            <option value="month" selected>Ez a hónap</option>
+                            <option value="year">Ez az év</option>
+                            <option value="custom">Egyedi időszak</option>
+                        </select>
+                        
+                        <select id="paymentMethodFilter" class="filter-select">
+                            <option value="all">Minden fizetési mód</option>
+                            <option value="CASH">Készpénz</option>
+                            <option value="CARD">Kártya</option>
+                        </select>
+                        
+                        <select id="orderTypeFilter" class="filter-select">
+                            <option value="all">Minden rendelés típus</option>
+                            <option value="DELIVERY">Szállítás</option>
+                            <option value="PICKUP">Elvitel</option>
+                        </select>
+                        
+                        <div class="date-range-inputs" id="customDateRange" style="display: none;">
+                            <input type="date" id="startDate" class="date-input">
+                            <span>-</span>
+                            <input type="date" id="endDate" class="date-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="invoices-table-container">
+                    <div class="table-controls">
+                        <div class="invoices-count">
+                            <span id="invoicesCount">0 számla</span>
+                        </div>
+                        
+                        <div class="sort-controls">
+                            <select id="sortBy" class="sort-select">
+                                <option value="createdAt">Dátum szerint</option>
+                                <option value="invoiceNumber">Számla szám szerint</option>
+                                <option value="customerName">Ügyfél szerint</option>
+                                <option value="totalGross">Összeg szerint</option>
+                            </select>
+                            
+                            <button class="btn-sort" id="sortOrder" data-order="desc">
+                                <i class="fas fa-sort-amount-down"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="bulk-actions">
+                            <button class="btn-info" id="bulkDownloadBtn" disabled>
+                                <i class="fas fa-download"></i>
+                                Kijelöltek letöltése
+                            </button>
+                            <button class="btn-success" id="bulkEmailBtn" disabled>
+                                <i class="fas fa-envelope"></i>
+                                Kijelöltek emailezése
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="invoices-table" id="invoicesTable">
+                        <div class="loading-placeholder">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            Számlák betöltése...
+                        </div>
+                    </div>
+
+                    <div class="pagination-container" id="paginationContainer">
+                        <!-- Pagination will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports-section" class="invoices-section">
+                <div class="reports-header">
+                    <h3>
+                        <i class="fas fa-download"></i>
+                        Havi jelentések és exportálás
+                    </h3>
+                    <p>Havi számlák exportálása könyveléshez és jelentések készítése</p>
+                </div>
+
+                <div class="export-options">
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-file-excel"></i>
+                        </div>
+                        <div class="export-content">
+                            <h4>Havi Excel export</h4>
+                            <p>Teljes havi számla lista Excel formátumban könyveléshez</p>
+                            <div class="export-controls">
+                                <select id="exportMonth" class="export-select">
+                                    <!-- Will be populated with months -->
+                                </select>
+                                <select id="exportYear" class="export-select">
+                                    <!-- Will be populated with years -->
+                                </select>
+                                <button class="btn-primary" id="exportMonthlyBtn">
+                                    <i class="fas fa-download"></i>
+                                    Letöltés
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="export-content">
+                            <h4>ÁFA összefoglaló</h4>
+                            <p>Havi ÁFA jelentés adóhivatal számára</p>
+                            <div class="export-controls">
+                                <select id="vatReportMonth" class="export-select">
+                                    <!-- Will be populated with months -->
+                                </select>
+                                <select id="vatReportYear" class="export-select">
+                                    <!-- Will be populated with years -->
+                                </select>
+                                <button class="btn-success" id="vatReportBtn">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Jelentés
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="export-card">
+                        <div class="export-icon">
+                            <i class="fas fa-filter"></i>
+                        </div>
+                        <div class="export-content">
+                            <h4>Egyedi export</h4>
+                            <p>Szűrt számlák exportálása egyedi időszakra</p>
+                            <div class="export-controls">
+                                <input type="date" id="customExportStart" class="date-input">
+                                <input type="date" id="customExportEnd" class="date-input">
+                                <button class="btn-warning" id="customExportBtn">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invoice Detail Modal -->
+            <div class="modal" id="invoiceModal">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content large-modal">
+                    <div class="modal-header">
+                        <h3 id="invoiceModalTitle">Számla részletei</h3>
+                        <button class="modal-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="invoicePreview">
+                            <!-- Invoice details will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-secondary" id="closeInvoiceModalBtn">
+                            Bezárás
+                        </button>
+                        <button class="btn-info" id="downloadInvoiceBtn">
+                            <i class="fas fa-download"></i>
+                            PDF letöltés
+                        </button>
+                        <button class="btn-primary" id="emailInvoiceBtn">
+                            <i class="fas fa-envelope"></i>
+                            Email küldés
+                        </button>
+                        <button class="btn-success" id="viewOrderBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            Rendelés megtekintése
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading Overlay -->
+            <div class="loading-overlay" id="invoicesLoading" style="display: none;">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Feldolgozás...</p>
+                </div>
+            </div>
+        `;
+
+        // Set initial section
+        this.showSection(this.state.currentSection);
+    }
+
+    async loadInitialData() {
+        try {
+            this.showLoading();
+            
+            // Load overview data and recent invoices in parallel
+            await Promise.all([
+                this.loadOverviewData(),
+                this.loadInvoices(),
+                this.setupDateSelectors()
+            ]);
+            
+            this.renderCurrentSection();
+            this.hideLoading();
+            
+        } catch (error) {
+            console.error('Failed to load initial data:', error);
+            this.showNotification('Nem sikerült betölteni az adatokat', 'error');
+            this.hideLoading();
+        }
+    }
+
+    async loadOverviewData() {
+        try {
+            const response = await this.apiCall('/invoices/overview');
+            if (response.success) {
+                this.state.overview = response.data;
+                this.updateOverviewCards();
+            }
+        } catch (error) {
+            console.error('Failed to load overview data:', error);
+            // Set default values if API fails
+            this.state.overview = {
+                todayInvoices: 0,
+                monthlyInvoices: 0,
+                todayRevenue: 0,
+                monthlyRevenue: 0,
+                paymentBreakdown: { CASH: 0, CARD: 0 }
+            };
+        }
+    }
+
+    async loadInvoices() {
+        try {
+            const params = new URLSearchParams({
+                page: this.state.currentPage,
+                limit: this.config.itemsPerPage,
+                search: this.state.searchQuery,
+                dateRange: this.state.filters.dateRange,
+                paymentMethod: this.state.filters.paymentMethod,
+                orderType: this.state.filters.orderType,
+                sortBy: this.state.sortBy,
+                sortOrder: this.state.sortOrder
+            });
+
+            // Add custom date range if selected
+            if (this.state.filters.startDate) {
+                params.append('startDate', this.state.filters.startDate);
+            }
+            if (this.state.filters.endDate) {
+                params.append('endDate', this.state.filters.endDate);
+            }
+
+            const response = await this.apiCall(`/invoices?${params}`);
+            
+            if (response.success) {
+                this.state.invoices = response.data.invoices || [];
+                this.state.totalInvoices = response.data.pagination?.total || 0;
+            } else {
+                throw new Error(response.error || 'Failed to load invoices');
+            }
+
+        } catch (error) {
+            console.error('Failed to load invoices:', error);
+            this.showNotification('Nem sikerült betölteni a számlákat', 'error');
+            this.state.invoices = [];
+            this.state.totalInvoices = 0;
+        }
+    }
+
+    setupEventListeners() {
+        // Section tabs
+        document.querySelectorAll('.invoices-section-tabs .tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const section = e.target.dataset.section;
+                this.switchSection(section);
+            });
+        });
+
+        // Overview section
+        this.setupOverviewListeners();
+        
+        // Management section
+        this.setupManagementListeners();
+        
+        // Reports section
+        this.setupReportsListeners();
+    }
+
+    setupOverviewListeners() {
+        const viewAllBtn = document.getElementById('viewAllInvoicesBtn');
+        if (viewAllBtn) {
+            viewAllBtn.addEventListener('click', () => {
+                this.switchSection('management');
+            });
+        }
+    }
+
+    setupManagementListeners() {
+        // Search
+        const searchInput = document.getElementById('invoiceSearch');
+        if (searchInput) {
+            searchInput.addEventListener('input', this.debounce((e) => {
+                this.state.searchQuery = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            }, 500));
+        }
+
+        // Filters
+        const dateRangeFilter = document.getElementById('dateRangeFilter');
+        const paymentMethodFilter = document.getElementById('paymentMethodFilter');
+        const orderTypeFilter = document.getElementById('orderTypeFilter');
+
+        if (dateRangeFilter) {
+            dateRangeFilter.addEventListener('change', (e) => {
+                this.state.filters.dateRange = e.target.value;
+                this.state.currentPage = 1;
+                
+                // Show/hide custom date inputs
+                const customDateRange = document.getElementById('customDateRange');
+                if (customDateRange) {
+                    customDateRange.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+                }
+                
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        if (paymentMethodFilter) {
+            paymentMethodFilter.addEventListener('change', (e) => {
+                this.state.filters.paymentMethod = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        if (orderTypeFilter) {
+            orderTypeFilter.addEventListener('change', (e) => {
+                this.state.filters.orderType = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        // Custom date range
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+
+        if (startDate) {
+            startDate.addEventListener('change', (e) => {
+                this.state.filters.startDate = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        if (endDate) {
+            endDate.addEventListener('change', (e) => {
+                this.state.filters.endDate = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        // Sort controls
+        const sortBy = document.getElementById('sortBy');
+        const sortOrder = document.getElementById('sortOrder');
+
+        if (sortBy) {
+            sortBy.addEventListener('change', (e) => {
+                this.state.sortBy = e.target.value;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        if (sortOrder) {
+            sortOrder.addEventListener('click', (e) => {
+                const currentOrder = e.target.dataset.order;
+                const newOrder = currentOrder === 'desc' ? 'asc' : 'desc';
+                
+                e.target.dataset.order = newOrder;
+                e.target.innerHTML = newOrder === 'desc' ? 
+                    '<i class="fas fa-sort-amount-down"></i>' : 
+                    '<i class="fas fa-sort-amount-up"></i>';
+                
+                this.state.sortOrder = newOrder;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }
+
+        // Bulk actions
+        const bulkDownloadBtn = document.getElementById('bulkDownloadBtn');
+        const bulkEmailBtn = document.getElementById('bulkEmailBtn');
+
+        if (bulkDownloadBtn) {
+            bulkDownloadBtn.addEventListener('click', () => {
+                this.bulkDownloadInvoices();
+            });
+        }
+
+        if (bulkEmailBtn) {
+            bulkEmailBtn.addEventListener('click', () => {
+                this.bulkEmailInvoices();
+            });
+        }
+    }
+
+    setupReportsListeners() {
+        // Monthly export
+        const exportMonthlyBtn = document.getElementById('exportMonthlyBtn');
+        if (exportMonthlyBtn) {
+            exportMonthlyBtn.addEventListener('click', () => {
+                const month = document.getElementById('exportMonth').value;
+                const year = document.getElementById('exportYear').value;
+                this.exportMonthlyReport(year, month);
+            });
+        }
+
+        // VAT report
+        const vatReportBtn = document.getElementById('vatReportBtn');
+        if (vatReportBtn) {
+            vatReportBtn.addEventListener('click', () => {
+                const month = document.getElementById('vatReportMonth').value;
+                const year = document.getElementById('vatReportYear').value;
+                this.generateVATReport(year, month);
+            });
+        }
+
+        // Custom export
+        const customExportBtn = document.getElementById('customExportBtn');
+        if (customExportBtn) {
+            customExportBtn.addEventListener('click', () => {
+                const startDate = document.getElementById('customExportStart').value;
+                const endDate = document.getElementById('customExportEnd').value;
+                this.exportCustomRange(startDate, endDate);
+            });
+        }
+    }
+
+    switchSection(section) {
+        // Update state
+        this.state.currentSection = section;
+
+        // Update tab buttons
+        document.querySelectorAll('.invoices-section-tabs .tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.section === section);
+        });
+
+        // Show section
+        this.showSection(section);
+        this.renderCurrentSection();
+    }
+
+    showSection(section) {
+        document.querySelectorAll('.invoices-section').forEach(sec => {
+            sec.classList.toggle('active', sec.id === `${section}-section`);
+        });
+    }
+
+    renderCurrentSection() {
+        switch (this.state.currentSection) {
+            case 'overview':
+                this.renderOverview();
+                break;
+            case 'management':
+                this.renderInvoicesTable();
+                break;
+            case 'reports':
+                this.renderReportsSection();
+                break;
+        }
+    }
+
+    updateOverviewCards() {
+        const { overview } = this.state;
+        
+        // Today revenue
+        const todayRevenueEl = document.getElementById('todayRevenue');
+        if (todayRevenueEl) {
+            todayRevenueEl.textContent = this.formatCurrency(overview.todayRevenue || 0);
+        }
+
+        // Today invoices count
+        const todayInvoicesEl = document.getElementById('todayInvoicesCount');
+        if (todayInvoicesEl) {
+            todayInvoicesEl.textContent = `${overview.todayInvoices || 0} számla`;
+        }
+
+        // Monthly revenue
+        const monthlyRevenueEl = document.getElementById('monthlyRevenue');
+        if (monthlyRevenueEl) {
+            monthlyRevenueEl.textContent = this.formatCurrency(overview.monthlyRevenue || 0);
+        }
+
+        // Monthly invoices count
+        const monthlyInvoicesEl = document.getElementById('monthlyInvoicesCount');
+        if (monthlyInvoicesEl) {
+            monthlyInvoicesEl.textContent = `${overview.monthlyInvoices || 0} számla`;
+        }
+
+        // Payment method breakdown
+        const totalPayments = (overview.paymentBreakdown?.CASH || 0) + (overview.paymentBreakdown?.CARD || 0);
+        
+        if (totalPayments > 0) {
+            const cardPercentage = Math.round((overview.paymentBreakdown?.CARD || 0) / totalPayments * 100);
+            const cashPercentage = 100 - cardPercentage;
+
+            const cardPercentageEl = document.getElementById('cardPaymentPercentage');
+            const cashPercentageEl = document.getElementById('cashPaymentPercentage');
+            const cardCountEl = document.getElementById('cardPaymentCount');
+            const cashCountEl = document.getElementById('cashPaymentCount');
+
+            if (cardPercentageEl) cardPercentageEl.textContent = `${cardPercentage}%`;
+            if (cashPercentageEl) cashPercentageEl.textContent = `${cashPercentage}%`;
+            if (cardCountEl) cardCountEl.textContent = `${overview.paymentBreakdown?.CARD || 0} számla`;
+            if (cashCountEl) cashCountEl.textContent = `${overview.paymentBreakdown?.CASH || 0} számla`;
+        }
+    }
+
+    renderOverview() {
+        this.updateOverviewCards();
+        this.renderRecentInvoices();
+    }
+
+    renderRecentInvoices() {
+        const container = document.getElementById('recentInvoicesList');
+        if (!container) return;
+
+        // Take first 5 invoices for recent list
+        const recentInvoices = this.state.invoices.slice(0, 5);
+
+        if (recentInvoices.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-file-invoice"></i>
+                    <h3>Nincsenek számlák</h3>
+                    <p>Még nincsenek kiállított számlák.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = recentInvoices.map(invoice => `
+            <div class="invoice-item" onclick="invoicesApp.viewInvoiceDetails(${invoice.id})">
+                <div class="invoice-info">
+                    <h4>${invoice.invoiceNumber}</h4>
+                    <p>${this.escapeHtml(invoice.customerName)} • ${this.formatCurrency(invoice.totalGross)} • ${this.formatDate(invoice.createdAt)}</p>
+                </div>
+                <div class="invoice-badges">
+                    <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
+                        <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
+                        ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
+                    </span>
+                    <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
+                        <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
+                        ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
+                    </span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderInvoicesTable() {
+        const container = document.getElementById('invoicesTable');
+        const countContainer = document.getElementById('invoicesCount');
+
+        if (!container) return;
+
+        // Update count
+        if (countContainer) {
+            countContainer.textContent = `${this.state.totalInvoices} számla`;
+        }
+
+        if (this.state.invoices.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>Nincsenek találatok</h3>
+                    <p>Próbálja meg módosítani a szűrési feltételeket.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div class="invoices-table-wrapper">
+                <table class="invoices-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="selectAllInvoices">
+                                    <span class="checkbox-custom"></span>
+                                </label>
+                            </th>
+                            <th>Számla száma</th>
+                            <th>Dátum</th>
+                            <th>Ügyfél</th>
+                            <th>Rendelés típus</th>
+                            <th>Fizetési mód</th>
+                            <th>Összeg</th>
+                            <th>Művelet</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${this.state.invoices.map(invoice => `
+                            <tr class="invoice-row">
+                                <td>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" 
+                                               class="invoice-checkbox" 
+                                               value="${invoice.id}">
+                                        <span class="checkbox-custom"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <a href="#" onclick="invoicesApp.viewInvoiceDetails(${invoice.id}); return false;" 
+                                       class="invoice-number-link">
+                                        ${invoice.invoiceNumber}
+                                    </a>
+                                </td>
+                                <td>${this.formatDate(invoice.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                                <td>${this.escapeHtml(invoice.customerName)}</td>
+                                <td>
+                                    <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
+                                        <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
+                                        ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
+                                        <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
+                                        ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
+                                    </span>
+                                </td>
+                                <td class="amount-cell">${this.formatCurrency(invoice.totalGross)}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-icon btn-info" 
+                                                onclick="invoicesApp.viewInvoiceDetails(${invoice.id})"
+                                                title="Megtekintés">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn-icon btn-primary" 
+                                                onclick="invoicesApp.downloadInvoice(${invoice.id})"
+                                                title="PDF letöltés">
+                                            <i class="fas fa-download"></i>
+                                        </button>
+                                        <button class="btn-icon btn-success" 
+                                                onclick="invoicesApp.emailInvoice(${invoice.id})"
+                                                title="Email küldés">
+                                            <i class="fas fa-envelope"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        // Setup table interactions
+        this.setupTableInteractions();
+        this.renderPagination();
+    }
+
+    setupTableInteractions() {
+        // Select all checkbox
+        const selectAllCheckbox = document.getElementById('selectAllInvoices');
+        if (selectAllCheckbox) {
+            selectAllCheckbox.addEventListener('change', (e) => {
+                const checkboxes = document.querySelectorAll('.invoice-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = e.target.checked;
+                    if (e.target.checked) {
+                        this.state.selectedInvoices.add(parseInt(checkbox.value));
+                    } else {
+                        this.state.selectedInvoices.delete(parseInt(checkbox.value));
+                    }
+                });
+                this.updateBulkActionButtons();
+            });
+        }
+
+        // Individual checkboxes
+        document.querySelectorAll('.invoice-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', (e) => {
+                const invoiceId = parseInt(e.target.value);
+                if (e.target.checked) {
+                    this.state.selectedInvoices.add(invoiceId);
+                } else {
+                    this.state.selectedInvoices.delete(invoiceId);
+                }
+                this.updateBulkActionButtons();
+                
+                // Update select all checkbox
+                const selectAllCheckbox = document.getElementById('selectAllInvoices');
+                if (selectAllCheckbox) {
+                    const allCheckboxes = document.querySelectorAll('.invoice-checkbox');
+                    const checkedCheckboxes = document.querySelectorAll('.invoice-checkbox:checked');
+                    selectAllCheckbox.checked = allCheckboxes.length === checkedCheckboxes.length;
+                    selectAllCheckbox.indeterminate = checkedCheckboxes.length > 0 && checkedCheckboxes.length < allCheckboxes.length;
+                }
+            });
+        });
+    }
+
+    updateBulkActionButtons() {
+        const selectedCount = this.state.selectedInvoices.size;
+        const bulkDownloadBtn = document.getElementById('bulkDownloadBtn');
+        const bulkEmailBtn = document.getElementById('bulkEmailBtn');
+
+        if (bulkDownloadBtn) {
+            bulkDownloadBtn.disabled = selectedCount === 0;
+            bulkDownloadBtn.textContent = selectedCount > 0 ? 
+                `${selectedCount} kijelölt letöltése` : 'Kijelöltek letöltése';
+        }
+
+        if (bulkEmailBtn) {
+            bulkEmailBtn.disabled = selectedCount === 0;
+            bulkEmailBtn.textContent = selectedCount > 0 ? 
+                `${selectedCount} kijelölt emailezése` : 'Kijelöltek emailezése';
+        }
+    }
+
+    renderPagination() {
+        const container = document.getElementById('paginationContainer');
+        if (!container) return;
+
+        const totalPages = Math.ceil(this.state.totalInvoices / this.config.itemsPerPage);
+        
+        if (totalPages <= 1) {
+            container.innerHTML = '';
+            return;
+        }
+
+        const currentPage = this.state.currentPage;
+        let paginationHTML = '<div class="pagination">';
+
+        // Previous button
+        if (currentPage > 1) {
+            paginationHTML += `
+                <button class="pagination-btn" onclick="invoicesApp.goToPage(${currentPage - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+        }
+
+        // Page numbers
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, currentPage + 2);
+
+        if (startPage > 1) {
+            paginationHTML += `<button class="pagination-btn" onclick="invoicesApp.goToPage(1)">1</button>`;
+            if (startPage > 2) {
+                paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+            }
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            paginationHTML += `
+                <button class="pagination-btn ${i === currentPage ? 'active' : ''}" 
+                        onclick="invoicesApp.goToPage(${i})">
+                    ${i}
+                </button>
+            `;
+        }
+
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+            }
+            paginationHTML += `<button class="pagination-btn" onclick="invoicesApp.goToPage(${totalPages})">${totalPages}</button>`;
+        }
+
+        // Next button
+        if (currentPage < totalPages) {
+            paginationHTML += `
+                <button class="pagination-btn" onclick="invoicesApp.goToPage(${currentPage + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+
+        paginationHTML += '</div>';
+        container.innerHTML = paginationHTML;
+    }
+
+    async goToPage(page) {
+        this.state.currentPage = page;
+        await this.loadInvoices();
+        this.renderInvoicesTable();
+    }
+
+    setupDateSelectors() {
+        const currentYear = new Date().getFullYear();
+        const currentMonth = new Date().getMonth();
+
+        // Month options
+        const months = [
+            'Január', 'Február', 'Március', 'Április', 'Május', 'Június',
+            'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December'
+        ];
+
+        // Populate export month selectors
+        const exportMonthSelectors = ['exportMonth', 'vatReportMonth'];
+        exportMonthSelectors.forEach(id => {
+            const select = document.getElementById(id);
+            if (select) {
+                select.innerHTML = months.map((month, index) => 
+                    `<option value="${index + 1}" ${index === currentMonth ? 'selected' : ''}>
+                        ${month}
+                    </option>`
+                ).join('');
+            }
+        });
+
+        // Populate year selectors
+        const yearSelectors = ['exportYear', 'vatReportYear'];
+        yearSelectors.forEach(id => {
+            const select = document.getElementById(id);
+            if (select) {
+                const years = [];
+                for (let year = currentYear; year >= currentYear - 5; year--) {
+                    years.push(`<option value="${year}" ${year === currentYear ? 'selected' : ''}>${year}</option>`);
+                }
+                select.innerHTML = years.join('');
+            }
+        });
+    }
+
+    renderReportsSection() {
+        // Reports section is already rendered in the main render method
+        // This method can be used for dynamic updates if needed
+        console.log('Reports section is ready');
+    }
+
+    // Invoice Detail Methods
+    async viewInvoiceDetails(invoiceId) {
+        try {
+            this.showLoading();
+            
+            const response = await this.apiCall(`/invoices/${invoiceId}`);
+            
+            if (response.success) {
+                this.renderInvoiceModal(response.data);
+                this.showInvoiceModal();
+            } else {
+                throw new Error(response.error || 'Failed to load invoice details');
+            }
+            
+        } catch (error) {
+            console.error('Failed to load invoice details:', error);
+            this.showNotification('Nem sikerült betölteni a számla részleteit', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    renderInvoiceModal(invoice) {
+        const modalTitle = document.getElementById('invoiceModalTitle');
+        const invoicePreview = document.getElementById('invoicePreview');
+
+        if (modalTitle) {
+            modalTitle.textContent = `Számla részletei - ${invoice.invoiceNumber}`;
+        }
+
+        if (invoicePreview) {
+            invoicePreview.innerHTML = `
+                <div class="invoice-details">
+                    <div class="invoice-header-info">
+                        <div class="invoice-meta">
+                            <h4>Alapadatok</h4>
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <label>Számla száma:</label>
+                                    <span>${invoice.invoiceNumber}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <label>Kiállítás dátuma:</label>
+                                    <span>${this.formatDate(invoice.createdAt)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <label>Esedékesség:</label>
+                                    <span>${this.formatDate(invoice.dueDate || invoice.createdAt)}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <label>Rendelés típus:</label>
+                                    <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
+                                        <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
+                                        ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
+                                    </span>
+                                </div>
+                                <div class="meta-item">
+                                    <label>Fizetési mód:</label>
+                                    <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
+                                        <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
+                                        ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="customer-info">
+                            <h4>Ügyfél adatok</h4>
+                            <div class="customer-details">
+                                <p><strong>Név:</strong> ${this.escapeHtml(invoice.customerName)}</p>
+                                ${invoice.customerEmail ? `<p><strong>Email:</strong> ${this.escapeHtml(invoice.customerEmail)}</p>` : ''}
+                                ${invoice.customerPhone ? `<p><strong>Telefon:</strong> ${this.escapeHtml(invoice.customerPhone)}</p>` : ''}
+                                ${invoice.customerAddress ? `<p><strong>Cím:</strong> ${this.escapeHtml(invoice.customerAddress)}</p>` : ''}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="invoice-items">
+                        <h4>Rendelés tételek</h4>
+                        <div class="items-table">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Termék</th>
+                                        <th>Mennyiség</th>
+                                        <th>Egységár</th>
+                                        <th>Összeg</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${invoice.items?.map(item => `
+                                        <tr>
+                                            <td>
+                                                <div class="item-details">
+                                                    <strong>${this.escapeHtml(item.name)}</strong>
+                                                    ${item.customizations?.length ? `
+                                                        <div class="customizations">
+                                                            ${item.customizations.map(custom => 
+                                                                `<span class="customization">${this.escapeHtml(custom.name)}</span>`
+                                                            ).join('')}
+                                                        </div>
+                                                    ` : ''}
+                                                </div>
+                                            </td>
+                                            <td>${item.quantity}</td>
+                                            <td>${this.formatCurrency(item.price)}</td>
+                                            <td>${this.formatCurrency(item.quantity * item.price)}</td>
+                                        </tr>
+                                    `).join('') || '<tr><td colspan="4">Nincsenek tételek</td></tr>'}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="invoice-totals">
+                        <div class="totals-section">
+                            <div class="total-row">
+                                <span>Nettó összeg:</span>
+                                <span>${this.formatCurrency(invoice.totalNet || 0)}</span>
+                            </div>
+                            <div class="total-row">
+                                <span>ÁFA (${invoice.vatRate || 27}%):</span>
+                                <span>${this.formatCurrency(invoice.totalVat || 0)}</span>
+                            </div>
+                            <div class="total-row final-total">
+                                <span><strong>Végösszeg:</strong></span>
+                                <span><strong>${this.formatCurrency(invoice.totalGross)}</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Setup modal action buttons
+        this.setupInvoiceModalActions(invoice);
+    }
+
+    setupInvoiceModalActions(invoice) {
+        // Clean up existing listeners
+        this.cleanupModalListeners();
+
+        const downloadBtn = document.getElementById('downloadInvoiceBtn');
+        const emailBtn = document.getElementById('emailInvoiceBtn');
+        const viewOrderBtn = document.getElementById('viewOrderBtn');
+        const closeBtn = document.getElementById('closeInvoiceModalBtn');
+        const modalCloseBtn = document.querySelector('#invoiceModal .modal-close');
+        const modalBackdrop = document.querySelector('#invoiceModal .modal-backdrop');
+
+        // Download action
+        if (downloadBtn) {
+            const downloadHandler = () => this.downloadInvoice(invoice.id);
+            downloadBtn.addEventListener('click', downloadHandler);
+            this.modalEventListeners.push({ element: downloadBtn, event: 'click', handler: downloadHandler });
+        }
+
+        // Email action
+        if (emailBtn) {
+            const emailHandler = () => this.emailInvoice(invoice.id);
+            emailBtn.addEventListener('click', emailHandler);
+            this.modalEventListeners.push({ element: emailBtn, event: 'click', handler: emailHandler });
+        }
+
+        // View order action
+        if (viewOrderBtn) {
+            const viewOrderHandler = () => this.viewRelatedOrder(invoice.orderId);
+            viewOrderBtn.addEventListener('click', viewOrderHandler);
+            this.modalEventListeners.push({ element: viewOrderBtn, event: 'click', handler: viewOrderHandler });
+        }
+
+        // Close actions
+        const closeHandler = () => this.hideInvoiceModal();
+        
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeHandler);
+            this.modalEventListeners.push({ element: closeBtn, event: 'click', handler: closeHandler });
+        }
+
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', closeHandler);
+            this.modalEventListeners.push({ element: modalCloseBtn, event: 'click', handler: closeHandler });
+        }
+
+        if (modalBackdrop) {
+            modalBackdrop.addEventListener('click', closeHandler);
+            this.modalEventListeners.push({ element: modalBackdrop, event: 'click', handler: closeHandler });
+        }
+    }
+
+    showInvoiceModal() {
+        const modal = document.getElementById('invoiceModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    hideInvoiceModal() {
+        const modal = document.getElementById('invoiceModal');
+        if (modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        this.cleanupModalListeners();
+    }
+
+    cleanupModalListeners() {
+        this.modalEventListeners.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        this.modalEventListeners = [];
+    }
+
+    // Action Methods
+    async downloadInvoice(invoiceId) {
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`${this.config.apiUrl}/invoices/${invoiceId}/pdf`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to download invoice');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `invoice-${invoiceId}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.showNotification('Számla sikeresen letöltve', 'success');
+
+        } catch (error) {
+            console.error('Failed to download invoice:', error);
+            this.showNotification('Nem sikerült letölteni a számlát', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async emailInvoice(invoiceId) {
+        try {
+            this.showLoading();
+            
+            const response = await this.apiCall(`/invoices/${invoiceId}/email`, {
+                method: 'POST'
+            });
+
+            if (response.success) {
+                this.showNotification('Email sikeresen elküldve', 'success');
+            } else {
+                throw new Error(response.error || 'Failed to send email');
+            }
+
+        } catch (error) {
+            console.error('Failed to send invoice email:', error);
+            this.showNotification('Nem sikerült elküldeni az emailt', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    viewRelatedOrder(orderId) {
+        if (orderId && window.adminDashboard) {
+            this.hideInvoiceModal();
+            window.adminDashboard.loadApp('orders');
+            // If orders app has a method to view specific order
+            setTimeout(() => {
+                if (window.ordersApp && window.ordersApp.viewOrderDetails) {
+                    window.ordersApp.viewOrderDetails(orderId);
+                }
+            }, 500);
+        }
+    }
+
+    // Bulk Actions
+    async bulkDownloadInvoices() {
+        if (this.state.selectedInvoices.size === 0) {
+            this.showNotification('Kérjük válasszon ki számlákat', 'warning');
+            return;
+        }
+
+        try {
+            this.showLoading();
+            
+            const invoiceIds = Array.from(this.state.selectedInvoices);
+            const response = await this.apiCall('/invoices/bulk-download', {
+                method: 'POST',
+                body: JSON.stringify({ invoiceIds })
+            });
+
+            if (response.success && response.data.downloadUrl) {
+                // Download the ZIP file
+                const a = document.createElement('a');
+                a.href = response.data.downloadUrl;
+                a.download = `invoices-${new Date().toISOString().split('T')[0]}.zip`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+
+                this.showNotification('Számlák sikeresen letöltve', 'success');
+            } else {
+                throw new Error(response.error || 'Failed to download invoices');
+            }
+
+        } catch (error) {
+            console.error('Failed to bulk download invoices:', error);
+            this.showNotification('Nem sikerült letölteni a számlákat', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async bulkEmailInvoices() {
+        if (this.state.selectedInvoices.size === 0) {
+            this.showNotification('Kérjük válasszon ki számlákat', 'warning');
+            return;
+        }
+
+        try {
+            this.showLoading();
+            
+            const invoiceIds = Array.from(this.state.selectedInvoices);
+            const response = await this.apiCall('/invoices/bulk-email', {
+                method: 'POST',
+                body: JSON.stringify({ invoiceIds })
+            });
+
+            if (response.success) {
+                this.showNotification(`${invoiceIds.length} számla sikeresen elküldve`, 'success');
+            } else {
+                throw new Error(response.error || 'Failed to send emails');
+            }
+
+        } catch (error) {
+            console.error('Failed to bulk email invoices:', error);
+            this.showNotification('Nem sikerült elküldeni az emaileket', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    // Export Methods
+    async exportMonthlyReport(year, month) {
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`${this.config.apiUrl}/invoices/export/monthly?year=${year}&month=${month}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to export monthly report');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `monthly-report-${year}-${month.toString().padStart(2, '0')}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.showNotification('Havi jelentés sikeresen letöltve', 'success');
+
+        } catch (error) {
+            console.error('Failed to export monthly report:', error);
+            this.showNotification('Nem sikerült exportálni a havi jelentést', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async generateVATReport(year, month) {
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`${this.config.apiUrl}/invoices/vat-report?year=${year}&month=${month}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to generate VAT report');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `vat-report-${year}-${month.toString().padStart(2, '0')}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.showNotification('ÁFA jelentés sikeresen letöltve', 'success');
+
+        } catch (error) {
+            console.error('Failed to generate VAT report:', error);
+            this.showNotification('Nem sikerült generálni az ÁFA jelentést', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    async exportCustomRange(startDate, endDate) {
+        if (!startDate || !endDate) {
+            this.showNotification('Kérjük adja meg a kezdő és végső dátumot', 'warning');
+            return;
+        }
+
+        try {
+            this.showLoading();
+            
+            const response = await fetch(`${this.config.apiUrl}/invoices/export/custom?startDate=${startDate}&endDate=${endDate}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to export custom range');
+            }
+
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `custom-export-${startDate}-${endDate}.xlsx`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+
+            this.showNotification('Egyedi export sikeresen letöltve', 'success');
+
+        } catch (error) {
+            console.error('Failed to export custom range:', error);
+            this.showNotification('Nem sikerült exportálni az egyedi időszakot', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    // Utility Methods
+    showLoading() {
+        const loading = document.getElementById('invoicesLoading');
+        if (loading) {
+            loading.style.display = 'flex';
+        }
+    }
+
+    hideLoading() {
+        const loading = document.getElementById('invoicesLoading');
+        if (loading) {
+            loading.style.display = 'none';
+        }
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    async refresh() {
+        await this.loadInitialData();
+    }
+
+    destroy() {
+        this.cleanupModalListeners();
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+        }
+        super.destroy();
+    }
+}
+
+// Make globally available for onclick handlers
+window.InvoicesApp = InvoicesApp;
+window.invoicesApp = null; // Will be set when app is created                                
+
 
 /**
  * Content App (Placeholder)
