@@ -34,10 +34,6 @@ class PalaceCheckout {
         this.customizationOptions = null; // Will be loaded from API
         this.currentItem = null;
 
-        this.stripe = null;
-        this.cardElement = null;
-        this.stripePublishableKey = null;
-
         // State management
         this.state = {
             cart: [],
@@ -67,8 +63,6 @@ class PalaceCheckout {
             await this.loadCartData();
 
             await this.loadCustomizationOptions();
-
-            await this.initializeStripe();
 
             // Initialize order type to pickup
             this.state.orderType = 'pickup';
@@ -857,206 +851,27 @@ class PalaceCheckout {
         date.setHours(hours, minutes, 0, 0);
         return date.toISOString();
     }
-
-    /**
-     * Initialize Stripe payment system
-     */
-    async initializeStripe() {
-        try {
-            console.log('💳 Initializing Stripe...');
-
-            // Get Stripe configuration from backend
-            const configResponse = await fetch(`${this.config.apiBaseUrl}/stripe/config`);
-            const config = await configResponse.json();
-
-            if (!config.success) {
-                throw new Error('Failed to load Stripe configuration');
-            }
-
-            this.stripePublishableKey = config.data.publishableKey;
-
-            // Initialize Stripe
-            this.stripe = Stripe(this.stripePublishableKey);
-
-            // Create card element
-            this.setupStripeElements();
-
-            console.log('✅ Stripe initialized successfully');
-
-        } catch (error) {
-            console.error('❌ Stripe initialization failed:', error);
-            // Disable card payment option
-            const stripeOption = document.querySelector('[data-payment="stripe"]');
-            if (stripeOption) {
-                stripeOption.style.opacity = '0.5';
-                stripeOption.style.cursor = 'not-allowed';
-                const input = stripeOption.querySelector('input');
-                if (input) input.disabled = true;
-            }
-        }
-    }
-
-    /**
-     * Set up Stripe Elements for card input
-     */
-    setupStripeElements() {
-        const elements = this.stripe.elements();
-
-        // Create card element with custom styling
-        this.cardElement = elements.create('card', {
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#333333',
-                    fontFamily: 'Poppins, Arial, sans-serif',
-                    '::placeholder': {
-                        color: '#999999',
-                    },
-                },
-                invalid: {
-                    color: '#38141A',
-                    iconColor: '#38141A'
-                }
-            },
-            hidePostalCode: true // We collect address separately
-        });
-
-        // Mount the card element
-        this.cardElement.mount('#card-element');
-
-        // Handle real-time validation errors from the card Element
-        this.cardElement.on('change', ({error}) => {
-            const displayError = document.getElementById('card-errors');
-            if (error) {
-                displayError.textContent = error.message;
-                displayError.classList.add('show');
-            } else {
-                displayError.textContent = '';
-                displayError.classList.remove('show');
-            }
-        });
-    }
-
-    /**
-     * Process Stripe payment
-     */
-    async processStripePayment() {
-        console.log('💳 Processing Stripe payment...');
-
-        try {
-            // Prepare order data
-            const orderData = this.prepareOrderData();
-
-            // Create payment intent
-            const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    amount: orderData.total,
-                    currency: 'eur',
-                    orderData: {
-                        customerName: orderData.customerName,
-                        customerEmail: orderData.customerEmail,
-                        customerPhone: orderData.customerPhone,
-                        orderType: orderData.orderType,
-                        deliveryAddress: orderData.deliveryAddress
-                    }
-                })
-            });
-
-            const paymentIntentResult = await paymentIntentResponse.json();
-
-            if (!paymentIntentResult.success) {
-                throw new Error(paymentIntentResult.error || 'Failed to create payment intent');
-            }
-
-            // Confirm payment with Stripe
-            const {error} = await this.stripe.confirmCardPayment(
-                paymentIntentResult.data.clientSecret,
-                {
-                    payment_method: {
-                        card: this.cardElement,
-                        billing_details: {
-                            name: orderData.customerName,
-                            email: orderData.customerEmail,
-                            phone: orderData.customerPhone,
-                        }
-                    }
-                }
-            );
-
-            if (error) {
-                throw new Error(error.message);
-            }
-
-            console.log('✅ Payment confirmed with Stripe');
-
-            // Confirm payment and create order in backend
-            const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    paymentIntentId: paymentIntentResult.data.paymentIntentId,
-                    orderData: orderData
-                })
-            });
-
-            const confirmResult = await confirmResponse.json();
-
-            if (!confirmResult.success) {
-                throw new Error(confirmResult.error || 'Failed to confirm payment');
-            }
-
-            console.log('🎉 Stripe order completed successfully');
-
-            // Redirect to confirmation page
-            this.redirectToConfirmation(confirmResult.data.orderNumber);
-
-        } catch (error) {
-            console.error('❌ Stripe payment failed:', error);
-            throw error;
-        }
-    }
-
-
-
     /**
      * Handle payment method change
      */
     handlePaymentChange(method) {
-        console.log('💳 Payment method changed to:', method);
-
         this.state.paymentMethod = method;
-
+        
         // Update UI
         const paymentOptions = document.querySelectorAll('.payment-option');
         paymentOptions.forEach(option => {
             option.classList.remove('active');
         });
-
+        
         const selectedOption = document.querySelector(`[data-payment="${method}"]`);
         if (selectedOption) {
             selectedOption.classList.add('active');
         }
-
-        // Show/hide card payment section
+        
+        // Future: Show/hide card processing section
         const cardSection = document.getElementById('cardPaymentSection');
         if (cardSection) {
-            if (method === 'stripe') {
-                cardSection.style.display = 'block';
-                // Focus on card element after a brief delay
-                setTimeout(() => {
-                    if (this.cardElement) {
-                        this.cardElement.focus();
-                    }
-                }, 100);
-            } else {
-                cardSection.style.display = 'none';
-            }
+            cardSection.style.display = method === 'stripe' ? 'block' : 'none';
         }
     }
 
@@ -2199,156 +2014,35 @@ class PalaceCheckout {
      * Handle place order
      */
     async handlePlaceOrder() {
-        console.log('📋 Processing order submission...');
+        if (!this.validateForm()) {
+            this.showNotification('Kérjük, töltsd ki az összes kötelező mezőt!', 'error');
+            return;
+        }
+
+        // Prepare order data
+        const orderData = this.prepareOrderData();
+        
+        // Show loading state
+        this.setLoadingState(true);
 
         try {
-            // Validate form
-            if (!this.validateOrderForm()) {
-                return;
-            }
-
-            // Show loading state
-            this.showOrderLoading(true);
-
-            if (this.state.paymentMethod === 'stripe') {
-                await this.processStripePayment();
+            // Submit order to backend
+            const response = await this.submitOrder(orderData);
+            
+            if (response.success) {
+                // Clear cart data
+                this.clearCartFromStorage();
+                
+                // Redirect to success page
+                window.location.href = `/order-confirmation.html?order=${response.data.orderNumber}`;
             } else {
-                await this.processCashOrder();
+                throw new Error(response.message || 'Hiba történt a rendelés leadásakor');
             }
-
         } catch (error) {
-            console.error('❌ Order submission failed:', error);
-            this.showError(error.message || 'Failed to process order. Please try again.');
-            this.showOrderLoading(false);
-        }
-    }
-
-    /**
-     * Validate order form (supports both payment methods)
-     */
-    validateOrderForm() {
-        // Check required fields
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        const email = document.getElementById('email').value.trim();
-
-        if (!firstName || !lastName || !phone || !email) {
-            this.showError('Kérjük, töltse ki az összes kötelező mezőt');
-            return false;
-        }
-
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            this.showError('Kérjük, adjon meg érvényes email címet');
-            return false;
-        }
-
-        // Validate delivery address if needed
-        if (this.state.orderType === 'delivery') {
-            const street = document.getElementById('street').value.trim();
-            const city = document.getElementById('city').value.trim();
-            const postalCode = document.getElementById('postalCode').value.trim();
-
-            if (!street || !city || !postalCode) {
-                this.showError('Kérjük, töltse ki a szállítási címet');
-                return false;
-            }
-        }
-
-        // Check legal checkboxes
-        const termsAccept = document.getElementById('termsAccept').checked;
-        const privacyAccept = document.getElementById('privacyAccept').checked;
-
-        if (!termsAccept || !privacyAccept) {
-            this.showError('Kérjük, fogadja el a szerződési feltételeket és az adatvédelmi nyilatkozatot');
-            return false;
-        }
-
-        // Validate cart
-        if (!this.state.cart || this.state.cart.length === 0) {
-            this.showError('A kosár üres. Kérjük, adjon hozzá termékeket a rendeléshez.');
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Show/hide loading state on order button
-     */
-    showOrderLoading(isLoading) {
-        const orderBtn = document.getElementById('placeOrderBtn');
-        const btnText = orderBtn.querySelector('.btn-text');
-        const btnIcon = orderBtn.querySelector('.btn-icon');
-        const btnLoading = orderBtn.querySelector('.btn-loading');
-
-        if (isLoading) {
-            orderBtn.classList.add('loading');
-            orderBtn.disabled = true;
-            btnText.style.display = 'none';
-            btnIcon.style.display = 'none';
-            btnLoading.style.display = 'flex';
-        } else {
-            orderBtn.classList.remove('loading');
-            orderBtn.disabled = false;
-            btnText.style.display = 'inline';
-            btnIcon.style.display = 'inline';
-            btnLoading.style.display = 'none';
-        }
-    }
-
-    /**
-     * Show error message to user
-     */
-    showError(message) {
-        this.showNotification(message, 'error');
-        console.error('Order Error:', message);
-    }
-
-    /**
-     * Redirect to confirmation page
-     */
-    redirectToConfirmation(orderNumber) {
-        // Clear cart data
-        localStorage.removeItem('palace_order_cart');
-
-        // Redirect to confirmation page with order number
-        window.location.href = `order-confirmation.html?order=${orderNumber}`;
-    }
-
-    /**
-     * Process cash order 
-     */
-    async processCashOrder() {
-        console.log('💵 Processing cash order...');
-
-        try {
-            const orderData = this.prepareOrderData();
-
-            const response = await fetch(`${this.config.apiBaseUrl}/orders`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(orderData)
-            });
-
-            const result = await response.json();
-
-            if (!result.success) {
-                throw new Error(result.error || 'Failed to create order');
-            }
-
-            console.log('🎉 Cash order completed successfully');
-
-            // Redirect to confirmation page
-            this.redirectToConfirmation(result.data.orderNumber);
-
-        } catch (error) {
-            console.error('❌ Cash order failed:', error);
-            throw error;
+            console.error('Order submission error:', error);
+            this.showNotification('Hiba történt a rendelés leadásakor. Kérjük, próbáld újra!', 'error');
+        } finally {
+            this.setLoadingState(false);
         }
     }
 
@@ -2356,223 +2050,56 @@ class PalaceCheckout {
      * Prepare order data for submission
      */
     prepareOrderData() {
-        console.log('=== PREPARING ORDER DATA ===');
+        const formData = this.collectFormData();
 
-        try {
-            // Get form data with validation
-            const firstName = this.getFieldValue('firstName');
-            const lastName = this.getFieldValue('lastName');
-            const phone = this.getFieldValue('phone');
-            const email = this.getFieldValue('email');
+        return {
+            // Customer information (backend format)
+            customerName: `${this.sanitizeInput(formData.firstName)} ${this.sanitizeInput(formData.lastName)}`.trim(),
+            customerPhone: formData.phone,
+            customerEmail: formData.email || null,
 
-            if (!firstName || !lastName || !phone || !email) {
-                throw new Error('Missing required customer information');
-            }
+            // Order type and payment
+            orderType: this.state.orderType.toUpperCase(), // 'PICKUP' or 'DELIVERY'
+            paymentMethod: this.state.paymentMethod.toUpperCase(), // 'CASH' or 'CARD' (for future)
 
-            // Get delivery information if needed
-            let deliveryAddress = null;
-            let deliveryNotes = null;
+            // Delivery information (only if delivery)
+            deliveryAddress: this.state.orderType === 'delivery' ? 
+                `${this.sanitizeInput(formData.street)}, ${this.sanitizeInput(formData.city)} ${formData.postalCode}`.trim() : null,
+            deliveryNotes: this.state.orderType === 'delivery' ? 
+                this.sanitizeInput(formData.deliveryNotes || '') || null : null,
 
-            if (this.state.orderType === 'delivery') {
-                const street = this.getFieldValue('street');
-                const city = this.getFieldValue('city');
-                const postalCode = this.getFieldValue('postalCode');
-                const notes = this.getFieldValue('deliveryNotes');
+            // Scheduled time (if not ASAP)
+            scheduledFor: this.getScheduledDateTime(),
 
-                if (!street || !city || !postalCode) {
-                    throw new Error('Missing required delivery address information');
+            // Order items (backend format)
+            items: this.state.cart.map(item => {
+                // Extract menu item ID (remove any prefixes like 'drink-')
+                let menuItemId = item.originalId || item.id;
+                if (typeof menuItemId === 'string' && menuItemId.includes('-')) {
+                    // Try to extract numeric ID from strings like 'drink-123' or 'PCB-123-456'
+                    const numericMatch = menuItemId.match(/\d+/);
+                    menuItemId = numericMatch ? parseInt(numericMatch[0]) : parseInt(menuItemId);
                 }
 
-                deliveryAddress = `${street}, ${city} ${postalCode}`;
-                deliveryNotes = notes || null;
-            }
-
-            // Get scheduled time
-            let scheduledFor = null;
-            if (this.state.selectedTime === 'scheduled') {
-                scheduledFor = this.getScheduledDateTime();
-            }
-
-            // Calculate totals
-            const subtotal = this.calculateSubtotal();
-            const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
-            const total = subtotal + deliveryFee;
-
-            // Prepare items in the exact format the backend expects
-            const items = this.state.cart.map((item, index) => {
-                console.log(`Processing cart item ${index}:`, item);
-
-                // Extract menu item ID - handle different ID formats
-                let menuItemId = this.extractMenuItemId(item);
-
-                // Prepare customization data
-                const customization = item.customization || {};
-
-                // Map frontend customization to backend format
-                const orderItem = {
-                    menuItemId: menuItemId,
-                    quantity: parseInt(item.quantity) || 1,
-                    selectedSauce: customization.sauce || null,
-                    friesUpgrade: customization.fries || null,
-                    extras: Array.isArray(customization.extras) ? customization.extras : [],
-                    removeItems: this.parseRemoveInstructions(customization.removeInstructions),
-                    specialNotes: customization.specialInstructions || null
+                return {
+                    menuItemId: parseInt(menuItemId),
+                    quantity: item.quantity,
+                    selectedSauce: item.customization?.sauce || null,
+                    friesUpgrade: item.customization?.fries === 'regular' ? null : item.customization?.fries || null,
+                    extras: item.customization?.extras || [],
+                    removeItems: item.customization?.removeInstructions ? 
+                        [item.customization.removeInstructions] : [],
+                    specialNotes: this.sanitizeInput(
+                        item.customization?.specialInstructions || 
+                        item.specialNotes || 
+                        ''
+                    ) || null
                 };
+            }),
 
-                console.log(`Mapped item ${index}:`, orderItem);
-                return orderItem;
-            });
-
-            // Build final order data object matching backend expectations
-            const orderData = {
-                // Customer information
-                customerName: `${firstName} ${lastName}`.trim(),
-                customerPhone: phone,
-                customerEmail: email,
-
-                // Order details
-                orderType: this.state.orderType.toUpperCase(), // 'PICKUP' or 'DELIVERY'
-                paymentMethod: this.state.paymentMethod.toUpperCase(), // 'CASH' or 'STRIPE'
-
-                // Delivery info (only for delivery orders)
-                deliveryAddress,
-                deliveryNotes,
-
-                // Special notes and timing
-                specialNotes: null,
-                scheduledFor,
-
-                // Order items
-                items,
-
-                // Totals (for validation)
-                subtotal,
-                deliveryFee,
-                total
-            };
-
-            console.log('Final order data:', orderData);
-
-            // Validate the prepared data
-            this.validateOrderData(orderData);
-
-            return orderData;
-
-        } catch (error) {
-            console.error('Error preparing order data:', error);
-            throw new Error(`Failed to prepare order: ${error.message}`);
-        }
-    }
-
-    getFieldValue(fieldId) {
-        const field = document.getElementById(fieldId);
-        if (!field) {
-            console.warn(`Field not found: ${fieldId}`);
-            return '';
-        }
-        return this.sanitizeInput(field.value.trim());
-    }
-
-    extractMenuItemId(item) {
-        console.log('Extracting menu ID from:', { id: item.id, originalId: item.originalId, category: item.category });
-
-        let menuItemId = item.originalId || item.id;
-
-        if (typeof menuItemId === 'string') {
-            if (menuItemId.startsWith('drink-')) {
-                const numericId = menuItemId.replace('drink-', '');
-                const parsed = parseInt(numericId);
-                if (!isNaN(parsed)) {
-                    console.log(`Extracted drink ID: ${parsed} from ${menuItemId}`);
-                    return parsed;
-                }
-            }
-
-            if (menuItemId.includes('-')) {
-                const numericMatch = menuItemId.match(/\d+/);
-                if (numericMatch) {
-                    const parsed = parseInt(numericMatch[0]);
-                    console.log(`Extracted numeric ID: ${parsed} from ${menuItemId}`);
-                    return parsed;
-                }
-            }
-
-            const parsed = parseInt(menuItemId);
-            if (!isNaN(parsed)) {
-                console.log(`Parsed string ID to number: ${parsed}`);
-                return parsed;
-            }
-        }
-
-        if (typeof menuItemId === 'number') {
-            console.log(`Using numeric ID: ${menuItemId}`);
-            return menuItemId;
-        }
-
-        console.warn(`Could not extract valid menu ID from:`, item);
-        const fallbackId = this.hashCode(item.name || 'unknown-item');
-        console.warn(`Using fallback hash ID: ${fallbackId}`);
-        return Math.abs(fallbackId);
-    }
-
-    parseRemoveInstructions(removeInstructions) {
-        if (!removeInstructions || typeof removeInstructions !== 'string') {
-            return [];
-        }
-
-        return removeInstructions
-            .split(/[,;]/)
-            .map(item => item.trim())
-            .filter(item => item.length > 0)
-            .map(item => this.sanitizeInput(item));
-    }
-
-    hashCode(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash = hash & hash;
-        }
-        return hash;
-    }
-
-    validateOrderData(orderData) {
-        const errors = [];
-
-        if (!orderData.customerName) errors.push('Customer name is required');
-        if (!orderData.customerPhone) errors.push('Customer phone is required');
-        if (!orderData.customerEmail) errors.push('Customer email is required');
-        if (!orderData.orderType) errors.push('Order type is required');
-        if (!orderData.paymentMethod) errors.push('Payment method is required');
-
-        if (orderData.orderType === 'DELIVERY' && !orderData.deliveryAddress) {
-            errors.push('Delivery address is required for delivery orders');
-        }
-
-        if (!orderData.items || orderData.items.length === 0) {
-            errors.push('At least one item is required');
-        }
-
-        orderData.items.forEach((item, index) => {
-            if (!item.menuItemId) {
-                errors.push(`Item ${index + 1}: Missing menu item ID`);
-            }
-            if (!item.quantity || item.quantity < 1) {
-                errors.push(`Item ${index + 1}: Invalid quantity`);
-            }
-        });
-
-        if (orderData.total <= 0) {
-            errors.push('Order total must be greater than 0');
-        }
-
-        if (errors.length > 0) {
-            console.error('Order validation errors:', errors);
-            throw new Error(`Order validation failed: ${errors.join(', ')}`);
-        }
-
-        console.log('✅ Order data validation passed');
+            // General order notes
+            specialNotes: null // Can be used for overall order notes if needed
+        };
     }
 
     /**
