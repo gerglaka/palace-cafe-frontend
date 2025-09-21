@@ -2268,8 +2268,19 @@ class PalaceCheckout {
             console.log('💰 Processing payment for total:', total);
             console.log('💰 Amount in cents:', Math.round(total * 100));
 
-            // Step 1: Create payment intent
-            console.log('📤 Sending payment intent request...');
+            // Step 1: Submit the payment element (required for modern Stripe API)
+            console.log('📤 Submitting payment element...');
+            const {error: submitError} = await this.stripeElements.submit();
+
+            if (submitError) {
+                console.error('❌ Payment element submission error:', submitError);
+                throw new Error(submitError.message);
+            }
+
+            console.log('✅ Payment element submitted successfully');
+
+            // Step 2: Create payment intent
+            console.log('📤 Creating payment intent...');
             const paymentIntentResponse = await fetch(`${this.config.apiBaseUrl}/stripe/create-payment-intent`, {
                 method: 'POST',
                 headers: {
@@ -2295,9 +2306,9 @@ class PalaceCheckout {
                 throw new Error(paymentIntent.error || 'Failed to create payment intent');
             }
 
-            // Step 2: Submit payment directly (no element recreation)
-            console.log('🔐 Submitting payment...');
-            const {error: submitError} = await this.stripe.confirmPayment({
+            // Step 3: Confirm payment
+            console.log('🔐 Confirming payment...');
+            const {error: confirmError} = await this.stripe.confirmPayment({
                 elements: this.stripeElements,
                 clientSecret: paymentIntent.data.clientSecret,
                 confirmParams: {
@@ -2313,16 +2324,16 @@ class PalaceCheckout {
                 redirect: 'if_required'
             });
 
-            console.log('🔐 Payment confirmation result:', submitError ? 'ERROR' : 'SUCCESS');
+            console.log('🔐 Payment confirmation result:', confirmError ? 'ERROR' : 'SUCCESS');
 
-            if (submitError) {
-                console.error('❌ Payment confirmation error:', submitError);
-                throw new Error(submitError.message);
+            if (confirmError) {
+                console.error('❌ Payment confirmation error:', confirmError);
+                throw new Error(confirmError.message);
             }
 
             console.log('✅ Payment confirmed, creating order...');
 
-            // Step 3: Confirm order creation
+            // Step 4: Confirm order creation
             const confirmResponse = await fetch(`${this.config.apiBaseUrl}/stripe/confirm-payment`, {
                 method: 'POST',
                 headers: {
