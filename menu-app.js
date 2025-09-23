@@ -210,6 +210,17 @@ class MenuApp extends BaseApp {
                                                placeholder="9.99"
                                                required>
                                     </div>
+
+                                    <div class="form-group" id="priceAddonGroup" style="display: none;">
+                                        <label for="itemPriceAddon">Kiegészítő ár (EUR):</label>
+                                        <input type="number" 
+                                               id="itemPriceAddon" 
+                                               name="priceAddon" 
+                                               step="0.01" 
+                                               min="0"
+                                               placeholder="2.50">
+                                        <small>Ár különbözet amikor köretként választják</small>
+                                    </div>
                                     
                                     <div class="form-group">
                                         <label for="itemCategory">Kategória*:</label>
@@ -1130,6 +1141,7 @@ class MenuApp extends BaseApp {
                 // Populate form fields
                 document.getElementById('itemSlug').value = item.slug || '';
                 document.getElementById('itemPrice').value = item.price || '';
+                document.getElementById('itemPriceAddon').value = item.priceAddon || '';
                 document.getElementById('itemBadge').value = item.badge || '';
                 document.getElementById('spicyLevel').value = item.spicyLevel || '0';
                 document.getElementById('allergens').value = Array.isArray(item.allergens) ? item.allergens.join(', ') : '';
@@ -1176,9 +1188,37 @@ class MenuApp extends BaseApp {
         this.state.categories.forEach(category => {
             const option = document.createElement('option');
             option.value = category.id;
+            option.setAttribute('data-slug', category.slug);
             option.textContent = category.translations.hu?.name || 'Névtelen kategória';
             categorySelect.appendChild(option);
         });
+    }
+
+    handleCategoryChange(e) {
+        const categoryId = parseInt(e.target.value);
+        const priceAddonGroup = document.getElementById('priceAddonGroup');
+
+        if (!categoryId || !priceAddonGroup) return;
+
+        // Get selected option to check slug
+        const selectedOption = e.target.options[e.target.selectedIndex];
+        const categorySlug = selectedOption.getAttribute('data-slug');
+
+        if (categorySlug === 'sides') {
+            // Show price addon field for sides
+            priceAddonGroup.style.display = 'block';
+            document.getElementById('itemPriceAddon').required = true;
+
+            // Set focus to price addon field
+            setTimeout(() => {
+                document.getElementById('itemPriceAddon').focus();
+            }, 100);
+        } else {
+            // Hide price addon field for other categories
+            priceAddonGroup.style.display = 'none';
+            document.getElementById('itemPriceAddon').required = false;
+            document.getElementById('itemPriceAddon').value = '';
+        }
     }
 
     setupModalListeners(modal) {
@@ -1221,6 +1261,10 @@ class MenuApp extends BaseApp {
         removeBtn.addEventListener('click', removeHandler);
         fileInput.addEventListener('change', fileHandler);
 
+        const categorySelect = document.getElementById('itemCategory');
+        const categoryHandler = (e) => this.handleCategoryChange(e);
+        categorySelect.addEventListener('change', categoryHandler);
+
         // Track all listeners for cleanup
         this.modalEventListeners.push(
             { element: backdrop, event: 'click', handler: closeHandler },
@@ -1229,7 +1273,8 @@ class MenuApp extends BaseApp {
             { element: form, event: 'submit', handler: formHandler },
             { element: uploadBtn, event: 'click', handler: uploadHandler },
             { element: removeBtn, event: 'click', handler: removeHandler },
-            { element: fileInput, event: 'change', handler: fileHandler }
+            { element: fileInput, event: 'change', handler: fileHandler },
+            { element: categorySelect, event: 'change', handler: categoryHandler }
         );
     }
 
@@ -1474,6 +1519,11 @@ class MenuApp extends BaseApp {
         if (form) {
             form.reset();
             delete form.dataset.itemId;
+
+            const priceAddonGroup = document.getElementById('priceAddonGroup');
+            if (priceAddonGroup) {
+                priceAddonGroup.style.display =  'none';
+            }
         }
     }
 
