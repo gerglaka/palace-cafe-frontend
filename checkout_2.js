@@ -325,7 +325,7 @@ class PalaceCheckout {
 
 
     /**
-     * Display drink suggestions
+     * Display drink suggestions with dynamic quantity controls
      */
     displayDrinkSuggestions() {
         const drinkOptionsContainer = document.getElementById('drinkOptions');
@@ -347,7 +347,10 @@ class PalaceCheckout {
             const safeName = this.sanitizeInput(drink.name || 'Unnamed Drink');
             const safePrice = parseFloat(drink.price || 0).toFixed(2);
             const safeId = drink.id || `drink-${Math.random().toString(36).substr(2, 9)}`;
-        
+
+            // Get current quantity from cart
+            const currentQuantity = this.getDrinkQuantityFromCart(safeId);
+
             return `
                 <div class="drink-suggestion" data-drink-id="${safeId}">
                     <div class="drink-image-container">
@@ -360,16 +363,124 @@ class PalaceCheckout {
                         <div class="drink-name">${safeName}</div>
                         <div class="drink-price">€${safePrice}</div>
                     </div>
-                    <button class="add-drink-btn" 
-                            onclick="checkout.addDrinkToOrder('${safeId}', '${safeName}', ${drink.price || 0}, '${imgSrc}')">
-                        Hozzáadás
-                    </button>
+                    <div class="drink-button-container" id="drink-controls-${safeId}">
+                        ${this.generateDrinkButtonHTML(safeId, safeName, drink.price, imgSrc, currentQuantity)}
+                    </div>
                 </div>
             `;
         }).join('');
 
         // Show the section
         if (drinkSection) drinkSection.style.display = 'block';
+    }
+
+    /**
+     * Generate dynamic button HTML based on quantity
+     */
+    generateDrinkButtonHTML(drinkId, name, price, imageUrl, quantity = 0) {
+        if (quantity === 0) {
+            // Show single "Hozzáadás" button
+            return `
+                <button class="add-drink-btn" 
+                        onclick="checkout.addDrinkToOrder('${drinkId}', '${name}', ${price}, '${imageUrl}')">
+                    Hozzáadás
+                </button>
+            `;
+        } else {
+            // Show quantity controls
+            return `
+                <div class="drink-quantity-controls">
+                    <button class="drink-qty-btn decrease" 
+                            onclick="checkout.decreaseDrinkQuantity('${drinkId}', '${name}', ${price}, '${imageUrl}')">
+                        -
+                    </button>
+                    <span class="drink-quantity-display">${quantity}</span>
+                    <button class="drink-qty-btn increase" 
+                            onclick="checkout.increaseDrinkQuantity('${drinkId}', '${name}', ${price}, '${imageUrl}')">
+                        +
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    /**
+     * Get current quantity of a drink from cart
+     */
+    getDrinkQuantityFromCart(drinkId) {
+        const cartItem = this.state.cart.find(item => 
+            item.category === 'drink' && item.originalId === drinkId
+        );
+        return cartItem ? cartItem.quantity : 0;
+    }
+
+    /**
+     * Increase drink quantity
+     */
+    increaseDrinkQuantity(drinkId, name, price, imageUrl) {
+        const cartItem = this.state.cart.find(item => 
+            item.category === 'drink' && item.originalId === drinkId
+        );
+
+        if (cartItem && cartItem.quantity < 10) { // Max quantity limit
+            cartItem.quantity += 1;
+
+            // Update displays
+            this.updateDrinkButtonDisplay(drinkId, name, price, imageUrl);
+            this.updateCartDisplay();
+            this.updateOrderSummary();
+            this.saveCartToStorage();
+        }
+    }
+
+    /**
+     * Decrease drink quantity
+     */
+    decreaseDrinkQuantity(drinkId, name, price, imageUrl) {
+        const cartItem = this.state.cart.find(item => 
+            item.category === 'drink' && item.originalId === drinkId
+        );
+
+        if (cartItem) {
+            if (cartItem.quantity > 1) {
+                cartItem.quantity -= 1;
+                this.updateDrinkButtonDisplay(drinkId, name, price, imageUrl);
+            } else {
+                // Remove item from cart when quantity reaches 0
+                const itemIndex = this.state.cart.findIndex(item => item.id === cartItem.id);
+                if (itemIndex !== -1) {
+                    this.state.cart.splice(itemIndex, 1);
+
+                    // Remove from addedDrinks tracking
+                    const addedIndex = this.state.addedDrinks.indexOf(drinkId);
+                    if (addedIndex !== -1) {
+                        this.state.addedDrinks.splice(addedIndex, 1);
+                    }
+                }
+                this.updateDrinkButtonDisplay(drinkId, name, price, imageUrl);
+            }
+
+            // Update displays
+            this.updateCartDisplay();
+            this.updateOrderSummary();
+            this.saveCartToStorage();
+
+            // Check if cart is now empty
+            if (this.state.cart.length === 0) {
+                this.redirectToOrderPage();
+            }
+        }
+    }
+
+    /**
+     * Update drink button display based on current quantity
+     */
+    updateDrinkButtonDisplay(drinkId, name, price, imageUrl) {
+        const buttonContainer = document.getElementById(`drink-controls-${drinkId}`);
+        if (!buttonContainer) return;
+
+        const currentQuantity = this.getDrinkQuantityFromCart(drinkId);
+        buttonContainer.innerHTML = this.generateDrinkButtonHTML(drinkId, name, price, imageUrl, currentQuantity);
     }
 
     /**
@@ -399,12 +510,6 @@ class PalaceCheckout {
      * Add drink to order
      */
     addDrinkToOrder(drinkId, name, price, imageUrl) {
-        // Check if drink already added
-        if (this.state.addedDrinks.includes(drinkId)) {
-            this.showNotification('Ez az ital már hozzá van adva a rendeléshez!', 'warning');
-            return;
-        }
-
         const drinkItem = {
             id: `drink-${Date.now()}`,
             originalId: drinkId,
@@ -418,22 +523,12 @@ class PalaceCheckout {
         };
 
         this.state.cart.push(drinkItem);
-        this.state.addedDrinks.push(drinkId);
-        
+
+        // Update displays
+        this.updateDrinkButtonDisplay(drinkId, name, price, imageUrl);
         this.updateCartDisplay();
         this.updateOrderSummary();
         this.saveCartToStorage();
-        
-        // Update UI
-        const drinkSuggestion = document.querySelector(`[data-drink-id="${drinkId}"]`);
-        if (drinkSuggestion) {
-            drinkSuggestion.classList.add('selected');
-            const btn = drinkSuggestion.querySelector('.add-drink-btn');
-            if (btn) {
-                btn.textContent = 'Hozzáadva ✓';
-                btn.disabled = true;
-            }
-        }
 
         this.showNotification('Ital hozzáadva a rendeléshez!', 'success');
     }
