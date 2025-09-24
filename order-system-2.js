@@ -679,9 +679,6 @@ class OrderSystem {
                         <div class="allergen-info">
                             <div class="allergen-code">${allergenCode}</div>
                             <div class="allergen-name" id="allergenName"></div>
-                            <div class="allergen-description">
-                                Ez az allergén információ az EU szabályozás szerint.
-                            </div>
                         </div>
                     </div>
                 </div>
