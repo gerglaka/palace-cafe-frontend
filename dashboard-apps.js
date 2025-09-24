@@ -3898,17 +3898,6 @@ class UsersApp extends BaseApp {
                         <span class="user-role role-${user.role.toLowerCase()}">${this.getRoleDisplayName(user.role)}</span>
                     </div>
                 </div>
-                <div class="user-status">
-                    <span class="status-badge ${user.isActive ? 'active' : 'inactive'}">
-                        ${user.isActive ? 'Aktív' : 'Inaktív'}
-                    </span>
-                    <p class="last-login">
-                        ${user.lastLoginAt ? 
-                            `Utolsó belépés: ${this.formatDate(user.lastLoginAt)}` : 
-                            'Még nem lépett be'
-                        }
-                    </p>
-                </div>
                 <div class="user-actions">
                     <button class="btn-icon btn-info" onclick="usersApp.editUser(${user.id})" title="Szerkesztés">
                         <i class="fas fa-edit"></i>
