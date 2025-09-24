@@ -31,8 +31,145 @@ class OrdersApp extends BaseApp {
     }
 
     initNotificationSound() {
-        this.notificationSound = null;
-        console.log('Notification sound disabled for testing');
+        // Initialize Web Audio API context
+        try {
+            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            this.notificationEnabled = true;
+            console.log('✅ Notification sound system initialized');
+        } catch (error) {
+            console.warn('⚠️ Web Audio API not supported:', error);
+            this.notificationEnabled = false;
+        }
+    }
+
+    /**
+     * Generate a pleasant notification chime sound
+     */
+    generateNotificationSound() {
+        if (!this.audioContext || !this.notificationEnabled) return;
+
+        try {
+            // Resume audio context if suspended (browser autoplay policy)
+            if (this.audioContext.state === 'suspended') {
+                this.audioContext.resume();
+            }
+
+            const now = this.audioContext.currentTime;
+            const duration = 0.6; // 600ms total duration
+
+            // Create oscillators for a pleasant chime (two-tone)
+            const oscillator1 = this.audioContext.createOscillator();
+            const oscillator2 = this.audioContext.createOscillator();
+
+            // Create gain nodes for volume control
+            const gainNode1 = this.audioContext.createGain();
+            const gainNode2 = this.audioContext.createGain();
+            const masterGain = this.audioContext.createGain();
+
+            // Set frequencies (C6 and E6 - pleasant harmony)
+            oscillator1.frequency.setValueAtTime(1047, now); // C6
+            oscillator2.frequency.setValueAtTime(1319, now); // E6
+
+            // Use sine waves for pleasant tone
+            oscillator1.type = 'sine';
+            oscillator2.type = 'sine';
+
+            // Create envelope (attack-decay-release)
+            const volume = 0.15; // Moderate volume
+
+            // First tone envelope
+            gainNode1.gain.setValueAtTime(0, now);
+            gainNode1.gain.linearRampToValueAtTime(volume, now + 0.1);
+            gainNode1.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+            // Second tone envelope (slightly delayed and quieter)
+            gainNode2.gain.setValueAtTime(0, now);
+            gainNode2.gain.linearRampToValueAtTime(volume * 0.7, now + 0.05);
+            gainNode2.gain.exponentialRampToValueAtTime(0.01, now + duration);
+
+            // Master gain
+            masterGain.gain.setValueAtTime(1, now);
+
+            // Connect audio graph
+            oscillator1.connect(gainNode1);
+            oscillator2.connect(gainNode2);
+            gainNode1.connect(masterGain);
+            gainNode2.connect(masterGain);
+            masterGain.connect(this.audioContext.destination);
+
+            // Start and stop oscillators
+            oscillator1.start(now);
+            oscillator2.start(now + 0.05); // Slight delay for harmony
+            oscillator1.stop(now + duration);
+            oscillator2.stop(now + duration);
+
+        } catch (error) {
+            console.error('Failed to generate notification sound:', error);
+        }
+    }
+
+    /**
+     * Play notification sound with user interaction check
+     */
+    async playNotificationSound() {
+        if (!this.audioContext || !this.notificationEnabled) return;
+
+        try {
+            // Handle browser autoplay policy
+            if (this.audioContext.state === 'suspended') {
+                await this.audioContext.resume();
+            }
+
+            this.generateNotificationSound();
+        } catch (error) {
+            console.warn('Could not play notification sound:', error);
+            // Fallback: show a more prominent visual notification
+            this.showVisualNotification();
+        }
+    }
+
+    /**
+     * Fallback visual notification when sound fails
+     */
+    showVisualNotification() {
+        // Create a brief visual flash effect
+        const flash = document.createElement('div');
+        flash.className = 'notification-flash';
+        flash.innerHTML = '🔔 Új rendelés!';
+
+        flash.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 10000;
+            animation: flashNotification 2s ease-out;
+            pointer-events: none;
+        `;
+
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 2000);
+
+        // Add CSS animation if not exists
+        if (!document.querySelector('#notificationStyles')) {
+            const style = document.createElement('style');
+            style.id = 'notificationStyles';
+            style.textContent = `
+                @keyframes flashNotification {
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+                    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                    100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
     }
 
     setupWebSocket() {
@@ -792,7 +929,12 @@ class OrdersApp extends BaseApp {
     }
 
     handleNewOrder(orderData) {
-        console.log('New order notification (sound disabled):', orderData);
+        console.log('🔔 New order received:', orderData);
+        
+        // Play notification sound
+        this.playNotificationSound();
+        
+        // Show text notification
         this.showNotification(`Új rendelés érkezett: ${orderData.orderNumber}`, 'info');
         
         this.loadActiveOrders().then(() => {
