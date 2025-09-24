@@ -142,7 +142,6 @@ body {
 .logo {
     height: 60px;
     width: auto;
-    transform: translateY(10px);
     transition: var(--transition-smooth);
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
 }
