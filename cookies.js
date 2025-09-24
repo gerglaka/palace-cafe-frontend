@@ -247,19 +247,32 @@ class CookieConsent {
      * Initialize Google Analytics (when you add it later)
      */
     initGoogleAnalytics() {
-        // This is where Google Analytics will be initialized
-        // For now, just log that it would be initialized
-        console.log('📊 Google Analytics would be initialized here');
+        console.log('📊 Initializing Google Analytics...');
         
-        // Future implementation:
-        /*
         if (typeof gtag !== 'undefined') {
+            // Update consent for analytics
             gtag('consent', 'update', {
                 'analytics_storage': 'granted'
             });
-            gtag('config', 'YOUR_GA_MEASUREMENT_ID');
+            
+            // Enable enhanced measurement features if user fully consented
+            if (this.consentData.marketing) {
+                gtag('config', 'YOUR_G_ID_HERE', {
+                    'allow_google_signals': true,
+                    'allow_ad_personalization_signals': true
+                });
+            }
+            
+            // Track that analytics was enabled
+            gtag('event', 'cookie_consent_granted', {
+                'event_category': 'privacy',
+                'event_label': 'analytics_enabled'
+            });
+            
+            console.log('✅ Google Analytics initialized with user consent');
+        } else {
+            console.warn('⚠️ Google Analytics not loaded');
         }
-        */
     }
 
     /**
