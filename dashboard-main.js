@@ -122,7 +122,7 @@ function setupGlobalErrorHandling() {
  * Setup service worker for offline support
  */
 function setupServiceWorker() {
-    if ('serviceWorker' in navigator) {
+/**    if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/admin-sw.js')
                 .then(registration => {
@@ -149,6 +149,10 @@ function setupServiceWorker() {
                 });
         });
     }
+}*/
+
+    // Disable service worker for now to avoid 404 errors
+    console.log('Service worker disabled in development');
 }
 
 /**
