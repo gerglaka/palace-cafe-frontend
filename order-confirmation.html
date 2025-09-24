@@ -311,9 +311,9 @@
                     <li><a href="/menu">Menü</a></li>
                     <!--<li><a href="/rolunk">Rólunk</a></li>-->
                     <li><a href="/rendeles">Rendelj Online</a></li>
-                    <li><a href="/adatvedelmi-nyilatkozat">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" rel="noopener noreferrer">Adatvédelmi Nyilatkozat</a></li>
                     <li><a href="/sutik">Sütik</a></li>
-                    <li><a href="/felhasznalasi-feltetelek">Felhasználási Feltételek</a></li>
+                    <li><a href="documents/Podmienky používania webovej stránky.pdf" target="_blank" rel="noopener noreferrer">Felhasználási Feltételek</a></li>
                 </ul>
             </div>
 
@@ -353,10 +353,82 @@
             <div class="conf-toast-message" id="errorMessage">Hiba történt a rendelés betöltése során</div>
         </div>
     </div>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookieConsent" class="cookie-consent">
+        <div class="cookie-content">
+            <div class="cookie-icon">🍪</div>
+            <div class="cookie-text">
+                <h3>Sütik használata</h3>
+                <p>A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
+            </div>
+            <div class="cookie-actions">
+                <button id="cookieSettings" class="btn-settings">Beállítások</button>
+                <button id="acceptEssential" class="btn-essential">Csak szükséges</button>
+                <button id="acceptAll" class="btn-accept">Összes elfogadása</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Cookie Settings Modal -->
+    <div id="cookieModal" class="cookie-modal">
+        <div class="cookie-modal-content">
+            <div class="cookie-modal-header">
+                <h2>Süti beállítások</h2>
+                <button id="closeCookieModal" class="cookie-close">&times;</button>
+            </div>
+            
+            <div class="cookie-modal-body">
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="essentialCookies" checked disabled>
+                            <span class="cookie-slider"></span>
+                        </label>
+                        <div>
+                            <h4>Szükséges sütik</h4>
+                            <p>Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="analyticsCookies">
+                            <span class="cookie-slider"></span>
+                        </label>
+                        <div>
+                            <h4>Elemzési sütik</h4>
+                            <p>Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cookie-category">
+                    <div class="cookie-category-header">
+                        <label class="cookie-switch">
+                            <input type="checkbox" id="marketingCookies">
+                            <span class="cookie-slider"></span>
+                        </label>
+                        <div>
+                            <h4>Marketing sütik</h4>
+                            <p>Személyre szabott reklámok és közösségi média funkciók.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cookie-modal-footer">
+                <button id="saveSettings" class="btn-save">Beállítások mentése</button>
+                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link">Adatvédelmi tájékoztató</a>
+            </div>
+        </div>
+    </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script src="order-confirmation.js"></script>
-    <script src="script.js"></script>
+    <script src="cookies.js"></script>
     
 </body>
 </html>
