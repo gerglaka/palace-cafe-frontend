@@ -3734,6 +3734,325 @@ class SettingsApp extends BaseApp {
     }
 }
 
+/**
+ * User Management App
+ * For SUPER_ADMIN to manage users
+ */
+class UsersApp extends BaseApp {
+    constructor() {
+        super('users');
+        this.state = {
+            users: [],
+            isCreating: false
+        };
+    }
+
+    async initialize() {
+        console.log('👥 Initializing User Management App...');
+        
+        // Check permissions
+        if (!this.canAccess()) {
+            this.renderAccessDenied();
+            return;
+        }
+        
+        this.render();
+        await this.loadUsers();
+        this.setupEventListeners();
+    }
+
+    canAccess() {
+        return window.adminDashboard?.state.user?.role === 'SUPER_ADMIN';
+    }
+
+    render() {
+        if (!this.container) return;
+        
+        this.container.innerHTML = `
+            <div class="users-header">
+                <div class="users-title">
+                    <h2>👥 Felhasználó kezelés</h2>
+                    <p>Adminisztrátorok és személyzet kezelése</p>
+                </div>
+                <button class="btn-primary" id="addUserBtn">
+                    <i class="fas fa-plus"></i>
+                    Új felhasználó
+                </button>
+            </div>
+
+            <div class="users-list" id="usersList">
+                <div class="loading-placeholder">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Felhasználók betöltése...
+                </div>
+            </div>
+
+            <!-- Create User Modal -->
+            <div class="modal" id="createUserModal">
+                <div class="modal-backdrop"></div>
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Új felhasználó létrehozása</h3>
+                        <button class="modal-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createUserForm">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="userEmail">Email cím *</label>
+                                    <input type="email" id="userEmail" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userFirstName">Keresztnév *</label>
+                                    <input type="text" id="userFirstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userLastName">Családnév *</label>
+                                    <input type="text" id="userLastName" name="lastName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userRole">Szerepkör *</label>
+                                    <select id="userRole" name="role" required>
+                                        <option value="">Válasszon szerepkört</option>
+                                        <option value="DELIVERY_USER">Futár</option>
+                                        <option value="RESTAURANT_USER">Étterem kezelő</option>
+                                        <option value="SUPER_ADMIN">Főadmin</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPassword">Jelszó *</label>
+                                    <input type="password" id="userPassword" name="password" required minlength="6">
+                                </div>
+                                <div class="form-group">
+                                    <label for="userPasswordConfirm">Jelszó megerősítése *</label>
+                                    <input type="password" id="userPasswordConfirm" name="passwordConfirm" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-secondary" id="cancelCreateBtn">
+                            Mégse
+                        </button>
+                        <button class="btn-primary" id="saveUserBtn">
+                            <i class="fas fa-save"></i>
+                            Létrehozás
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderAccessDenied() {
+        if (!this.container) return;
+        
+        this.container.innerHTML = `
+            <div class="access-denied">
+                <i class="fas fa-lock"></i>
+                <h2>Hozzáférés megtagadva</h2>
+                <p>Nincs jogosultsága a felhasználó kezeléshez.</p>
+            </div>
+        `;
+    }
+
+    async loadUsers() {
+        try {
+            const response = await this.apiCall('/users');
+            if (response.success) {
+                this.state.users = response.data;
+                this.renderUsersList();
+            }
+        } catch (error) {
+            console.error('Failed to load users:', error);
+            this.showNotification('Nem sikerült betölteni a felhasználókat', 'error');
+        }
+    }
+
+    renderUsersList() {
+        const container = document.getElementById('usersList');
+        if (!container) return;
+
+        if (this.state.users.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h3>Nincsenek felhasználók</h3>
+                    <p>Hozzon létre új felhasználókat a rendszer kezeléséhez.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const usersHtml = this.state.users.map(user => `
+            <div class="user-card">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h4>${this.escapeHtml(user.firstName)} ${this.escapeHtml(user.lastName)}</h4>
+                        <p class="user-email">${this.escapeHtml(user.email)}</p>
+                        <span class="user-role role-${user.role.toLowerCase()}">${this.getRoleDisplayName(user.role)}</span>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <span class="status-badge ${user.isActive ? 'active' : 'inactive'}">
+                        ${user.isActive ? 'Aktív' : 'Inaktív'}
+                    </span>
+                    <p class="last-login">
+                        ${user.lastLoginAt ? 
+                            `Utolsó belépés: ${this.formatDate(user.lastLoginAt)}` : 
+                            'Még nem lépett be'
+                        }
+                    </p>
+                </div>
+                <div class="user-actions">
+                    <button class="btn-icon btn-info" onclick="usersApp.editUser(${user.id})" title="Szerkesztés">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    ${user.id !== window.adminDashboard.state.user.id ? `
+                        <button class="btn-icon btn-danger" onclick="usersApp.deleteUser(${user.id})" title="Törlés">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+        container.innerHTML = usersHtml;
+    }
+
+    getRoleDisplayName(role) {
+        const roleNames = {
+            'SUPER_ADMIN': 'Főadmin',
+            'RESTAURANT_USER': 'Étterem kezelő',
+            'DELIVERY_USER': 'Futár'
+        };
+        return roleNames[role] || role;
+    }
+
+    setupEventListeners() {
+        // Add user button
+        const addUserBtn = document.getElementById('addUserBtn');
+        if (addUserBtn) {
+            addUserBtn.addEventListener('click', () => {
+                this.showCreateUserModal();
+            });
+        }
+
+        // Modal close
+        const modal = document.getElementById('createUserModal');
+        const closeBtn = modal?.querySelector('.modal-close');
+        const backdrop = modal?.querySelector('.modal-backdrop');
+        const cancelBtn = document.getElementById('cancelCreateBtn');
+
+        [closeBtn, backdrop, cancelBtn].forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', () => {
+                    this.hideCreateUserModal();
+                });
+            }
+        });
+
+        // Form submit
+        const saveBtn = document.getElementById('saveUserBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.createUser();
+            });
+        }
+    }
+
+    showCreateUserModal() {
+        const modal = document.getElementById('createUserModal');
+        if (modal) {
+            modal.classList.add('active');
+        }
+    }
+
+    hideCreateUserModal() {
+        const modal = document.getElementById('createUserModal');
+        const form = document.getElementById('createUserForm');
+        
+        if (modal) {
+            modal.classList.remove('active');
+        }
+        
+        if (form) {
+            form.reset();
+        }
+    }
+
+    async createUser() {
+        const form = document.getElementById('createUserForm');
+        const formData = new FormData(form);
+        
+        const userData = {
+            email: formData.get('email'),
+            firstName: formData.get('firstName'),
+            lastName: formData.get('lastName'),
+            role: formData.get('role'),
+            password: formData.get('password')
+        };
+
+        // Validate passwords match
+        const passwordConfirm = formData.get('passwordConfirm');
+        if (userData.password !== passwordConfirm) {
+            this.showNotification('A jelszavak nem egyeznek', 'error');
+            return;
+        }
+
+        try {
+            const response = await this.apiCall('/users', {
+                method: 'POST',
+                body: JSON.stringify(userData)
+            });
+
+            if (response.success) {
+                this.showNotification('Felhasználó sikeresen létrehozva', 'success');
+                this.hideCreateUserModal();
+                await this.loadUsers();
+            }
+        } catch (error) {
+            console.error('Failed to create user:', error);
+            this.showNotification('Nem sikerült létrehozni a felhasználót', 'error');
+        }
+    }
+
+    async deleteUser(userId) {
+        if (!confirm('Biztosan törölni szeretné ezt a felhasználót?')) {
+            return;
+        }
+
+        try {
+            const response = await this.apiCall(`/users/${userId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.success) {
+                this.showNotification('Felhasználó törölve', 'success');
+                await this.loadUsers();
+            }
+        } catch (error) {
+            console.error('Failed to delete user:', error);
+            this.showNotification('Nem sikerült törölni a felhasználót', 'error');
+        }
+    }
+
+    editUser(userId) {
+        // TODO: Implement edit functionality
+        this.showNotification('Szerkesztés funkció fejlesztés alatt', 'info');
+    }
+
+    async refresh() {
+        await this.loadUsers();
+    }
+}
+
 // Make app classes available globally for debugging
 window.DashboardApps = {
     DashboardOverview,
@@ -3741,5 +4060,6 @@ window.DashboardApps = {
     MenuApp,
     StatsApp,
     ContentApp,
-    SettingsApp
+    SettingsApp,
+    UsersApp
 };

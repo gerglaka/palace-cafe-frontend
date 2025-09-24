@@ -40,7 +40,8 @@ class AdminDashboard {
             analytics: typeof StatsApp !== 'undefined' ? new StatsApp() : new BaseApp('analytics'),
             invoices: new InvoicesApp(),
             content: new ContentApp(),
-            settings: new SettingsApp()
+            settings: new SettingsApp(),
+            users: new UsersApp()
         };
 
         this.apps = {
@@ -50,12 +51,14 @@ class AdminDashboard {
             analytics: typeof StatsApp !== 'undefined' ? new StatsApp() : new BaseApp('analytics'),
             invoices: new InvoicesApp(),
             content: new ContentApp(),
-            settings: new SettingsApp()
+            settings: new SettingsApp(),
+            users: new UsersApp()
         };
         
         // Make orders app globally accessible for onclick handlers
         window.ordersApp = this.apps.orders;
         window.invoicesApp = this.apps.invoices;
+        window.usersApp = this.apps.users;
 
         // Event listeners and security
         this.setupEventListeners();
@@ -365,27 +368,85 @@ class AdminDashboard {
         try {
             const response = await this.apiCall('/auth/user');
             this.state.user = response.data;
-            
+
             // Update UI with user info
             const adminName = document.getElementById('adminName');
             const adminRole = document.getElementById('adminRole');
-            
+
             if (adminName && this.state.user.name) {
                 adminName.textContent = this.state.user.name;
             }
-            
+
             if (adminRole && this.state.user.role) {
-                adminRole.textContent = this.state.user.role;
+                adminRole.textContent = this.getRoleDisplayName(this.state.user.role);
             }
-            
+
+            // Apply role-based navigation restrictions
+            this.applyRoleBasedRestrictions();
+
         } catch (error) {
             console.error('Failed to load user info:', error);
-            // Use defaults if API fails
             this.state.user = {
                 name: 'Admin User',
-                role: 'Administrator'
+                role: 'RESTAURANT_USER'
             };
+            this.applyRoleBasedRestrictions();
         }
+    }
+
+    /**
+     * Get display name for role
+     */
+    getRoleDisplayName(role) {
+        const roleNames = {
+            'SUPER_ADMIN': 'Főadmin',
+            'RESTAURANT_USER': 'Étterem kezelő',
+            'DELIVERY_USER': 'Futár'
+        };
+        return roleNames[role] || role;
+    }
+
+    /**
+     * Apply role-based navigation restrictions
+     */
+    applyRoleBasedRestrictions() {
+        const userRole = this.state.user?.role;
+        if (!userRole) return;
+
+        console.log('Applying role restrictions for:', userRole);
+
+        // Get all navigation items
+        const navItems = document.querySelectorAll('.nav-item[data-app]');
+
+        navItems.forEach(navItem => {
+            const app = navItem.dataset.app;
+            const shouldShow = this.canAccessApp(app, userRole);
+
+            if (shouldShow) {
+                navItem.style.display = 'flex';
+            } else {
+                navItem.style.display = 'none';
+            }
+        });
+
+        // Show/hide user management for super admin only
+        const userManagementItem = document.querySelector('.nav-item[data-app="users"]');
+        if (userManagementItem) {
+            userManagementItem.style.display = userRole === 'SUPER_ADMIN' ? 'flex' : 'none';
+        }
+    }
+
+    /**
+     * Check if user role can access specific app
+     */
+    canAccessApp(app, role) {
+        const permissions = {
+            'SUPER_ADMIN': ['dashboard', 'orders', 'menu', 'analytics', 'invoices', 'content', 'settings', 'users'],
+            'RESTAURANT_USER': ['dashboard', 'orders', 'menu', 'analytics', 'content', 'settings'],
+            'DELIVERY_USER': ['orders']
+        };
+
+        return permissions[role]?.includes(app) || false;
     }
 
     /**
