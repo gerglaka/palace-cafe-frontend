@@ -3823,11 +3823,11 @@ class UsersApp extends BaseApp {
                                 </div>
                                 <div class="form-group">
                                     <label for="userPassword">Jelszó *</label>
-                                    <input type="password" id="userPassword" name="password" required minlength="6">
+                                    <input type="password" id="userPassword" name="password" required minlength="6" autocomplete="new-password">
                                 </div>
                                 <div class="form-group">
                                     <label for="userPasswordConfirm">Jelszó megerősítése *</label>
-                                    <input type="password" id="userPasswordConfirm" name="passwordConfirm" required>
+                                    <input type="password" id="userPasswordConfirm" name="passwordConfirm" required autocomplete="new-password">
                                 </div>
                             </div>
                         </form>
