@@ -677,8 +677,11 @@ class OrderSystem {
                     </div>
                     <div class="modal-body">
                         <div class="allergen-info">
-                            <div class="allergen-code">${allergenCode}</div>
+                            <div class="allergen-code" id="allergenCode"></div>
                             <div class="allergen-name" id="allergenName"></div>
+                            <div class="allergen-description">
+                                Ez az allergén információ az EU szabályozás szerint.
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -692,6 +695,7 @@ class OrderSystem {
         }
 
         // Update content
+        document.getElementById('allergenCode').textContent = allergenCode;
         document.getElementById('allergenName').textContent = allergen.name;
 
         // Show modal
@@ -1987,7 +1991,7 @@ class MenuDataLoader {
                     </div>
                     <div class="modal-body">
                         <div class="allergen-info">
-                            <div class="allergen-code">${allergenCode}</div>
+                            <div class="allergen-code" id="allergenCode"></div>
                             <div class="allergen-name" id="allergenName"></div>
                             <div class="allergen-description">
                                 Ez az allergén információ az EU szabályozás szerint.
@@ -2003,7 +2007,9 @@ class MenuDataLoader {
             });
         }
 
+        document.getElementById('allergenCode').textContent = allergenCode;
         document.getElementById('allergenName').textContent = allergen.name;
+
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
     }
