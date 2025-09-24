@@ -659,11 +659,10 @@ class MenuApp extends BaseApp {
                                     
                                     <div class="form-group">
                                         <label for="allergens">Allergének:</label>
-                                        <input type="text" 
-                                               id="allergens" 
-                                               name="allergens"
-                                               placeholder="pl: Glutén, Tej, Tojás">
-                                        <small>Vesszővel elválasztva</small>
+                                        <div class="allergen-checkboxes" id="allergenCheckboxes">
+                                            <!-- Allergen checkboxes will be populated here -->
+                                        </div>
+                                        <small>Válassza ki az érintett allergéneket</small>
                                     </div>
                                     
                                     <div class="form-checkboxes">
@@ -829,7 +828,8 @@ class MenuApp extends BaseApp {
             await Promise.all([
                 this.loadDeliverableItems(),
                 this.loadCategories(),
-                this.loadAllItems()
+                this.loadAllItems(),
+                this.loadAllergenData()
             ]);
             
             this.renderCurrentSection();
@@ -885,6 +885,58 @@ class MenuApp extends BaseApp {
             console.error('Failed to load categories:', error);
             this.state.categories = [];
         }
+    }
+
+    async loadAllergenData() {
+        try {
+            const response = await fetch(`${this.config.publicApiUrl}/allergens?lang=hu`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('🏷️ Allergen data loaded:', result);
+
+            if (result.success) {
+                this.allergenData = result.data || [];
+            } else {
+                throw new Error(result.error || 'Failed to load allergen data');
+            }
+
+        } catch (error) {
+            console.error('❌ Failed to load allergen data:', error);
+            this.allergenData = [];
+        }
+    }
+
+    renderAllergenCheckboxes() {
+        const container = document.getElementById('allergenCheckboxes');
+        if (!container || !this.allergenData) return;
+
+        if (this.allergenData.length === 0) {
+            container.innerHTML = '<p class="no-allergens">Nincsenek elérhető allergének</p>';
+            return;
+        }
+
+        container.innerHTML = this.allergenData.map(allergen => `
+            <label class="checkbox-label allergen-checkbox">
+                <input type="checkbox" 
+                       name="allergen" 
+                       value="${allergen.code}" 
+                       data-allergen-id="${allergen.id}">
+                <span class="checkbox-custom"></span>
+                <span class="allergen-info">
+                    <span class="allergen-code">${allergen.code}</span>
+                    <span class="allergen-name">${this.escapeHtml(allergen.name)}</span>
+                </span>
+            </label>
+        `).join('');
     }
 
     async loadAllItems() {
@@ -1599,11 +1651,13 @@ class MenuApp extends BaseApp {
         if (itemId) {
             // Edit mode
             modalTitle.textContent = 'Termék szerkesztése';
-            this.loadItemForEdit(itemId);
+            this.renderAllergenCheckboxes();
+            this.loadItemForEdit(itemId);            
         } else {
             // Create mode
             modalTitle.textContent = 'Új termék hozzáadása';
             this.populateCategoryOptions();
+            this.renderAllergenCheckboxes();
         }
 
         modal.classList.add('active');
@@ -1625,7 +1679,16 @@ class MenuApp extends BaseApp {
                 document.getElementById('itemPriceAddon').value = item.priceAddon || '';
                 document.getElementById('itemBadge').value = item.badge || '';
                 document.getElementById('spicyLevel').value = item.spicyLevel || '0';
-                document.getElementById('allergens').value = Array.isArray(item.allergens) ? item.allergens.join(', ') : '';
+                
+                if (Array.isArray(item.allergens)) {
+                    item.allergens.forEach(allergenCode => {
+                        const checkbox = document.querySelector(`input[name="allergen"][value="${allergenCode}"]`);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    });
+                }
+
                 document.getElementById('includesSides').checked = item.includesSides || false;
                 document.getElementById('isPopular').checked = item.isPopular || false;
 
@@ -1875,6 +1938,10 @@ class MenuApp extends BaseApp {
             formData.set('includesSides', form.includesSides.checked);
             formData.set('isPopular', form.isPopular.checked);
 
+            const selectedAllergens = Array.from(document.querySelectorAll('input[name="allergen"]:checked'))
+                .map(checkbox => checkbox.value);
+            formData.set('allergens', selectedAllergens.join(','));            
+
             const endpoint = isEdit ? `/menu/items/${itemId}` : '/menu/items';
             const method = isEdit ? 'PUT' : 'POST';
 
@@ -2022,6 +2089,10 @@ class MenuApp extends BaseApp {
             form.reset();
             delete form.dataset.itemId;
         }
+
+        document.querySelectorAll('input[name="allergen"]').forEach(checkbox => {
+            checkbox.checked = false;
+        });        
 
         const priceAddonGroup = document.getElementById('PriceAddonGroup');
         if (priceAddonGroup) {

@@ -6416,3 +6416,58 @@ body {
         align-items: flex-start;
     }
 }
+
+/* Allergen Checkboxes in Admin */
+.allergen-checkboxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 0.5rem;
+    background: #fafafa;
+}
+
+.allergen-checkbox {
+    display: flex !important;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 3px;
+    transition: background-color 0.2s ease;
+}
+
+.allergen-checkbox:hover {
+    background: #f0f0f0;
+}
+
+.allergen-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.allergen-code {
+    background: #f97316;
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 24px;
+    text-align: center;
+}
+
+.allergen-name {
+    font-size: 0.85rem;
+    color: #333;
+}
+
+.no-allergens {
+    color: #666;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+}
