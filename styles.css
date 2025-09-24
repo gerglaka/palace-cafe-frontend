@@ -9252,3 +9252,67 @@ body {
         min-width: 18px;
     }
 }
+
+/* Allergen Badges */
+.allergen-badges {
+    margin: 0.5rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.allergen-badge {
+    background: #f97316;
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.allergen-badge:hover {
+    background: #ea580c;
+    transform: scale(1.05);
+}
+
+/* Allergen Modal */
+.allergen-modal .modal-container {
+    max-width: 400px;
+    width: 90%;
+}
+
+.allergen-info {
+    text-align: center;
+    padding: 1rem;
+}
+
+.allergen-code {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #f97316;
+    margin-bottom: 0.5rem;
+}
+
+.allergen-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--blackwash);
+    margin-bottom: 0.5rem;
+}
+
+.allergen-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .allergen-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.3rem;
+    }
+}

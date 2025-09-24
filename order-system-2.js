@@ -417,7 +417,8 @@ class OrderSystem {
             // Load menu and customization options
             await Promise.all([
                 this.loadMenu(),
-                this.loadCustomizationOptions()
+                this.loadCustomizationOptions(),
+                this.loadAllergenData()
             ]);
 
             this.setupEventListeners();
@@ -475,6 +476,25 @@ class OrderSystem {
         } catch (error) {
             console.error('❌ Customization loading error:', error);
             throw error;
+        }
+    }
+
+    async loadAllergenData() {
+        try {
+            const response = await fetch(`${this.apiUrl}/allergens?lang=hu`);
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to load allergen data');
+            }
+
+            console.log('🏷️ Allergen data loaded:', result.data);
+            this.allergenData = result.data;
+
+        } catch (error) {
+            console.error('❌ Allergen loading error:', error);
+            // Don't throw - allergens are optional
+            this.allergenData = [];
         }
     }
 
@@ -597,6 +617,7 @@ class OrderSystem {
                     <div class="food-info">
                         <h3 class="food-name">${item.name}</h3>
                         <p class="food-description">${item.description || ''}</p>
+                        ${this.renderAllergenBadges(item.allergens || [])}
                         <div class="food-price-row">
                             <span class="food-price">€${item.price.toFixed(2)}</span>
                             <button class="add-to-cart-btn" onclick="orderSystem.handleAddToCartClick(event, ${item.id})">
@@ -610,6 +631,86 @@ class OrderSystem {
                 </div>
             `;
         }).join('');
+    }
+
+    /**
+     * Render allergen badges for a menu item
+     */
+    renderAllergenBadges(allergenCodes) {
+        if (!allergenCodes || allergenCodes.length === 0) {
+            return '';
+        }
+
+        const badges = allergenCodes.map(code => 
+            `<span class="allergen-badge" data-allergen="${code}" onclick="orderSystem.showAllergenModal('${code}')">${code}</span>`
+        ).join('');
+
+        return `<div class="allergen-badges">${badges}</div>`;
+    }
+
+    /**
+     * Show allergen information modal
+     */
+    showAllergenModal(allergenCode) {
+        if (!this.allergenData) return;
+
+        const allergen = this.allergenData.find(a => a.code === allergenCode);
+        if (!allergen) return;
+
+        // Check if modal already exists
+        let modal = document.getElementById('allergenModal');
+
+        if (!modal) {
+            // Create modal HTML
+            modal = document.createElement('div');
+            modal.id = 'allergenModal';
+            modal.className = 'modal-overlay allergen-modal';
+            modal.innerHTML = `
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Allergén információ</h3>
+                        <button class="modal-close" onclick="orderSystem.closeAllergenModal()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="allergen-info">
+                            <div class="allergen-code">${allergenCode}</div>
+                            <div class="allergen-name" id="allergenName"></div>
+                            <div class="allergen-description">
+                                Ez az allergén információ az EU szabályozás szerint.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) this.closeAllergenModal();
+            });
+        }
+
+        // Update content
+        document.getElementById('allergenName').textContent = allergen.name;
+
+        // Show modal
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    /**
+     * Close allergen modal
+     */
+    closeAllergenModal() {
+        const modal = document.getElementById('allergenModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
 
     // ============================================
@@ -1830,9 +1931,95 @@ class MenuDataLoader {
                 <div class="menu-item-price">€${item.price.toFixed(2)}</div>
             </div>
             ${item.description ? `<p class="menu-item-description">${this.escapeHtml(item.description)}</p>` : ''}
+            ${this.renderAllergenBadgesMenu(item.allergens || [])}
         `;
         
         return card;
+    }
+
+    /**
+     * Render allergen badges for menu page
+     */
+    renderAllergenBadgesMenu(allergenCodes) {
+        if (!allergenCodes || allergenCodes.length === 0) {
+            return '';
+        }
+
+        const badges = allergenCodes.map(code => 
+            `<span class="allergen-badge" data-allergen="${code}" onclick="menuLoader.showAllergenModal('${code}')">${code}</span>`
+        ).join('');
+
+        return `<div class="allergen-badges">${badges}</div>`;
+    }
+
+    /**
+     * Show allergen modal for menu page
+     */
+    async showAllergenModal(allergenCode) {
+        // Load allergen data if not already loaded
+        if (!this.allergenData) {
+            try {
+                const response = await fetch(`${this.apiUrl}/allergens?lang=hu`);
+                const result = await response.json();
+                this.allergenData = result.success ? result.data : [];
+            } catch (error) {
+                console.error('Failed to load allergen data:', error);
+                return;
+            }
+        }
+
+        const allergen = this.allergenData.find(a => a.code === allergenCode);
+        if (!allergen) return;
+
+        // Same modal creation logic as order page
+        let modal = document.getElementById('allergenModal');
+
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'allergenModal';
+            modal.className = 'modal-overlay allergen-modal';
+            modal.innerHTML = `
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Allergén információ</h3>
+                        <button class="modal-close" onclick="menuLoader.closeAllergenModal()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="allergen-info">
+                            <div class="allergen-code">${allergenCode}</div>
+                            <div class="allergen-name" id="allergenName"></div>
+                            <div class="allergen-description">
+                                Ez az allergén információ az EU szabályozás szerint.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) this.closeAllergenModal();
+            });
+        }
+
+        document.getElementById('allergenName').textContent = allergen.name;
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    /**
+     * Close allergen modal for menu page
+     */
+    closeAllergenModal() {
+        const modal = document.getElementById('allergenModal');
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
     }
 
     /**
@@ -2284,6 +2471,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (document.querySelector('.menu-main')) {
         window.menuDataLoader = new MenuDataLoader();
+        window.menuLoader = window.menuDataLoader;
         window.categoryNavigation = new CategoryNavigation();
     }
 });
