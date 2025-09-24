@@ -411,16 +411,23 @@ class AdminDashboard {
      */
     applyRoleBasedRestrictions() {
         const userRole = this.state.user?.role;
-        if (!userRole) return;
+        console.log('🔍 Applying restrictions for role:', userRole);
+        console.log('🔍 User object:', this.state.user);
 
-        console.log('Applying role restrictions for:', userRole);
+        if (!userRole) {
+            console.log('❌ No user role found, showing all apps');
+            return;
+        }
 
         // Get all navigation items
         const navItems = document.querySelectorAll('.nav-item[data-app]');
+        console.log('🔍 Found navigation items:', navItems.length);
 
         navItems.forEach(navItem => {
             const app = navItem.dataset.app;
             const shouldShow = this.canAccessApp(app, userRole);
+
+            console.log(`🔍 App: ${app}, Role: ${userRole}, Show: ${shouldShow}`);
 
             if (shouldShow) {
                 navItem.style.display = 'flex';
@@ -433,6 +440,7 @@ class AdminDashboard {
         const userManagementItem = document.querySelector('.nav-item[data-app="users"]');
         if (userManagementItem) {
             userManagementItem.style.display = userRole === 'SUPER_ADMIN' ? 'flex' : 'none';
+            console.log(`🔍 Users app visibility: ${userRole === 'SUPER_ADMIN' ? 'visible' : 'hidden'}`);
         }
     }
 
@@ -446,7 +454,10 @@ class AdminDashboard {
             'DELIVERY_USER': ['orders']
         };
 
-        return permissions[role]?.includes(app) || false;
+        const hasAccess = permissions[role]?.includes(app) || false;
+        console.log(`🔍 Permission check - App: ${app}, Role: ${role}, Access: ${hasAccess}`);
+
+        return hasAccess;
     }
 
     /**
