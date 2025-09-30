@@ -5371,7 +5371,7 @@ body {
    margin: 0;
 }
 
-/* Prepare for Stripe Integration */
+/* Prepare for Stripe Integration 
 .payment-options .payment-option[data-payment="stripe"] {
     opacity: 0.5;
     cursor: not-allowed;
@@ -5392,7 +5392,7 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-}
+} */
 
 .payment-options .payment-option[data-payment="stripe"]:hover {
     background: inherit;
