@@ -76,6 +76,9 @@ class AdminDashboard {
             // Load user information
             await this.loadUserInfo();
 
+            // Load initial order status
+            await this.loadOrderStatus();           
+
             // Restore sidebar state
             this.restoreSidebarState();            
             
@@ -103,6 +106,98 @@ class AdminDashboard {
         }
 
 
+    }
+
+    /**
+     * Toggle order acceptance (Kitchen On Fire feature)
+     */
+    async toggleOrders() {
+        const btn = document.getElementById('toggleOrdersBtn');
+        const statusText = document.getElementById('orderStatusText');
+
+        if (!btn || !statusText) {
+            console.error('❌ Toggle button elements not found');
+            return;
+        }
+
+        // Prevent double-clicks
+        if (btn.classList.contains('loading')) {
+            return;
+        }
+
+        try {
+            // Show loading state
+            btn.classList.add('loading');
+            statusText.textContent = 'Frissítés...';
+
+            // Call API to toggle orders
+            const result = await this.apiCall('/restaurant/status', {
+                method: 'POST'
+            });
+
+            if (!result.success) {
+                throw new Error(result.error || 'Failed to toggle orders');
+            }
+
+            const isAccepting = result.data.acceptingOrders;
+
+            // Update button UI
+            this.updateOrderToggleButton(isAccepting);
+
+            // Show notification
+            this.showNotification(
+                result.message || (isAccepting ? 'Rendelések engedélyezve' : 'Rendelések felfüggesztve'),
+                'success'
+            );
+
+            console.log(`✅ Orders ${isAccepting ? 'ENABLED' : 'DISABLED'}`);
+
+        } catch (error) {
+            console.error('❌ Error toggling orders:', error);
+            this.showNotification('Hiba történt a rendelések kapcsolásánál', 'error');
+        } finally {
+            btn.classList.remove('loading');
+        }
+    }
+
+    /**
+     * Update order toggle button UI
+     */
+    updateOrderToggleButton(isAccepting) {
+        const btn = document.getElementById('toggleOrdersBtn');
+        const statusText = document.getElementById('orderStatusText');
+
+        if (!btn || !statusText) return;
+
+        // Remove existing state classes
+        btn.classList.remove('orders-enabled', 'orders-disabled');
+
+        if (isAccepting) {
+            btn.classList.add('orders-enabled');
+            statusText.textContent = 'AKTÍV';
+        } else {
+            btn.classList.add('orders-disabled');
+            statusText.textContent = 'SZÜNETEL';
+        }
+    }
+
+    /**
+     * Load initial order status (call this in init())
+     */
+    async loadOrderStatus() {
+        try {
+            const result = await this.apiCall('/restaurant/status', {
+                method: 'GET'
+            });
+
+            if (result.success) {
+                this.updateOrderToggleButton(result.data.acceptingOrders);
+            }
+        } catch (error) {
+            console.error('❌ Error loading order status:', error);
+            // Default to enabled if error
+            this.updateOrderToggleButton(true);
+        }
     }
 
     /**
