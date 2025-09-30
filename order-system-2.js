@@ -393,6 +393,13 @@ class OrderSystem {
             5: { open: '11:00', close: '21:00' }, // Friday
             6: { open: '11:00', close: '21:00' }  // Saturday
         };
+
+        this.isAcceptingOrders = true;
+        this.orderStatusCheckTimer = null;
+        this.refreshCountdown = 60;
+        this.countdownInterval = null;
+        this.socket = null;
+
         this.init();
     }
 
@@ -419,12 +426,14 @@ class OrderSystem {
 
         try {
             this.showLoading();
-        // Check if restaurant is open
-        if (!this.isRestaurantOpen()) {
-            this.hideLoading();
-            this.showClosedOverlay();
-            return; // Stop initialization if closed
-        }
+            // Check if restaurant is open
+            if (!this.isRestaurantOpen()) {
+                this.hideLoading();
+                this.showClosedOverlay();
+                return; // Stop initialization if closed
+            }
+        
+            await this.initOrderStatusCheck();
 
             this.clearCart();
 
@@ -2032,7 +2041,277 @@ class OrderSystem {
     formatPrice(price) {
         return `€${price.toFixed(2)}`;
     }
+
+    // ============================================
+    // KITCHEN ON FIRE FEATURE - ORDER STATUS CHECK
+    // ============================================
+
+    /**
+     * Initialize order status checking
+     */
+    async initOrderStatusCheck() {
+        console.log('🔍 Initializing Kitchen On Fire feature...');
+
+        // Check immediately on page load
+        await this.checkOrderStatus();
+
+        // Then check every 60 seconds
+        this.startOrderStatusPolling();
+
+        // Listen for real-time updates via Socket.io (if available)
+        this.setupOrderStatusSocketListener();
+    }
+
+    /**
+     * Check if restaurant is accepting orders
+     */
+    async checkOrderStatus() {
+        try {
+            console.log('📡 Checking if restaurant is accepting orders...');
+
+            const response = await fetch(`${this.apiUrl}/restaurant/accepting-orders`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log('✅ Order status response:', result);
+
+            if (result.success) {
+                const isAccepting = result.data.acceptingOrders;
+                this.isAcceptingOrders = isAccepting;
+
+                if (isAccepting) {
+                    this.hideKitchenFireOverlay();
+                    this.enableOrderFeatures();
+                } else {
+                    this.showKitchenFireOverlay();
+                    this.disableOrderFeatures();
+                }
+            }
+
+        } catch (error) {
+            console.error('❌ Error checking order status:', error);
+            // On error, default to accepting orders (fail-safe)
+            this.isAcceptingOrders = true;
+            this.hideKitchenFireOverlay();
+        }
+    }
+
+    /**
+     * Show the Kitchen On Fire overlay
+     */
+    showKitchenFireOverlay() {
+        console.log('🔥 Showing Kitchen On Fire overlay...');
+
+        const overlay = document.getElementById('kitchenFireOverlay');
+        if (overlay) {
+            overlay.style.display = 'flex';
+
+            // Start countdown timer
+            this.startRefreshCountdown();
+
+            // Prevent scrolling on body
+            document.body.style.overflow = 'hidden';
+        }
+    }
+
+    /**
+     * Hide the Kitchen On Fire overlay
+     */
+    hideKitchenFireOverlay() {
+        console.log('✅ Hiding Kitchen On Fire overlay...');
+
+        const overlay = document.getElementById('kitchenFireOverlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+
+            // Stop countdown timer
+            this.stopRefreshCountdown();
+
+            // Re-enable scrolling
+            document.body.style.overflow = '';
+        }
+    }
+
+    /**
+     * Disable ordering features when kitchen is closed
+     */
+    disableOrderFeatures() {
+        console.log('🚫 Disabling order features...');
+
+        // Disable all "Add to Cart" buttons
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        addToCartButtons.forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            btn.title = 'A rendelés jelenleg nem elérhető';
+        });
+    }
+
+    /**
+     * Enable ordering features when kitchen is open
+     */
+    enableOrderFeatures() {
+        console.log('✅ Enabling order features...');
+
+        // Re-enable all "Add to Cart" buttons
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        addToCartButtons.forEach(btn => {
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.style.cursor = 'pointer';
+            btn.title = 'Kosárba';
+        });
+    }
+
+    /**
+     * Start polling for order status every 60 seconds
+     */
+    startOrderStatusPolling() {
+        console.log('⏰ Starting order status polling (every 60 seconds)...');
+
+        // Clear any existing timer
+        if (this.orderStatusCheckTimer) {
+            clearInterval(this.orderStatusCheckTimer);
+        }
+
+        // Check every 60 seconds
+        this.orderStatusCheckTimer = setInterval(() => {
+            this.checkOrderStatus();
+        }, 60000);
+    }
+
+    /**
+     * Stop polling
+     */
+    stopOrderStatusPolling() {
+        if (this.orderStatusCheckTimer) {
+            clearInterval(this.orderStatusCheckTimer);
+            this.orderStatusCheckTimer = null;
+        }
+    }
+
+    /**
+     * Start the refresh countdown timer (60 seconds)
+     */
+    startRefreshCountdown() {
+        this.refreshCountdown = 60;
+        const countdownElement = document.getElementById('refreshCountdown');
+
+        if (!countdownElement) return;
+
+        // Update immediately
+        countdownElement.textContent = this.refreshCountdown;
+
+        // Clear any existing countdown
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+
+        // Update every second
+        this.countdownInterval = setInterval(() => {
+            this.refreshCountdown--;
+            countdownElement.textContent = this.refreshCountdown;
+
+            if (this.refreshCountdown <= 0) {
+                // Auto-refresh the page
+                console.log('⏰ Auto-refresh triggered');
+                window.location.reload();
+            }
+        }, 1000);
+    }
+
+    /**
+     * Stop the refresh countdown
+     */
+    stopRefreshCountdown() {
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+    }
+
+    /**
+     * Setup Socket.io listener for real-time order status updates
+     */
+    setupOrderStatusSocketListener() {
+        // Check if Socket.io is available
+        if (typeof io === 'undefined') {
+            console.warn('⚠️ Socket.io not available, using polling only');
+            return;
+        }
+
+        try {
+            console.log('🔌 Connecting to Socket.io for real-time updates...');
+
+            this.socket = io('https://palace-cafe-backend-production.up.railway.app', {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: 10
+            });
+
+            this.socket.on('connect', () => {
+                console.log('✅ Socket.io connected');
+            });
+
+            this.socket.on('disconnect', () => {
+                console.log('🔌 Socket.io disconnected');
+            });
+
+            // Listen for order status changes
+            this.socket.on('orderStatusChanged', (data) => {
+                console.log('🔔 Real-time order status update:', data);
+
+                const isAccepting = data.acceptingOrders;
+                this.isAcceptingOrders = isAccepting;
+
+                if (isAccepting) {
+                    this.hideKitchenFireOverlay();
+                    this.enableOrderFeatures();
+                    this.showSuccessToast('✅ Rendelések újra elérhetők!');
+                } else {
+                    this.showKitchenFireOverlay();
+                    this.disableOrderFeatures();
+                }
+            });
+
+            this.socket.on('error', (error) => {
+                console.error('❌ Socket.io error:', error);
+            });
+
+        } catch (error) {
+            console.error('❌ Failed to setup Socket.io:', error);
+        }
+    }
+
+    /**
+     * Cleanup when page unloads
+     */
+    cleanup() {
+        this.stopOrderStatusPolling();
+        this.stopRefreshCountdown();
+
+        if (this.socket) {
+            this.socket.disconnect();
+        }
+    }
+
 }
+
+window.addEventListener('beforeunload', () => {
+    if (window.orderSystem) {
+        window.orderSystem.cleanup();
+    }
+});
 
 /**
  * Menu Page API Integration - Debug Version

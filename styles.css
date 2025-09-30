@@ -10077,3 +10077,439 @@ input:disabled + .cookie-slider {
         font-size: 0.9rem;
     }
 }
+
+
+/* ============================================
+   KITCHEN ON FIRE OVERLAY - FULL SCREEN ANIMATION
+   ============================================ */
+
+.kitchen-fire-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, rgba(20, 20, 30, 0.98) 0%, rgba(40, 20, 20, 0.98) 100%);
+    backdrop-filter: blur(10px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    overflow-y: auto;
+    animation: overlayFadeIn 0.5s ease-out;
+}
+
+@keyframes overlayFadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.fire-overlay-content {
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   ANIMATED SVG FLAMES
+   ============================================ */
+
+.fire-animation-container {
+    position: relative;
+    margin-bottom: 2rem;
+    height: 300px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.flames-svg {
+    width: 400px;
+    height: 300px;
+    filter: drop-shadow(0 0 20px rgba(255, 69, 0, 0.8));
+}
+
+.flame {
+    filter: blur(2px);
+}
+
+.smoke {
+    filter: blur(8px);
+}
+
+/* ============================================
+   CARTOON CHEF CHARACTER
+   ============================================ */
+
+.chef-character {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    animation: chefPanic 0.5s infinite alternate;
+}
+
+@keyframes chefPanic {
+    0% {
+        transform: translateX(-5px) rotate(-2deg);
+    }
+    100% {
+        transform: translateX(5px) rotate(2deg);
+    }
+}
+
+.chef-body {
+    position: relative;
+    width: 80px;
+}
+
+/* Chef Head */
+.chef-head {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+.chef-hat {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 15px;
+    background: white;
+    border-radius: 20px 20px 0 0;
+}
+
+.chef-hat-top {
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+}
+
+.chef-face {
+    width: 50px;
+    height: 50px;
+    background: #fdbcb4;
+    border-radius: 50%;
+    position: relative;
+}
+
+.chef-eyes {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+}
+
+.chef-eye {
+    width: 8px;
+    height: 8px;
+    background: #000;
+    border-radius: 50%;
+    animation: blink 3s infinite;
+}
+
+@keyframes blink {
+    0%, 48%, 52%, 100% {
+        transform: scaleY(1);
+    }
+    50% {
+        transform: scaleY(0.1);
+    }
+}
+
+.chef-mouth {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 10px;
+    border: 2px solid #000;
+    border-top: none;
+    border-radius: 0 0 20px 20px;
+}
+
+/* Chef Body */
+.chef-torso {
+    width: 60px;
+    height: 50px;
+    background: white;
+    border-radius: 0 0 30px 30px;
+    margin: 0 auto;
+    border: 2px solid #ddd;
+}
+
+.chef-arms {
+    position: relative;
+}
+
+.chef-arm {
+    position: absolute;
+    width: 15px;
+    height: 40px;
+    background: #fdbcb4;
+    border-radius: 10px;
+    top: -35px;
+}
+
+.chef-arm.left {
+    left: -5px;
+    transform: rotate(-30deg);
+    animation: armWaveLeft 0.5s infinite alternate;
+}
+
+.chef-arm.right {
+    right: -5px;
+    transform: rotate(30deg);
+    animation: armWaveRight 0.5s infinite alternate;
+}
+
+@keyframes armWaveLeft {
+    0% {
+        transform: rotate(-30deg);
+    }
+    100% {
+        transform: rotate(-45deg);
+    }
+}
+
+@keyframes armWaveRight {
+    0% {
+        transform: rotate(30deg);
+    }
+    100% {
+        transform: rotate(45deg);
+    }
+}
+
+/* Fire Extinguisher */
+.fire-extinguisher {
+    position: absolute;
+    bottom: 10px;
+    right: -20px;
+    font-size: 2rem;
+    animation: shake 0.3s infinite;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: rotate(-5deg);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+}
+
+/* ============================================
+   MESSAGE BOX
+   ============================================ */
+
+.fire-message-box {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 3px solid #ff4500;
+}
+
+.fire-title {
+    font-size: 2.5rem;
+    color: #ff4500;
+    margin: 0 0 1rem 0;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(255, 69, 0, 0.3);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.fire-subtitle {
+    font-size: 1.3rem;
+    color: #dc143c;
+    margin: 0 0 1.5rem 0;
+    font-weight: 600;
+}
+
+.fire-explanation {
+    background: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    color: #856404;
+}
+
+.fire-explanation p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.fire-explanation strong {
+    color: #dc143c;
+    font-size: 1.2rem;
+}
+
+/* ============================================
+   REFRESH TIMER
+   ============================================ */
+
+.refresh-timer {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+#refreshCountdown {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffd700;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+
+.refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+}
+
+.refresh-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.5);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.refresh-btn:active {
+    transform: translateY(-1px);
+}
+
+.refresh-icon {
+    font-size: 1.5rem;
+    display: inline-block;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.back-home-btn {
+    display: inline-block;
+    color: #6b7280;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #d1d5db;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+.back-home-btn:hover {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+    transform: translateX(-5px);
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+
+@media (max-width: 768px) {
+    .kitchen-fire-overlay {
+        padding: 1rem;
+    }
+
+    .flames-svg {
+        width: 300px;
+        height: 200px;
+    }
+
+    .fire-animation-container {
+        height: 200px;
+    }
+
+    .chef-character {
+        right: 10px;
+        bottom: 30px;
+        transform: scale(0.7);
+    }
+
+    .fire-message-box {
+        padding: 1.5rem;
+    }
+
+    .fire-title {
+        font-size: 1.8rem;
+    }
+
+    .fire-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .fire-explanation p {
+        font-size: 1rem;
+    }
+
+    .refresh-btn {
+        font-size: 1rem;
+        padding: 0.875rem 1.5rem;
+    }
+}

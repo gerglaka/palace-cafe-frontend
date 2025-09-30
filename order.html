@@ -36,6 +36,133 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Kitchen On Fire Overlay (Hidden by default) -->
+    <div id="kitchenFireOverlay" class="kitchen-fire-overlay" style="display: none;">
+        <div class="fire-overlay-content">
+            <!-- Animated SVG Kitchen Scene -->
+            <div class="fire-animation-container">
+                <!-- Flames SVG -->
+                <svg class="flames-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gradient Definitions -->
+                    <defs>
+                        <linearGradient id="flameGradient1" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ff4500;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff8c00;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.8" />
+                        </linearGradient>
+                        <linearGradient id="flameGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ff6347;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ffa500;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffff00;stop-opacity:0.8" />
+                        </linearGradient>
+                        <linearGradient id="flameGradient3" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#dc143c;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff6347;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffa500;stop-opacity:0.8" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Flame 1 (Left) -->
+                    <path class="flame flame-1" d="M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z" fill="url(#flameGradient1)">
+                        <animate attributeName="d" 
+                                 dur="1.5s" 
+                                 repeatCount="indefinite"
+                                 values="M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z;
+                                         M100,250 Q100,200 115,175 Q135,155 140,110 Q145,155 165,175 Q180,200 180,250 Z;
+                                         M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z"/>
+                    </path>
+
+                    <!-- Flame 2 (Center) -->
+                    <path class="flame flame-2" d="M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z" fill="url(#flameGradient2)">
+                        <animate attributeName="d" 
+                                 dur="1.3s" 
+                                 repeatCount="indefinite"
+                                 values="M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z;
+                                         M200,250 Q200,210 210,185 Q225,165 230,115 Q235,165 250,185 Q260,210 260,250 Z;
+                                         M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z"/>
+                    </path>
+
+                    <!-- Flame 3 (Right) -->
+                    <path class="flame flame-3" d="M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z" fill="url(#flameGradient3)">
+                        <animate attributeName="d" 
+                                 dur="1.7s" 
+                                 repeatCount="indefinite"
+                                 values="M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z;
+                                         M280,250 Q280,205 290,180 Q305,160 310,120 Q315,160 330,180 Q340,205 340,250 Z;
+                                         M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z"/>
+                    </path>
+
+                    <!-- Smoke Circles -->
+                    <circle class="smoke smoke-1" cx="140" cy="100" r="15" fill="#555" opacity="0.3">
+                        <animate attributeName="cy" from="100" to="20" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.3" to="0" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="15" to="30" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle class="smoke smoke-2" cx="230" cy="110" r="18" fill="#666" opacity="0.4">
+                        <animate attributeName="cy" from="110" to="30" dur="3.5s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.4" to="0" dur="3.5s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="18" to="35" dur="3.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle class="smoke smoke-3" cx="310" cy="105" r="16" fill="#777" opacity="0.35">
+                        <animate attributeName="cy" from="105" to="25" dur="3.2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.35" to="0" dur="3.2s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="16" to="32" dur="3.2s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+
+                <!-- Cartoon Chef Character -->
+                <div class="chef-character">
+                    <div class="chef-body">
+                        <div class="chef-head">
+                            <div class="chef-hat">
+                                <div class="chef-hat-top"></div>
+                            </div>
+                            <div class="chef-face">
+                                <div class="chef-eyes">
+                                    <div class="chef-eye left"></div>
+                                    <div class="chef-eye right"></div>
+                                </div>
+                                <div class="chef-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="chef-torso"></div>
+                        <div class="chef-arms">
+                            <div class="chef-arm left"></div>
+                            <div class="chef-arm right"></div>
+                        </div>
+                    </div>
+                    <!-- Fire Extinguisher -->
+                    <div class="fire-extinguisher">🧯</div>
+                </div>
+            </div>
+
+            <!-- Message Content -->
+            <div class="fire-message-box">
+                <h1 class="fire-title">🔥 Konyha túlterhelt! 🔥</h1>
+                <p class="fire-subtitle">Jelenleg nem fogadunk új rendeléseket</p>
+                <div class="fire-explanation">
+                    <p>A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.</p>
+                    <p><strong>Kérjük, próbáld újra később!</strong></p>
+                </div>
+
+                <!-- Auto-refresh Timer -->
+                <div class="refresh-timer">
+                    <p>Automatikus frissítés: <span id="refreshCountdown">60</span> másodperc múlva</p>
+                </div>
+
+                <!-- Manual Refresh Button -->
+                <button class="refresh-btn" onclick="window.location.reload()">
+                    <span>Frissítés most</span>
+                </button>
+
+                <!-- Back to Home Button -->
+                <a href="index.html" class="back-home-btn">
+                    <span>← Vissza a főoldalra</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
@@ -458,6 +585,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="order-system-2.js"></script>
     <script src="cookies.js"></script>
 </body>
