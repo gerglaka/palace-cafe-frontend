@@ -716,12 +716,61 @@ class AdminDashboard {
      * Setup real-time updates
      */
     setupRealTimeUpdates() {
-        // For now, use polling. Will upgrade to WebSockets later
-        this.updateInterval = setInterval(() => {
-            if (!document.hidden && this.state.currentApp === 'dashboard') {
-                this.refreshDashboardData();
-            }
-        }, this.config.refreshInterval);
+        if (typeof io === 'undefined') {
+            console.warn('Socket.io not available');
+            return;
+        }
+    
+        try {
+            console.log('🔌 Connecting to Socket.io...');
+            
+            this.socket = io(this.config.apiUrl.replace('/api/admin', ''), {
+                transports: ['websocket', 'polling'],
+                reconnection: true,
+                reconnectionDelay: 1000,
+                reconnectionAttempts: 10
+            });
+        
+            this.socket.on('connect', () => {
+                console.log('✅ Socket.io connected');
+            });
+        
+            this.socket.on('disconnect', () => {
+                console.log('🔌 Socket.io disconnected');
+            });
+        
+            // Listen for new orders
+            this.socket.on('newOrder', (orderData) => {
+                console.log('🔔 New order received:', orderData);
+                this.showNotification('Új rendelés érkezett!', 'success');
+                
+                // Refresh orders app if it's loaded
+                if (this.apps.orders && this.state.currentApp === 'orders') {
+                    this.apps.orders.refresh();
+                }
+            });
+        
+            // Listen for order status changes (Kitchen On Fire)
+            this.socket.on('orderStatusChanged', (data) => {
+                console.log('🔔 Order acceptance status changed:', data);
+                
+                // Update the toggle button immediately
+                this.updateOrderToggleButton(data.acceptingOrders);
+                
+                const message = data.acceptingOrders 
+                    ? '✅ Rendelések engedélyezve' 
+                    : '🔥 Rendelések felfüggesztve';
+                
+                this.showNotification(message, data.acceptingOrders ? 'success' : 'warning');
+            });
+        
+            this.socket.on('error', (error) => {
+                console.error('❌ Socket.io error:', error);
+            });
+        
+        } catch (error) {
+            console.error('❌ Failed to setup Socket.io:', error);
+        }
     }
 
     /**
