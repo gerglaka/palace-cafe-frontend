@@ -384,7 +384,15 @@ class OrderSystem {
         this.customizationOptions = null;
         this.deliveryFee = 2.50;
         this.menuData = null;
-
+        this.operatingHours = {
+            0: null, // Sunday - CLOSED
+            1: null, // Monday - CLOSED
+            2: null, // Tuesday - CLOSED
+            3: { open: '11:00', close: '19:00' }, // Wednesday
+            4: { open: '11:00', close: '19:00' }, // Thursday
+            5: { open: '11:00', close: '21:00' }, // Friday
+            6: { open: '11:00', close: '21:00' }  // Saturday
+        };
         this.init();
     }
 
@@ -411,6 +419,12 @@ class OrderSystem {
 
         try {
             this.showLoading();
+        // Check if restaurant is open
+        if (!this.isRestaurantOpen()) {
+            this.hideLoading();
+            this.showClosedOverlay();
+            return; // Stop initialization if closed
+        }
 
             this.clearCart();
 
@@ -547,6 +561,279 @@ class OrderSystem {
             throw error;
         } finally {
             this.hideLoading();
+        }
+    }
+
+/**
+     * Check if restaurant is currently open
+     */
+    isRestaurantOpen() {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        const todayHours = this.operatingHours[currentDay];
+        
+        // If no hours defined for today, restaurant is closed
+        if (!todayHours) {
+            console.log('❌ Restaurant closed today (no operating hours)');
+            return false;
+        }
+        
+        // Check if current time is within operating hours
+        const isOpen = currentTime >= todayHours.open && currentTime < todayHours.close;
+        
+        console.log(`⏰ Current time: ${currentTime}`);
+        console.log(`📅 Today's hours: ${todayHours.open} - ${todayHours.close}`);
+        console.log(`🏪 Restaurant is: ${isOpen ? 'OPEN' : 'CLOSED'}`);
+        
+        return isOpen;
+    }
+
+    /**
+     * Calculate next opening time
+     */
+    getNextOpening() {
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+        
+        const dayNames = ['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'];
+        
+        // Check if we open later today
+        const todayHours = this.operatingHours[currentDay];
+        if (todayHours && currentTime < todayHours.open) {
+            return `Ma ${todayHours.open}-kor`;
+        }
+        
+        // Check next 7 days
+        for (let i = 1; i <= 7; i++) {
+            const checkDay = (currentDay + i) % 7;
+            const hours = this.operatingHours[checkDay];
+            
+            if (hours) {
+                const dayName = dayNames[checkDay];
+                if (i === 1) {
+                    return `Holnap (${dayName}) ${hours.open}-kor`;
+                } else {
+                    return `${dayName} ${hours.open}-kor`;
+                }
+            }
+        }
+        
+        return 'Hamarosan'; // Fallback
+    }
+
+    /**
+     * Get appropriate closed message based on time/day
+     */
+    getClosedMessage() {
+        const now = new Date();
+        const currentDay = now.getDay();
+        const currentHour = now.getHours();
+        
+        // Monday or Tuesday (closed days)
+        if (currentDay === 1 || currentDay === 2) {
+            return {
+                icon: '🌴',
+                message: 'A szakács pihenőnapja! Szerda-tól várunk újra.'
+            };
+        }
+        
+        // Sunday
+        if (currentDay === 0) {
+            return {
+                icon: '😴',
+                message: 'Vasárnap zárva tartunk. Szerda-től várunk szeretettel!'
+            };
+        }
+        
+        // Late night (after 20:00 on Wed-Thu, after 22:00 on Fri-Sat)
+        if (currentHour >= 20) {
+            return {
+                icon: '🌙',
+                message: 'Mára zárva! Holnap újra szeretettel várunk.'
+            };
+        }
+        
+        // Early morning (before 11:00)
+        if (currentHour < 11) {
+            return {
+                icon: '☕',
+                message: 'Még készülünk a nyitásra. Hamarosan indulunk!'
+            };
+        }
+        
+        // Default
+        return {
+            icon: '🍔',
+            message: 'Jelenleg zárva vagyunk.'
+        };
+    }
+
+    /**
+     * Show the closed overlay
+     */
+    showClosedOverlay() {
+        // Check if overlay already exists
+        let overlay = document.getElementById('closedOverlay');
+        
+        if (!overlay) {
+            const closedInfo = this.getClosedMessage();
+            const nextOpening = this.getNextOpening();
+            
+            overlay = document.createElement('div');
+            overlay.id = 'closedOverlay';
+            overlay.className = 'restaurant-closed-overlay';
+            overlay.innerHTML = `
+                <div class="closed-content">
+                    <div class="closed-icon">${closedInfo.icon}</div>
+                    <h2 class="closed-title">Jelenleg zárva vagyunk</h2>
+                    <p class="closed-message">${closedInfo.message}</p>
+                    <div class="next-opening">
+                        📅 Nyitás: ${nextOpening}
+                    </div>
+                    <div class="closed-actions">
+                        <button class="hours-button" onclick="orderSystem.showHoursModal()">
+                            📋 Nyitvatartási idő
+                        </button>
+                        <button class="browse-menu-btn" onclick="orderSystem.hideClosedOverlay()">
+                            👀 Menü böngészése
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+        }
+        
+        // Show overlay
+        requestAnimationFrame(() => {
+            overlay.classList.add('active');
+        });
+        
+        // Disable all add-to-cart buttons
+        this.disableOrdering();
+    }
+
+    /**
+     * Hide the closed overlay (for browsing only)
+     */
+    hideClosedOverlay() {
+        const overlay = document.getElementById('closedOverlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+        
+        // Keep ordering disabled
+        this.showBrowseOnlyMessage();
+    }
+
+    /**
+     * Show browse-only message at top of page
+     */
+    showBrowseOnlyMessage() {
+        const orderMain = document.getElementById('orderMain');
+        if (orderMain && !document.getElementById('browseOnlyBanner')) {
+            const banner = document.createElement('div');
+            banner.id = 'browseOnlyBanner';
+            banner.style.cssText = `
+                background: rgba(255, 193, 7, 0.9);
+                color: #000;
+                padding: 1rem 2rem;
+                text-align: center;
+                font-weight: 600;
+                font-size: 1.1rem;
+                border-radius: 10px;
+                margin-bottom: 2rem;
+                box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            `;
+            banner.innerHTML = '⚠️ Böngészési mód: Jelenleg nem fogadunk rendeléseket';
+            orderMain.insertBefore(banner, orderMain.firstChild);
+        }
+    }
+
+    /**
+     * Disable all ordering functionality
+     */
+    disableOrdering() {
+        // Disable all add-to-cart buttons
+        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+            btn.style.cursor = 'not-allowed';
+            btn.title = 'Jelenleg zárva vagyunk';
+        });
+        
+        // Hide cart buttons
+        const cartButtons = document.querySelectorAll('#cartToggleBtn, #mobileCartBtn');
+        cartButtons.forEach(btn => {
+            if (btn) btn.style.display = 'none';
+        });
+        
+        console.log('🚫 Ordering functionality disabled');
+    }
+
+    /**
+     * Show operating hours modal
+     */
+    showHoursModal() {
+        let modal = document.getElementById('hoursModal');
+        
+        if (!modal) {
+            const dayNames = ['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'];
+            const today = new Date().getDay();
+            
+            let hoursHTML = '';
+            for (let i = 0; i < 7; i++) {
+                const hours = this.operatingHours[i];
+                const isToday = i === today;
+                const hoursText = hours ? `${hours.open} - ${hours.close}` : 'Zárva';
+                const closedClass = hours ? '' : 'closed';
+                
+                hoursHTML += `
+                    <li ${isToday ? 'class="today"' : ''}>
+                        <span class="day-name">${dayNames[i]}</span>
+                        <span class="day-hours ${closedClass}">${hoursText}</span>
+                    </li>
+                `;
+            }
+            
+            modal = document.createElement('div');
+            modal.id = 'hoursModal';
+            modal.className = 'hours-modal';
+            modal.innerHTML = `
+                <div class="hours-modal-content">
+                    <div class="hours-modal-header">
+                        <h3 class="hours-modal-title">Nyitvatartás</h3>
+                        <button class="hours-close" onclick="orderSystem.hideHoursModal()">×</button>
+                    </div>
+                    <ul class="hours-list">
+                        ${hoursHTML}
+                    </ul>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // Close on background click
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    this.hideHoursModal();
+                }
+            });
+        }
+        
+        modal.classList.add('active');
+    }
+
+    /**
+     * Hide operating hours modal
+     */
+    hideHoursModal() {
+        const modal = document.getElementById('hoursModal');
+        if (modal) {
+            modal.classList.remove('active');
         }
     }
 
