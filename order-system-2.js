@@ -697,9 +697,9 @@ class OrderSystem {
                         <button class="hours-button" onclick="orderSystem.showHoursModal()">
                             📋 Nyitvatartási idő
                         </button>
-                        <button class="browse-menu-btn" onclick="orderSystem.hideClosedOverlay()">
+                        <a href="menu.html" class="browse-menu-btn" style="display: inline-block; text-decoration: none;">
                             👀 Menü böngészése
-                        </button>
+                        </a>
                     </div>
                 </div>
             `;
