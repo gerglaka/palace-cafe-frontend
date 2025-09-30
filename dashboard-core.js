@@ -130,8 +130,8 @@ class AdminDashboard {
             btn.classList.add('loading');
             statusText.textContent = 'Frissítés...';
 
-            // Call API to toggle orders
-            const result = await this.apiCall('/restaurant/status', {
+            
+            const result = await this.apiCall('/toggle-orders', {
                 method: 'POST'
             });
 
@@ -186,6 +186,7 @@ class AdminDashboard {
      */
     async loadOrderStatus() {
         try {
+            
             const result = await this.apiCall('/restaurant/status', {
                 method: 'GET'
             });
