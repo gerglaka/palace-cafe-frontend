@@ -1307,30 +1307,54 @@ class PalaceCheckout {
      * Setup form validation with real-time feedback
      */
     setupFormValidation() {
-        const requiredFields = ['firstName', 'lastName', 'phone', 'email'];
-        const deliveryFields = ['street', 'city', 'postalCode'];
-
-        [...requiredFields, ...deliveryFields].forEach(fieldId => {
+        const allFields = ['firstName', 'lastName', 'phone', 'email', 'street', 'city', 'postalCode'];
+    
+        allFields.forEach(fieldId => {
             const field = document.getElementById(fieldId);
             if (field) {
-                field.addEventListener('blur', () => this.validateField(field));
-                field.addEventListener('input', () => this.clearFieldError(field));
+                // Validate on blur (when user leaves field)
+                field.addEventListener('blur', () => {
+                    this.validateField(field);
+                    this.validateForm(); // Update summary
+                });
+                
+                // Clear error as user types
+                field.addEventListener('input', () => {
+                    this.clearFieldError(field);
+                    field.classList.remove('invalid', 'valid');
+                    
+                    // Auto-validate after short delay
+                    clearTimeout(field.validationTimeout);
+                    field.validationTimeout = setTimeout(() => {
+                        if (field.value.trim()) {
+                            this.validateField(field);
+                            this.validateForm();
+                        }
+                    }, 500);
+                });
             }
         });
-
-        // Phone number formatting
+    
+        // Validate checkboxes on change
+        ['termsAccept', 'privacyAccept'].forEach(checkboxId => {
+            const checkbox = document.getElementById(checkboxId);
+            if (checkbox) {
+                checkbox.addEventListener('change', () => this.validateForm());
+            }
+        });
+    
+        // Validate payment method on change
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', () => this.validateForm());
+        });
+    
+        // Phone number formatting (keep your existing one)
         const phoneField = document.getElementById('phone');
         if (phoneField) {
             phoneField.addEventListener('input', this.formatPhoneNumber.bind(this));
         }
-
-        // Email validation
-        const emailField = document.getElementById('email');
-        if (emailField) {
-            emailField.addEventListener('input', this.validateEmail.bind(this));
-        }
-
-        // Postal code validation for Slovakia
+    
+        // Postal code validation
         const postalCodeField = document.getElementById('postalCode');
         if (postalCodeField) {
             postalCodeField.addEventListener('input', this.validatePostalCode.bind(this));
@@ -2270,7 +2294,7 @@ class PalaceCheckout {
     validatePostalCode(event) {
         const postalCode = event.target.value;
         const isValid = this.isValidSlovakPostalCode(postalCode);
-        
+
         if (postalCode && !isValid) {
             // Check if it's 5 digits but not in delivery area
             const isFiveDigits = /^\d{5}$/.test(postalCode);
@@ -2304,44 +2328,176 @@ class PalaceCheckout {
     }
 
     /**
-     * Validate entire form
+     * Enhanced form validation with detailed feedback
      */
     validateForm() {
+        const validationIssues = [];
         let isValid = true;
 
-        // Check cart
+        // 1. Check cart
         if (this.state.cart.length === 0) {
+            validationIssues.push({
+                field: 'cart',
+                message: 'A kosár üres',
+                isValid: false
+            });
             isValid = false;
+        } else {
+            validationIssues.push({
+                field: 'cart',
+                message: 'Kosár rendben',
+                isValid: true
+            });
         }
 
-        // Check minimum order amount
+        // 2. Check minimum order amount
         const subtotal = this.calculateSubtotal();
         if (subtotal < this.config.minOrderAmount) {
+            validationIssues.push({
+                field: 'minOrder',
+                message: `Minimum rendelési összeg: €${this.config.minOrderAmount.toFixed(2)}`,
+                isValid: false
+            });
             isValid = false;
         }
 
-        // Check required fields
-        const requiredFields = ['firstName', 'lastName', 'phone', 'email'];
-        
-        // Add delivery fields if delivery is selected
-        if (this.state.orderType === 'delivery') {
-            requiredFields.push('street', 'city', 'postalCode');
-        }
+        // 3. Validate customer information fields
+        const customerFields = [
+            { id: 'firstName', label: 'Keresztnév', required: true },
+            { id: 'lastName', label: 'Vezetéknév', required: true },
+            { id: 'phone', label: 'Telefonszám', required: true, type: 'phone' },
+            { id: 'email', label: 'Email cím', required: true, type: 'email' }
+        ];
 
-        requiredFields.forEach(fieldId => {
-            const field = document.getElementById(fieldId);
-            if (field && !this.validateField(field)) {
+        customerFields.forEach(fieldConfig => {
+            const field = document.getElementById(fieldConfig.id);
+            if (!field) return;
+
+            const value = field.value.trim();
+            let fieldValid = true;
+            let errorMessage = '';
+
+            // Check if required and empty
+            if (fieldConfig.required && !value) {
+                fieldValid = false;
+                errorMessage = `${fieldConfig.label} kötelező`;
+            } 
+            // Validate specific field types
+            else if (value) {
+                if (fieldConfig.type === 'email' && !this.isValidEmail(value)) {
+                    fieldValid = false;
+                    errorMessage = 'Érvénytelen email formátum (példa@domain.com)';
+                } else if (fieldConfig.type === 'phone' && !this.isValidPhone(value)) {
+                    fieldValid = false;
+                    errorMessage = 'Telefonszám formátum: +421 XXX XXX XXX';
+                }
+            }
+
+            // Update field UI
+            if (!fieldValid) {
+                this.showFieldError(field, errorMessage);
+                field.classList.add('invalid');
+                field.classList.remove('valid');
+                validationIssues.push({
+                    field: fieldConfig.id,
+                    message: errorMessage,
+                    isValid: false
+                });
                 isValid = false;
+            } else if (value) {
+                this.clearFieldError(field);
+                this.showFieldSuccess(field);
+                field.classList.add('valid');
+                field.classList.remove('invalid');
             }
         });
 
-        // Check legal checkboxes
+        // 4. Validate delivery fields (only if delivery selected)
+        if (this.state.orderType === 'delivery') {
+            const deliveryFields = [
+                { id: 'street', label: 'Utca és házszám', required: true },
+                { id: 'city', label: 'Város', required: true },
+                { id: 'postalCode', label: 'Irányítószám', required: true, type: 'postal' }
+            ];
+
+            deliveryFields.forEach(fieldConfig => {
+                const field = document.getElementById(fieldConfig.id);
+                if (!field) return;
+
+                const value = field.value.trim();
+                let fieldValid = true;
+                let errorMessage = '';
+
+                if (fieldConfig.required && !value) {
+                    fieldValid = false;
+                    errorMessage = `${fieldConfig.label} kötelező szállításhoz`;
+                } else if (value && fieldConfig.type === 'postal') {
+                    if (!this.isValidSlovakPostalCode(value)) {
+                        fieldValid = false;
+                        errorMessage = `Csak ${this.allowedPostalCodes.join(' és ')} irányítószámokba szállítunk`;
+                    }
+                }
+
+                if (!fieldValid) {
+                    this.showFieldError(field, errorMessage);
+                    field.classList.add('invalid');
+                    field.classList.remove('valid');
+                    validationIssues.push({
+                        field: fieldConfig.id,
+                        message: errorMessage,
+                        isValid: false
+                    });
+                    isValid = false;
+                } else if (value) {
+                    this.clearFieldError(field);
+                    this.showFieldSuccess(field);
+                    field.classList.add('valid');
+                    field.classList.remove('invalid');
+                }
+            });
+        }
+
+        // 5. Check payment method selection
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked');
+        if (!paymentMethod) {
+            validationIssues.push({
+                field: 'payment',
+                message: 'Válassz fizetési módot',
+                isValid: false
+            });
+            isValid = false;
+        } else {
+            validationIssues.push({
+                field: 'payment',
+                message: 'Fizetési mód kiválasztva',
+                isValid: true
+            });
+        }
+
+        // 6. Check legal checkboxes
         const termsAccept = document.getElementById('termsAccept');
         const privacyAccept = document.getElementById('privacyAccept');
-        
-        if (!termsAccept?.checked || !privacyAccept?.checked) {
+
+        if (!termsAccept?.checked) {
+            validationIssues.push({
+                field: 'terms',
+                message: 'Általános Szerződési Feltételek elfogadása kötelező',
+                isValid: false
+            });
             isValid = false;
         }
+
+        if (!privacyAccept?.checked) {
+            validationIssues.push({
+                field: 'privacy',
+                message: 'Adatvédelmi Tájékoztató elfogadása kötelező',
+                isValid: false
+            });
+            isValid = false;
+        }
+
+        // Update validation summary display
+        this.updateValidationSummary(validationIssues);
 
         // Update place order button
         const placeOrderBtn = document.getElementById('placeOrderBtn');
@@ -2350,6 +2506,60 @@ class PalaceCheckout {
         }
 
         return isValid;
+    }
+
+    /**
+     * Show field success indicator
+     */
+    showFieldSuccess(field) {
+        // Remove existing success message
+        const existingSuccess = field.parentNode.querySelector('.field-success');
+        if (existingSuccess) {
+            existingSuccess.remove();
+        }
+
+        // Add success checkmark
+        const successElement = document.createElement('div');
+        successElement.className = 'field-success';
+        successElement.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span>Rendben</span>
+        `;
+
+        field.parentNode.appendChild(successElement);
+    }
+
+    /**
+     * Update validation summary display
+     */
+    updateValidationSummary(issues) {
+        const summaryContainer = document.getElementById('validationSummary');
+        const validationList = document.getElementById('validationList');
+
+        if (!summaryContainer || !validationList) return;
+
+        // Filter to show only invalid issues
+        const invalidIssues = issues.filter(issue => !issue.isValid);
+
+        if (invalidIssues.length === 0) {
+            summaryContainer.style.display = 'none';
+            return;
+        }
+
+        // Show summary
+        summaryContainer.style.display = 'block';
+
+        // Build list HTML
+        validationList.innerHTML = invalidIssues.map(issue => `
+            <li class="invalid">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 18L18 6M6 6l12 12" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span>${this.sanitizeInput(issue.message)}</span>
+            </li>
+        `).join('');
     }
 
     /**

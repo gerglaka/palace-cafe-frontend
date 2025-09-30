@@ -9652,3 +9652,124 @@ input:disabled + .cookie-slider {
         text-align: center;
     }
 }
+
+
+
+/* Validation Summary Styles */
+.validation-summary {
+    background: rgba(56, 20, 26, 0.1);
+    border: 2px solid var(--rustic-red);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    animation: slideDown 0.3s ease;
+}
+
+.validation-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    color: var(--rustic-red);
+}
+
+.validation-header svg {
+    flex-shrink: 0;
+}
+
+.validation-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.validation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.validation-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    color: var(--blackwash);
+}
+
+.validation-list li.valid {
+    color: var(--eucalyptus-green);
+}
+
+.validation-list li.invalid {
+    color: var(--rustic-red);
+}
+
+.validation-list li svg {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+}
+
+/* Field Validation Styles */
+.form-group input.invalid,
+.form-group textarea.invalid,
+.form-group select.invalid {
+    border-color: var(--rustic-red);
+    background: rgba(56, 20, 26, 0.05);
+}
+
+.form-group input.valid,
+.form-group textarea.valid,
+.form-group select.valid {
+    border-color: #4CAF50;
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.field-error {
+    color: var(--rustic-red);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: slideDown 0.2s ease;
+}
+
+.field-success {
+    color: #4CAF50;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .validation-summary {
+        padding: 1rem;
+    }
+    
+    .validation-title {
+        font-size: 1rem;
+    }
+    
+    .validation-list li {
+        font-size: 0.9rem;
+    }
+}
