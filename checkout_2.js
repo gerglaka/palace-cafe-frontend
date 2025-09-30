@@ -15,6 +15,13 @@
 
 class PalaceCheckout {
     constructor() {
+
+        // ===== ALLOWED DELIVERY POSTAL CODES =====
+        // Only these postal codes are eligible for delivery
+        this.allowedPostalCodes = ['94501', '94504'];
+        // =========================================
+
+
         // Configuration
         this.config = {
             deliveryFee: 2.50,
@@ -2265,7 +2272,18 @@ class PalaceCheckout {
         const isValid = this.isValidSlovakPostalCode(postalCode);
         
         if (postalCode && !isValid) {
-            this.showFieldError(event.target, 'Érvénytelen szlovákiai irányítószám (5 számjegy)');
+            // Check if it's 5 digits but not in delivery area
+            const isFiveDigits = /^\d{5}$/.test(postalCode);
+            if (isFiveDigits) {
+                // Valid format but wrong delivery area
+                this.showFieldError(
+                    event.target, 
+                    `Sajnáljuk, jelenleg csak ${this.allowedPostalCodes.join(' és ')} irányítószámokba szállítunk`
+                );
+            } else {
+                // Invalid format
+                this.showFieldError(event.target, 'Érvénytelen irányítószám formátum (5 számjegy szükséges)');
+            }
         } else {
             this.clearFieldError(event.target);
         }
@@ -2275,8 +2293,14 @@ class PalaceCheckout {
      * Check if Slovak postal code is valid
      */
     isValidSlovakPostalCode(postalCode) {
+        // First check: Must be 5 digits
         const slovakPostalRegex = /^\d{5}$/;
-        return slovakPostalRegex.test(postalCode);
+        if (!slovakPostalRegex.test(postalCode)) {
+            return false;
+        }
+
+        // Second check: Must be in allowed delivery area
+        return this.allowedPostalCodes.includes(postalCode);
     }
 
     /**
