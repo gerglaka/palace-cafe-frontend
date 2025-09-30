@@ -2433,7 +2433,19 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 2000;
-    display: none;
+    display: none; /* Hidden by default */
+}
+
+/* Show mobile cart button ONLY on mobile */
+@media (max-width: 768px) {
+    .mobile-cart-button {
+        display: block; /* Show on mobile */
+    }
+    
+    /* Hide desktop cart button on mobile */
+    .cart-toggle-btn {
+        display: none !important;
+    }
 }
 
 .mobile-cart-btn {
@@ -2452,6 +2464,23 @@ body {
     box-shadow: 0 8px 30px rgba(29, 102, 93, 0.4);
     position: relative;
     overflow: hidden;
+    
+    /* Apple/Android touch target minimum */
+    min-height: 44px;
+    min-width: 44px;
+    
+    /* Better tap area */
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+    touch-action: manipulation;
+}
+
+/* Make button slightly bigger on very small screens */
+@media (max-width: 480px) {
+    .mobile-cart-btn {
+        padding: 1.1rem 2.2rem;
+        font-size: 1.05rem;
+        gap: 1.2rem;
+    }
 }
 
 .mobile-cart-btn::before {
