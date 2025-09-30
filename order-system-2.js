@@ -1372,15 +1372,23 @@ class OrderSystem {
         // Mobile cart button listener (order page specific)
         if (mobileCartBtn) {
             console.log('🔧 Mobile cart button found, adding event listener');
-            mobileCartBtn.addEventListener('click', (e) => {
+            
+            // Remove any existing listeners first (prevent duplicates)
+            const newMobileCartBtn = mobileCartBtn.cloneNode(true);
+            mobileCartBtn.parentNode.replaceChild(newMobileCartBtn, mobileCartBtn);
+            
+            // Add the click listener
+            newMobileCartBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('📱 Mobile cart button clicked');
+                console.log('📱 Mobile cart button clicked!');
                 this.toggleCart();
             });
+            
+            console.log('✅ Mobile cart button listener attached successfully');
         } else {
-            console.log('❌ Mobile cart button not found');
-        }        
+            console.log('❌ Mobile cart button not found in DOM');
+        }      
 
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
