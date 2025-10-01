@@ -279,11 +279,71 @@ class AdminDashboard {
         };
     }
 
-    /**
-     * Setup event listeners
-     */
+        /**
+         * Setup event listeners
+         */
     setupEventListeners() {
-        // Navigation clicks
+        // ============================================
+        // MOBILE MENU HANDLERS - 
+        // ============================================
+
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+        const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+
+        // Function to close mobile sidebar
+        const closeMobileSidebar = () => {
+            if (sidebar) sidebar.classList.remove('mobile-open');
+            if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+            document.body.style.overflow = ''; // Restore body scroll
+        };
+
+        // Open sidebar on mobile hamburger click
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (sidebar) sidebar.classList.add('mobile-open');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+                document.body.style.overflow = 'hidden'; // Prevent body scroll
+            });
+        }
+
+        // Close sidebar on backdrop click
+        if (sidebarBackdrop) {
+            sidebarBackdrop.addEventListener('click', closeMobileSidebar);
+        }
+
+        // Close sidebar on X button click
+        if (sidebarCloseBtn) {
+            sidebarCloseBtn.addEventListener('click', closeMobileSidebar);
+        }
+
+        // Close sidebar when clicking nav items on mobile
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const originalClickHandler = item.onclick;
+            item.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    closeMobileSidebar();
+                }
+            });
+        });
+
+        // Handle window resize - close mobile menu if resizing to desktop
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (window.innerWidth > 768) {
+                    closeMobileSidebar();
+                }
+            }, 250);
+        });
+
+        // ============================================
+        // NAVIGATION CLICKS 
+        // ============================================
+
         document.addEventListener('click', (e) => {
             const navItem = e.target.closest('.nav-item');
             if (navItem && navItem.dataset.app) {
@@ -292,7 +352,10 @@ class AdminDashboard {
             }
         });
 
-        // Sidebar toggle
+        // ============================================
+        // SIDEBAR TOGGLE 
+        // ============================================
+
         const sidebarToggle = document.getElementById('sidebarToggle');
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', () => {
@@ -300,15 +363,10 @@ class AdminDashboard {
             });
         }
 
-        // Mobile menu button
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                this.toggleMobileSidebar();
-            });
-        }
+        // ============================================
+        // LOGOUT BUTTON 
+        // ============================================
 
-        // Logout button
         const logoutBtn = document.getElementById('logoutBtn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', (e) => {
@@ -317,7 +375,10 @@ class AdminDashboard {
             });
         }
 
-        // Quick action buttons
+        // ============================================
+        // QUICK ACTION BUTTONS
+        // ============================================
+
         const newOrderBtn = document.getElementById('newOrderBtn');
         if (newOrderBtn) {
             newOrderBtn.addEventListener('click', () => {
@@ -332,7 +393,10 @@ class AdminDashboard {
             });
         }
 
-        // Global search
+        // ============================================
+        // GLOBAL SEARCH 
+        // ============================================
+
         const globalSearch = document.getElementById('globalSearch');
         if (globalSearch) {
             globalSearch.addEventListener('input', this.debounce((e) => {
@@ -340,7 +404,10 @@ class AdminDashboard {
             }, 500));
         }
 
-        // Notification bell
+        // ============================================
+        // NOTIFICATION BELL 
+        // ============================================
+
         const notificationBell = document.getElementById('notificationBell');
         if (notificationBell) {
             notificationBell.addEventListener('click', () => {
@@ -348,7 +415,6 @@ class AdminDashboard {
             });
         }
 
-        // Mark all notifications as read
         const markAllReadBtn = document.getElementById('markAllReadBtn');
         if (markAllReadBtn) {
             markAllReadBtn.addEventListener('click', (e) => {
@@ -357,7 +423,6 @@ class AdminDashboard {
             });
         }
 
-        // Clear all notifications
         const clearAllBtn = document.getElementById('clearAllBtn');
         if (clearAllBtn) {
             clearAllBtn.addEventListener('click', (e) => {
@@ -366,42 +431,27 @@ class AdminDashboard {
             });
         }
 
-        // View all notifications (placeholder for now)
         const viewAllBtn = document.getElementById('viewAllBtn');
         if (viewAllBtn) {
             viewAllBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.hideNotificationsPanel();
-                // Future: Navigate to full notifications page
                 console.log('Navigate to full notifications page');
             });
         }
 
-        // Keyboard shortcuts
+        // ============================================
+        // KEYBOARD SHORTCUTS 
+        // ============================================
+
         document.addEventListener('keydown', (e) => {
             this.handleKeyboardShortcuts(e);
         });
 
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            const sidebar = document.getElementById('sidebar');
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        // ============================================
+        // VISIBILITY CHANGE 
+        // ============================================
 
-            if (window.innerWidth <= 768 && 
-                sidebar && 
-                sidebar.classList.contains('mobile-open') && 
-                !sidebar.contains(e.target) && 
-                !mobileMenuBtn.contains(e.target)) {
-                sidebar.classList.remove('mobile-open');
-            }
-        });
-
-        // Window resize
-        window.addEventListener('resize', this.debounce(() => {
-            this.handleResize();
-        }, 250));
-
-        // Visibility change (for pausing updates when tab is hidden)
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
                 this.pauseRealTimeUpdates();
@@ -412,12 +462,26 @@ class AdminDashboard {
     }
 
     /**
-     * Toggle mobile sidebar
+     * Toggle mobile sidebar (legacy - handled in setupEventListeners)
      */
     toggleMobileSidebar() {
         const sidebar = document.getElementById('sidebar');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
         if (sidebar) {
-            sidebar.classList.toggle('mobile-open');
+            const isOpen = sidebar.classList.contains('mobile-open');
+
+            if (isOpen) {
+                // Close
+                sidebar.classList.remove('mobile-open');
+                if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                // Open
+                sidebar.classList.add('mobile-open');
+                if (sidebarBackdrop) sidebarBackdrop.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         }
     }
 
