@@ -294,9 +294,22 @@ class AdminDashboard {
 
         // Function to close mobile sidebar
         const closeMobileSidebar = () => {
-            if (sidebar) sidebar.classList.remove('mobile-open');
-            if (sidebarBackdrop) sidebarBackdrop.classList.remove('active');
-            document.body.style.overflow = ''; // Restore body scroll
+            if (sidebar) {
+                sidebar.classList.remove('mobile-open');
+                // Force reflow to ensure animation completes
+                void sidebar.offsetWidth;
+            }
+            if (sidebarBackdrop) {
+                sidebarBackdrop.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+            
+            // Extra safety: ensure sidebar is fully closed after animation
+            setTimeout(() => {
+                if (sidebar && !sidebar.classList.contains('mobile-open')) {
+                    sidebar.style.transform = 'translateX(-100%)';
+                }
+            }, 350); // Slightly longer than animation duration
         };
 
         // Open sidebar on mobile hamburger click
