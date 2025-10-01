@@ -606,6 +606,8 @@ body {
     transition: var(--transition);
     position: relative;
     overflow: hidden;
+    min-height: 120px; /* Prevent collapse */
+    position: relative; /* For proper stacking */
 }
 
 .stat-card:hover {
@@ -1178,36 +1180,62 @@ body {
     
     /* Stats grid - stack vertically */
     .stats-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
         gap: 15px;
+        display: flex;
+        flex-direction: column;
     }
     
     /* Stat cards - more compact on mobile */
     .stat-card {
         padding: 20px 15px;
-        flex-direction: row; /* Keep horizontal layout */
+        flex-direction: row;
         align-items: center;
         gap: 15px;
+        min-height: 100px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex !important;
+        position: relative;
+        margin-bottom: 0;
     }
     
     .stat-card .stat-icon {
-        font-size: 32px; /* Slightly smaller icon */
-        width: 50px;
-        height: 50px;
+        font-size: 32px;
+        width: 60px;
+        height: 60px;
+        min-width: 60px; /* Prevent shrinking */
         flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
     }
     
     .stat-card .stat-info {
         flex: 1;
         text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
     }
     
     .stat-card .stat-value {
-        font-size: 24px; /* Larger for readability */
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+        margin: 0;
     }
     
     .stat-card .stat-label {
-        font-size: 13px;
+        font-size: 14px;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .stat-card .stat-change {
+        font-size: 12px;
+        margin-top: 5px;
     }
     
     /* Dashboard grid */
@@ -7300,5 +7328,58 @@ body {
     
     .modal-body {
         max-height: calc(100vh - 140px);
+    }
+}
+
+@media (max-width: 768px) {
+    /* Prevent layout collapse */
+    .main-content {
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
+    }
+    
+    .app-container {
+        width: 100%;
+        min-height: calc(100vh - 60px);
+        padding: 15px;
+        box-sizing: border-box;
+        overflow-x: hidden;
+    }
+    
+    /* Prevent all cards from collapsing */
+    .dashboard-card,
+    .stat-card,
+    .summary-card {
+        transform: translateZ(0); /* Force GPU acceleration */
+        backface-visibility: hidden;
+        position: relative;
+    }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+    @media (max-width: 768px) {
+        .stats-grid {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-flex-direction: column;
+            flex-direction: column;
+        }
+        
+        .stat-card {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+        }
+        
+        .main-content {
+            -webkit-overflow-scrolling: touch;
+            height: 100vh;
+            overflow-y: scroll;
+        }
     }
 }
