@@ -130,19 +130,20 @@ class PalaceCafeWebsite {
     }
 
     initHeroSlider() {
-        const slides = document.querySelectorAll('.hero-slide');
-        const titleElement = document.getElementById('heroTitle');
-        const subtitleElement = document.getElementById('heroSubtitle');
-
-        if (slides.length === 0) return;
-
-        // Auto-advance slides and text together
-        setInterval(() => {
-            this.nextHeroSlide();
-        }, 6000);
-
-        // Initial text setup
-        this.updateHeroText();
+        //const slides = document.querySelectorAll('.hero-slide');
+        //const titleElement = document.getElementById('heroTitle');
+        //const subtitleElement = document.getElementById('heroSubtitle');
+//
+        //if (slides.length === 0) return;
+//
+        //// Auto-advance slides and text together
+        //setInterval(() => {
+        //    this.nextHeroSlide();
+        //}, 6000);
+//
+        //// Initial text setup
+        //this.updateHeroText();
+        return;
     }
 
     nextHeroSlide() {
