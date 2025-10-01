@@ -7383,3 +7383,67 @@ body {
         }
     }
 }
+
+
+/* Clickable phone and address links in modal */
+.phone-link,
+.address-link {
+    color: var(--admin-info);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: var(--transition);
+    background: rgba(52, 152, 219, 0.05);
+    font-weight: 500;
+}
+
+.phone-link {
+    color: var(--admin-info);
+    background: rgba(52, 152, 219, 0.05);
+}
+
+.address-link {
+    color: var(--admin-success);
+    background: rgba(39, 174, 96, 0.05);
+}
+
+.phone-link:hover,
+.address-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.phone-link:active,
+.address-link:active {
+    transform: translateY(0);
+}
+
+.phone-link i {
+    font-size: 14px;
+    color: var(--admin-info);
+}
+
+.address-link i {
+    font-size: 14px;
+    color: var(--admin-success);
+}
+
+/* Mobile optimization - larger touch targets */
+@media (max-width: 768px) {
+    .phone-link,
+    .address-link {
+        padding: 12px 16px;
+        font-size: 15px;
+        min-height: 44px;
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .phone-link i,
+    .address-link i {
+        font-size: 16px;
+    }
+}

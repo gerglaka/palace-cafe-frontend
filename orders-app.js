@@ -632,7 +632,14 @@ class OrdersApp extends BaseApp {
                         </div>
                         <div class="detail-item">
                             <label>Telefon:</label>
-                            <span>${this.escapeHtml(order.customerPhone)}</span>
+                            <span>
+                                ${order.customerPhone ? `
+                                    <a href="tel:${order.customerPhone}" class="phone-link">
+                                        <i class="fas fa-phone"></i>
+                                        ${this.escapeHtml(order.customerPhone)}
+                                    </a>
+                                ` : 'N/A'}
+                            </span>
                         </div>
                         ${order.customerEmail ? `
                             <div class="detail-item">
@@ -643,7 +650,17 @@ class OrdersApp extends BaseApp {
                         ${order.orderType === 'DELIVERY' && order.deliveryAddress ? `
                             <div class="detail-item">
                                 <label>Szállítási cím:</label>
-                                <span>${this.escapeHtml(order.deliveryAddress)}</span>
+                                <span>
+                                    ${order.deliveryAddress ? `
+                                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(order.deliveryAddress)}" 
+                                           target="_blank" 
+                                           rel="noopener noreferrer"
+                                           class="address-link">
+                                            <i class="fas fa-map-marker-alt"></i>
+                                            ${this.escapeHtml(order.deliveryAddress)}
+                                        </a>
+                                    ` : 'N/A'}
+                                </span>
                             </div>
                         ` : ''}
                         ${order.deliveryNotes && order.deliveryNotes.trim() ? `
