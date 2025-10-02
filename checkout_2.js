@@ -24,6 +24,7 @@ class PalaceCheckout {
 
         // Configuration
         this.config = {
+            packagingFee: 0.50,
             deliveryFee: 2.50,
             minOrderAmount: 5.00,
             maxDeliveryDistance: 15, // km from restaurant
@@ -1595,20 +1596,23 @@ class PalaceCheckout {
     updateOrderSummary() {
         const subtotal = this.calculateSubtotal();
         const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
-        const total = subtotal + deliveryFee;
+        const total = subtotal + packagingFee + deliveryFee;
 
         console.log('=== ORDER SUMMARY ===');
         console.log(`Subtotal: €${subtotal.toFixed(2)}`);
+        console.log(`Packaging: €${packagingFee.toFixed(2)}`);
         console.log(`Delivery: €${deliveryFee.toFixed(2)}`);
         console.log(`Total: €${total.toFixed(2)}`);
 
         // Update display elements
         const subtotalEl = document.getElementById('subtotal');
+        const packagingFeeEl = document.getElementById('packagingFee');
         const deliveryFeeEl = document.getElementById('deliveryFee');
         const totalAmountEl = document.getElementById('totalAmount');
         const finalAmountEl = document.getElementById('finalAmount');
 
         if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
+        if (packagingFeeEl) packagingFeeEl.textContent = `€${packagingFee.toFixed(2)}`;
         if (deliveryFeeEl) deliveryFeeEl.textContent = `€${deliveryFee.toFixed(2)}`;
         if (totalAmountEl) totalAmountEl.textContent = `€${total.toFixed(2)}`;
         if (finalAmountEl) finalAmountEl.textContent = `€${total.toFixed(2)}`;

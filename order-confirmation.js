@@ -860,6 +860,7 @@ class OrderConfirmation {
      */
     updateOrderTotals(order) {
         const subtotalEl = document.getElementById('subtotalAmount');
+        const packagingFeeEl = document.getElementById('confPackagingFee');
         const deliveryFeeEl = document.getElementById('deliveryFeeAmount');
         const deliveryFeeRow = document.getElementById('deliveryFeeRow');
         const totalEl = document.getElementById('totalAmount');
@@ -870,6 +871,11 @@ class OrderConfirmation {
         if (subtotalEl) {
             subtotalEl.textContent = this.formatCurrency(subtotal);
         }
+
+        const packagingFee = 0.50;
+        if (packagingFeeEl) {
+            packagingFeeEl.textContent = this.formatCurrency(packagingFee);
+        }       
         
         // Show delivery fee if it's a delivery order
         if (order.orderType === 'DELIVERY') {
