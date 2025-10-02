@@ -1595,6 +1595,7 @@ class PalaceCheckout {
      */
     updateOrderSummary() {
         const subtotal = this.calculateSubtotal();
+        const packagingFee = this.config.packagingFee;
         const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
         const total = subtotal + packagingFee + deliveryFee;
 
