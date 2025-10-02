@@ -1422,12 +1422,12 @@ class PalaceCheckout {
 
             // Mapping of English slugs to Hungarian names
             const extraTranslations = {
-                'bacon': 'Extra Bacon',
-                'cheese': 'Extra Sajt', 
-                'tomato': 'Extra Paradicsom',
-                'onion': 'Extra Hagyma',
-                'lettuce': 'Extra Saláta',
-                'pickle': 'Extra Savanyúság'
+                'bacon': ' Bacon',
+                'cheese': 'Cheddar Sajt', 
+                'cheddar': 'Olvadt Cheddar',
+                'onion': 'Pirított Hagyma',
+                'tomato': 'Paradicsom',
+                'jalapeno': 'Jalapeno'
             };
 
             const extraLabels = item.customization.extras.map(extra => {
