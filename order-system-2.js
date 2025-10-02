@@ -390,7 +390,7 @@ class OrderSystem {
             1: null, // Monday - CLOSED
             2: null, // Tuesday - CLOSED
             3: { open: '11:00', close: '19:00' }, // Wednesday
-            4: { open: '07:00', close: '19:00' }, // Thursday
+            4: { open: '11:00', close: '19:00' }, // Thursday
             5: { open: '11:00', close: '21:00' }, // Friday
             6: { open: '11:00', close: '21:00' }  // Saturday
         };
