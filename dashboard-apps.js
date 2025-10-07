@@ -2539,6 +2539,7 @@ class InvoicesApp extends BaseApp {
                         <button class="btn-secondary" id="closeInvoiceModalBtn">
                             Bezárás
                         </button>
+                        <!-- Storno button will be inserted here dynamically -->
                         <button class="btn-info" id="downloadInvoiceBtn">
                             <i class="fas fa-download"></i>
                             PDF letöltés
@@ -2956,117 +2957,117 @@ class InvoicesApp extends BaseApp {
         `).join('');
     }
 
-    renderInvoicesTable() {
-        const container = document.getElementById('invoicesTable');
-        const countContainer = document.getElementById('invoicesCount');
-    
-        if (!container) return;
-    
-        // Update count
-        if (countContainer) {
-            countContainer.textContent = `${this.state.totalInvoices} számla`;
-        }
-    
-        if (this.state.invoices.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-search"></i>
-                    <h3>Nincsenek találatok</h3>
-                    <p>Próbálja meg módosítani a szűrési feltételeket.</p>
-                </div>
-            `;
-            return;
-        }
-    
+renderInvoicesTable() {
+    const container = document.getElementById('invoicesTable');
+    const countContainer = document.getElementById('invoicesCount');
+
+    if (!container) return;
+
+    // Update count
+    if (countContainer) {
+        countContainer.textContent = `${this.state.totalInvoices} számla`;
+    }
+
+    if (this.state.invoices.length === 0) {
         container.innerHTML = `
-            <div class="invoices-table-wrapper">
-                <table class="invoices-table">
-                    <thead>
-                        <tr>
-                            <th>
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="selectAllInvoices">
-                                    <span class="checkbox-custom"></span>
-                                </label>
-                            </th>
-                            <th>Számla száma</th>
-                            <th>Dátum</th>
-                            <th>Ügyfél</th>
-                            <th>Rendelés típus</th>
-                            <th>Fizetési mód</th>
-                            <th>Összeg</th>
-                            <th>Művelet</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${this.state.invoices.map(invoice => `
-                            <!-- ✅ CHANGED: Added storno-invoice class -->
-                            <tr class="invoice-row ${invoice.invoiceType === 'STORNO' ? 'storno-invoice' : ''}">
-                                <td>
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" 
-                                               class="invoice-checkbox" 
-                                               value="${invoice.id}">
-                                        <span class="checkbox-custom"></span>
-                                    </label>
-                                </td>
-                                <td>
-                                    <a href="#" onclick="invoicesApp.viewInvoiceDetails(${invoice.id}); return false;" 
-                                       class="invoice-number-link">
-                                        ${invoice.invoiceNumber}
-                                        <!-- ✅ NEW: Storno badge -->
-                                        ${invoice.invoiceType === 'STORNO' ? '<span class="storno-badge">STORNO</span>' : ''}
-                                        <!-- ✅ NEW: Cancelled badge -->
-                                        ${invoice.isCancelled ? '<span class="cancelled-badge">ÉRVÉNYTELEN</span>' : ''}
-                                    </a>
-                                    <!-- ✅ NEW: Original invoice reference -->
-                                    ${invoice.originalInvoiceNumber ? `<div class="invoice-reference">Eredeti: ${invoice.originalInvoiceNumber}</div>` : ''}
-                                </td>
-                                <td>${this.formatDate(invoice.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
-                                <td>${this.escapeHtml(invoice.customerName)}</td>
-                                <td>
-                                    <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
-                                        <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
-                                        ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
-                                        <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
-                                        ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
-                                    </span>
-                                </td>
-                                <td class="amount-cell">${this.formatCurrency(invoice.totalGross)}</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-icon btn-info" 
-                                                onclick="invoicesApp.viewInvoiceDetails(${invoice.id})"
-                                                title="Megtekintés">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
-                                        <button class="btn-icon btn-primary" 
-                                                onclick="invoicesApp.downloadInvoice(${invoice.id})"
-                                                title="PDF letöltés">
-                                            <i class="fas fa-download"></i>
-                                        </button>
-                                        <button class="btn-icon btn-success" 
-                                                onclick="invoicesApp.emailInvoice(${invoice.id})"
-                                                title="Email küldés">
-                                            <i class="fas fa-envelope"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
+            <div class="empty-state">
+                <i class="fas fa-search"></i>
+                <h3>Nincsenek találatok</h3>
+                <p>Próbálja meg módosítani a szűrési feltételeket.</p>
             </div>
         `;
-                        
-        // Setup table interactions
-        this.setupTableInteractions();
-        this.renderPagination();
+        return;
     }
+
+    container.innerHTML = `
+        <div class="invoices-table-wrapper">
+            <table class="invoices-table">
+                <thead>
+                    <tr>
+                        <th>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="selectAllInvoices">
+                                <span class="checkbox-custom"></span>
+                            </label>
+                        </th>
+                        <th>Számla száma</th>
+                        <th>Dátum</th>
+                        <th>Ügyfél</th>
+                        <th>Rendelés típus</th>
+                        <th>Fizetési mód</th>
+                        <th>Összeg</th>
+                        <th>Művelet</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${this.state.invoices.map(invoice => `
+                        <!-- ✅ CHANGED: Added storno-invoice class -->
+                        <tr class="invoice-row ${invoice.invoiceType === 'STORNO' ? 'storno-invoice' : ''}">
+                            <td>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" 
+                                           class="invoice-checkbox" 
+                                           value="${invoice.id}">
+                                    <span class="checkbox-custom"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <a href="#" onclick="invoicesApp.viewInvoiceDetails(${invoice.id}); return false;" 
+                                   class="invoice-number-link">
+                                    ${invoice.invoiceNumber}
+                                    <!-- ✅ NEW: Storno badge -->
+                                    ${invoice.invoiceType === 'STORNO' ? '<span class="storno-badge">STORNO</span>' : ''}
+                                    <!-- ✅ NEW: Cancelled badge -->
+                                    ${invoice.isCancelled ? '<span class="cancelled-badge">ÉRVÉNYTELEN</span>' : ''}
+                                </a>
+                                <!-- ✅ NEW: Original invoice reference -->
+                                ${invoice.originalInvoiceNumber ? `<div class="invoice-reference">Eredeti: ${invoice.originalInvoiceNumber}</div>` : ''}
+                            </td>
+                            <td>${this.formatDate(invoice.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+                            <td>${this.escapeHtml(invoice.customerName)}</td>
+                            <td>
+                                <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
+                                    <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
+                                    ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
+                                    <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
+                                    ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
+                                </span>
+                            </td>
+                            <td class="amount-cell">${this.formatCurrency(invoice.totalGross)}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-icon btn-info" 
+                                            onclick="invoicesApp.viewInvoiceDetails(${invoice.id})"
+                                            title="Megtekintés">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn-icon btn-primary" 
+                                            onclick="invoicesApp.downloadInvoice(${invoice.id})"
+                                            title="PDF letöltés">
+                                        <i class="fas fa-download"></i>
+                                    </button>
+                                    <button class="btn-icon btn-success" 
+                                            onclick="invoicesApp.emailInvoice(${invoice.id})"
+                                            title="Email küldés">
+                                        <i class="fas fa-envelope"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    // Setup table interactions
+    this.setupTableInteractions();
+    this.renderPagination();
+}
 
     setupTableInteractions() {
         // Select all checkbox
@@ -3395,14 +3396,51 @@ class InvoicesApp extends BaseApp {
         this.setupInvoiceModalActions(invoice);
     }
 
+    /**
+     * Render Storno button if applicable
+     */
+    renderStornoButton(invoice) {
+        // Only show Storno button for NORMAL invoices that aren't already cancelled
+        if (invoice.invoiceType === 'STORNO') {
+            return ''; // Don't show Storno button on Storno invoices
+        }
+
+        // Check if invoice is already cancelled (has Storno)
+        if (invoice.isCancelled || invoice.hasStorno) {
+            return `
+                <button class="btn-danger" disabled title="Ez a számla már stornózva van">
+                    <i class="fas fa-ban"></i>
+                    Már stornózva
+                </button>
+            `;
+        }
+
+        // Show active Storno button
+        return `
+            <button class="btn-danger" id="generateStornoBtn">
+                <i class="fas fa-file-invoice"></i>
+                Stornó számla generálása
+            </button>
+        `;
+    }
+
     setupInvoiceModalActions(invoice) {
         // Clean up existing listeners
         this.cleanupModalListeners();
 
+        const modalActions = document.getElementById('invoiceModalActions');
+        const closeBtn = document.getElementById('closeInvoiceModalBtn');
+        if (modalActions && closeBtn) {
+            const stornoButtonHTML = this.renderStornoButton(invoice);
+            if (stornoButtonHTML) {
+                closeBtn.insertAdjacentHTML('afterend', stornoButtonHTML);
+            }
+        }
+
         const downloadBtn = document.getElementById('downloadInvoiceBtn');
         const emailBtn = document.getElementById('emailInvoiceBtn');
         const viewOrderBtn = document.getElementById('viewOrderBtn');
-        const closeBtn = document.getElementById('closeInvoiceModalBtn');
+        const generateStornoBtn = document.getElementById('generateStornoBtn');
         const modalCloseBtn = document.querySelector('#invoiceModal .modal-close');
         const modalBackdrop = document.querySelector('#invoiceModal .modal-backdrop');
 
@@ -3411,6 +3449,13 @@ class InvoicesApp extends BaseApp {
             const downloadHandler = () => this.downloadInvoice(invoice.id);
             downloadBtn.addEventListener('click', downloadHandler);
             this.modalEventListeners.push({ element: downloadBtn, event: 'click', handler: downloadHandler });
+        }
+
+        //Storno generation action
+        if (generateStornoBtn) {
+            const stornoHandler = () => this.generateStornoInvoice(invoice);
+            generateStornoBtn.addEventListener('click', stornoHandler);
+            this.modalEventListeners.push({ element: generateStornoBtn, event: 'click', handler: stornoHandler });
         }
 
         // Email action
@@ -3524,6 +3569,68 @@ class InvoicesApp extends BaseApp {
         } catch (error) {
             console.error('Failed to send invoice email:', error);
             this.showNotification('Nem sikerült elküldeni az emailt', 'error');
+        } finally {
+            this.hideLoading();
+        }
+    }
+
+    /**
+     * Generate Storno invoice for a given invoice
+     */
+    async generateStornoInvoice(invoice) {
+        // Show confirmation dialog
+        const confirmed = confirm(
+            `Biztosan generálni szeretne stornó számlát?\n\n` +
+            `Számla: ${invoice.invoiceNumber}\n` +
+            `Összeg: ${this.formatCurrency(invoice.totalGross)}\n\n` +
+            `Ez:\n` +
+            `• Létrehoz egy negatív összegű stornó számlát\n` +
+            `• Az eredeti számlát érvénytelenítettnek jelöli\n` +
+            `• Emailt küld az ügyfélnek a stornó számlával`
+        );
+    
+        if (!confirmed) {
+            console.log('Storno generation cancelled by user');
+            return;
+        }
+    
+        try {
+            this.showLoading();
+        
+            const response = await this.apiCall(`/orders/${invoice.orderId}/generate-storno`, {
+                method: 'POST'
+            });
+        
+            if (response.success) {
+                console.log('✅ Storno invoice generated:', response.data);
+                
+                this.showNotification(
+                    `Stornó számla sikeresen generálva: ${response.data.stornoInvoice.invoiceNumber}`,
+                    'success'
+                );
+            
+                // Close modal and refresh invoice list
+                this.hideInvoiceModal();
+                await this.loadInvoices();
+                this.renderInvoicesTable();
+            
+            } else {
+                throw new Error(response.error || 'Storno generation failed');
+            }
+        
+        } catch (error) {
+            console.error('❌ Failed to generate Storno invoice:', error);
+            
+            let errorMessage = 'Hiba történt a stornó számla generálása során';
+            
+            if (error.message.includes('already exists')) {
+                errorMessage = 'Ez a számla már rendelkezik stornó számlával';
+            } else if (error.message.includes('no invoice')) {
+                errorMessage = 'Ehhez a rendeléshez nincs eredeti számla';
+            }
+            
+            this.showNotification(errorMessage, 'error');
+            
         } finally {
             this.hideLoading();
         }
