@@ -3311,28 +3311,30 @@ class InvoicesApp extends BaseApp {
 
                     <div class="invoice-totals">
                         <div class="totals-section">
-                            <div class="total-row">
-                                <span>Részösszeg:</span>
-                                <span>${this.formatCurrency(invoice.subtotal || 0)}</span>
-                            </div>
-                            ${invoice.deliveryFee > 0 ? `
+                            ${invoice.subtotal ? `
+                                <div class="total-row">
+                                    <span>Részösszeg (tételek):</span>
+                                    <span>${this.formatCurrency(invoice.subtotal)}</span>
+                                </div>
+                            ` : ''}
+                            ${invoice.deliveryFee && invoice.deliveryFee > 0 ? `
                                 <div class="total-row">
                                     <span>Szállítási díj:</span>
                                     <span>${this.formatCurrency(invoice.deliveryFee)}</span>
                                 </div>
                             ` : ''}
-                            ${invoice.packagingFee > 0 ? `
+                            ${invoice.packagingFee && invoice.packagingFee > 0 ? `
                                 <div class="total-row">
                                     <span>Csomagolási díj:</span>
                                     <span>${this.formatCurrency(invoice.packagingFee)}</span>
                                 </div>
                             ` : ''}
-                            <div class="total-row">
+                            <div class="total-row subtotal-line">
                                 <span>Nettó összeg:</span>
                                 <span>${this.formatCurrency(invoice.totalNet || 0)}</span>
                             </div>
                             <div class="total-row">
-                                <span>ÁFA (${invoice.vatRate || 19}%):</span>
+                                <span>ÁFA (${invoice.vatRate || 27}%):</span>
                                 <span>${this.formatCurrency(invoice.totalVat || 0)}</span>
                             </div>
                             <div class="total-row final-total">
