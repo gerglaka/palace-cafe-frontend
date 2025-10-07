@@ -7447,3 +7447,74 @@ body {
         font-size: 16px;
     }
 }
+
+/* ============================================
+   STORNO INVOICE STYLING
+   ============================================ */
+
+.storno-invoice {
+    background: rgba(220, 53, 69, 0.05);
+}
+
+.storno-invoice:hover {
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.storno-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cancelled-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffc107, #ff9800);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.invoice-reference {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.amount-cell {
+    font-weight: 600;
+}
+
+.storno-invoice .amount-cell {
+    color: #dc3545;
+}
+
+/* Storno Overview Card */
+.overview-card.storno {
+    background: linear-gradient(135deg, #fff5f5, #ffe5e5);
+    border-left: 4px solid #dc3545;
+}
+
+.overview-card.storno .card-icon {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+}
+
+.overview-card.storno .card-icon i {
+    color: white;
+}
+
+.overview-card.storno h3 {
+    color: #dc3545;
+}

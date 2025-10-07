@@ -2204,6 +2204,7 @@ class InvoicesApp extends BaseApp {
                 dateRange: 'month',
                 paymentMethod: 'all',
                 orderType: 'all',
+                invoiceType: 'all',
                 startDate: null,
                 endDate: null
             },
@@ -2314,6 +2315,20 @@ class InvoicesApp extends BaseApp {
                             </div>
                         </div>
                     </div>
+
+                    <div class="overview-card storno">
+                        <div class="card-icon">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="stornoCount">0</h3>
+                            <p>Stornó számlák</p>
+                            <div class="trend neutral">
+                                <span>Ez hónapban</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
                 <div class="recent-invoices-section">
@@ -2371,6 +2386,12 @@ class InvoicesApp extends BaseApp {
                             <option value="DELIVERY">Szállítás</option>
                             <option value="PICKUP">Elvitel</option>
                         </select>
+
+                        <select id="invoiceTypeFilter" class="filter-select">
+                            <option value="all">Minden számla típus</option>
+                            <option value="NORMAL">Normál számlák</option>
+                            <option value="STORNO">Stornó számlák</option>
+                        </select>                        
                         
                         <div class="date-range-inputs" id="customDateRange" style="display: none;">
                             <input type="date" id="startDate" class="date-input">
@@ -2597,6 +2618,7 @@ class InvoicesApp extends BaseApp {
                 dateRange: this.state.filters.dateRange,
                 paymentMethod: this.state.filters.paymentMethod,
                 orderType: this.state.filters.orderType,
+                invoiceType: this.state.filters.invoiceType,
                 sortBy: this.state.sortBy,
                 sortOrder: this.state.sortOrder
             });
@@ -2700,6 +2722,15 @@ class InvoicesApp extends BaseApp {
                 this.loadInvoices().then(() => this.renderInvoicesTable());
             });
         }
+
+        const invoiceTypeFilter = document.getElementById('invoiceTypeFilter');
+        if (invoiceTypeFilter) {
+            invoiceTypeFilter.addEventListener('change', (e) => {
+                this.state.filters.invoiceType = e.target.value;
+                this.state.currentPage = 1;
+                this.loadInvoices().then(() => this.renderInvoicesTable());
+            });
+        }        
 
         // Custom date range
         const startDate = document.getElementById('startDate');
@@ -2874,6 +2905,12 @@ class InvoicesApp extends BaseApp {
             if (cardCountEl) cardCountEl.textContent = `${overview.paymentBreakdown?.CARD || 0} számla`;
             if (cashCountEl) cashCountEl.textContent = `${overview.paymentBreakdown?.CASH || 0} számla`;
         }
+
+        const stornoCountEl = document.getElementById('stornoCount');
+        if (stornoCountEl) {
+            stornoCountEl.textContent = overview.monthlyStornoCount || 0;
+        }
+
     }
 
     renderOverview() {
@@ -2922,14 +2959,14 @@ class InvoicesApp extends BaseApp {
     renderInvoicesTable() {
         const container = document.getElementById('invoicesTable');
         const countContainer = document.getElementById('invoicesCount');
-
+    
         if (!container) return;
-
+    
         // Update count
         if (countContainer) {
             countContainer.textContent = `${this.state.totalInvoices} számla`;
         }
-
+    
         if (this.state.invoices.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
@@ -2940,7 +2977,7 @@ class InvoicesApp extends BaseApp {
             `;
             return;
         }
-
+    
         container.innerHTML = `
             <div class="invoices-table-wrapper">
                 <table class="invoices-table">
@@ -2963,7 +3000,8 @@ class InvoicesApp extends BaseApp {
                     </thead>
                     <tbody>
                         ${this.state.invoices.map(invoice => `
-                            <tr class="invoice-row">
+                            <!-- ✅ CHANGED: Added storno-invoice class -->
+                            <tr class="invoice-row ${invoice.invoiceType === 'STORNO' ? 'storno-invoice' : ''}">
                                 <td>
                                     <label class="checkbox-label">
                                         <input type="checkbox" 
@@ -2976,7 +3014,13 @@ class InvoicesApp extends BaseApp {
                                     <a href="#" onclick="invoicesApp.viewInvoiceDetails(${invoice.id}); return false;" 
                                        class="invoice-number-link">
                                         ${invoice.invoiceNumber}
+                                        <!-- ✅ NEW: Storno badge -->
+                                        ${invoice.invoiceType === 'STORNO' ? '<span class="storno-badge">STORNO</span>' : ''}
+                                        <!-- ✅ NEW: Cancelled badge -->
+                                        ${invoice.isCancelled ? '<span class="cancelled-badge">ÉRVÉNYTELEN</span>' : ''}
                                     </a>
+                                    <!-- ✅ NEW: Original invoice reference -->
+                                    ${invoice.originalInvoiceNumber ? `<div class="invoice-reference">Eredeti: ${invoice.originalInvoiceNumber}</div>` : ''}
                                 </td>
                                 <td>${this.formatDate(invoice.createdAt, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
                                 <td>${this.escapeHtml(invoice.customerName)}</td>
@@ -3018,7 +3062,7 @@ class InvoicesApp extends BaseApp {
                 </table>
             </div>
         `;
-
+                        
         // Setup table interactions
         this.setupTableInteractions();
         this.renderPagination();

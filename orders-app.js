@@ -1050,7 +1050,7 @@ class OrdersApp extends BaseApp {
         
             if (response.success) {
                 console.log(`✅ API confirmed order ${orderId} cancelled`);
-                this.showNotification('Rendelés elutasítva', 'success');
+                this.showNotification('Rendelés elutasítva. Stornó számla generálva és elküldve.', 'success');
                 
                 setTimeout(() => this.syncWithServer(), 1000);
             } else {
