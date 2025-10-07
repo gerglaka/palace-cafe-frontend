@@ -3323,7 +3323,7 @@ class InvoicesApp extends BaseApp {
                                     <span>${this.formatCurrency(invoice.deliveryFee)}</span>
                                 </div>
                             ` : ''}
-                            ${invoice.packagingFee && invoice.packagingFee > 0 ? `
+                            ${invoice.packagingFee > 0 ? `
                                 <div class="total-row">
                                     <span>Csomagolási díj:</span>
                                     <span>${this.formatCurrency(invoice.packagingFee)}</span>
