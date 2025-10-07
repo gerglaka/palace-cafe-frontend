@@ -1931,6 +1931,7 @@ body {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.6s ease;
+    pointer-events: none;
 }
 
 .order-online-btn:hover::before {
@@ -2392,6 +2393,7 @@ body {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left 0.6s ease;
+    pointer-events: none;
 }
 
 .cart-toggle-btn:hover::before {
@@ -3554,6 +3556,7 @@ body {
    height: 100%;
    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
    transition: left 0.6s ease;
+   pointer-events: none;
 }
 
 .add-to-cart-modal-btn:hover::before {
@@ -3827,6 +3830,7 @@ body {
    height: 100%;
    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
    transition: left 0.6s ease;
+   pointer-events: none;
 }
 
 .checkout-btn:hover::before {
@@ -5515,6 +5519,7 @@ body {
    height: 100%;
    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
    transition: left 0.6s ease;
+   pointer-events: none;
 }
 
 .place-order-btn:hover::before {
