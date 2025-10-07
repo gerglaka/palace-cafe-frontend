@@ -2535,7 +2535,7 @@ class InvoicesApp extends BaseApp {
                             <!-- Invoice details will be rendered here -->
                         </div>
                     </div>
-                    <div class="modal-actions">
+                    <div class="modal-actions" id="invoiceModalActions">
                         <button class="btn-secondary" id="closeInvoiceModalBtn">
                             Bezárás
                         </button>
@@ -3588,49 +3588,49 @@ renderInvoicesTable() {
             `• Az eredeti számlát érvénytelenítettnek jelöli\n` +
             `• Emailt küld az ügyfélnek a stornó számlával`
         );
-    
+
         if (!confirmed) {
             console.log('Storno generation cancelled by user');
             return;
         }
-    
+
         try {
             this.showLoading();
-        
+
             const response = await this.apiCall(`/orders/${invoice.orderId}/generate-storno`, {
                 method: 'POST'
             });
-        
+
             if (response.success) {
                 console.log('✅ Storno invoice generated:', response.data);
-                
+
                 this.showNotification(
                     `Stornó számla sikeresen generálva: ${response.data.stornoInvoice.invoiceNumber}`,
                     'success'
                 );
-            
+
                 // Close modal and refresh invoice list
                 this.hideInvoiceModal();
                 await this.loadInvoices();
                 this.renderInvoicesTable();
-            
+
             } else {
                 throw new Error(response.error || 'Storno generation failed');
             }
-        
+
         } catch (error) {
             console.error('❌ Failed to generate Storno invoice:', error);
-            
+
             let errorMessage = 'Hiba történt a stornó számla generálása során';
-            
+
             if (error.message.includes('already exists')) {
                 errorMessage = 'Ez a számla már rendelkezik stornó számlával';
             } else if (error.message.includes('no invoice')) {
                 errorMessage = 'Ehhez a rendeléshez nincs eredeti számla';
             }
-            
+
             this.showNotification(errorMessage, 'error');
-            
+
         } finally {
             this.hideLoading();
         }
