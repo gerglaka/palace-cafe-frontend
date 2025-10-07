@@ -1595,33 +1595,61 @@ class PalaceCheckout {
      */
     updateOrderSummary() {
         const subtotal = this.calculateSubtotal();
-        const packagingFee = this.config.packagingFee;
-        const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
-        const total = subtotal + packagingFee + deliveryFee;
+        const deliveryFee = this.state.orderType === 'delivery' ?
+            this.config.deliveryFee : 0;
+
+        // ============================================
+        // CALCULATE PACKAGING FEE (€0.50 per food item)
+        // ============================================
+        const PACKAGING_FEE_PER_ITEM = 0.50;
+        const nonFoodCategories = [
+            'sides', 'nonalcoholic', 'sauces', 'drink',
+            'coffees', 'lemonades', 'specialty', 'cocktails', 
+            'alcohol', 'shots', 'desserts'
+        ];
+
+        let packagingFeeCount = 0;
+
+        this.state.cart.forEach(item => {
+            const itemCategory = this.getItemCategory(item.originalId || item.id) || item.category;
+
+            // Only count food items
+            if (itemCategory && !nonFoodCategories.includes(itemCategory)) {
+                packagingFeeCount += item.quantity;
+            }
+        });
+
+        const packagingFee = packagingFeeCount * PACKAGING_FEE_PER_ITEM;
+        const total = subtotal + deliveryFee + packagingFee;
+        // ============================================
 
         console.log('=== ORDER SUMMARY ===');
         console.log(`Subtotal: €${subtotal.toFixed(2)}`);
-        console.log(`Packaging: €${packagingFee.toFixed(2)}`);
         console.log(`Delivery: €${deliveryFee.toFixed(2)}`);
+        console.log(`Packaging: ${packagingFeeCount}x €${PACKAGING_FEE_PER_ITEM} = €${packagingFee.toFixed(2)}`);
         console.log(`Total: €${total.toFixed(2)}`);
 
         // Update display elements
         const subtotalEl = document.getElementById('subtotal');
-        const packagingFeeEl = document.getElementById('packagingFee');
         const deliveryFeeEl = document.getElementById('deliveryFee');
+        const packagingFeeEl = document.getElementById('packagingFee');
+        const packagingFeeRow = document.querySelector('.packaging-fee');
         const totalAmountEl = document.getElementById('totalAmount');
         const finalAmountEl = document.getElementById('finalAmount');
 
         if (subtotalEl) subtotalEl.textContent = `€${subtotal.toFixed(2)}`;
-        if (packagingFeeEl) packagingFeeEl.textContent = `€${packagingFee.toFixed(2)}`;
         if (deliveryFeeEl) deliveryFeeEl.textContent = `€${deliveryFee.toFixed(2)}`;
+
+        // Show/hide packaging fee
+        if (packagingFeeCount > 0) {
+            if (packagingFeeRow) packagingFeeRow.style.display = 'flex';
+            if (packagingFeeEl) packagingFeeEl.textContent = `${packagingFeeCount}x €${PACKAGING_FEE_PER_ITEM.toFixed(2)}`;
+        } else {
+            if (packagingFeeRow) packagingFeeRow.style.display = 'none';
+        }
+
         if (totalAmountEl) totalAmountEl.textContent = `€${total.toFixed(2)}`;
         if (finalAmountEl) finalAmountEl.textContent = `€${total.toFixed(2)}`;
-
-        // Update Stripe amount if payment method is stripe
-        if (this.state.paymentMethod === 'stripe') {
-            this.updateStripeAmount();
-        }
     }
 
 
