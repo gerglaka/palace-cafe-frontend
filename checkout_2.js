@@ -1128,7 +1128,33 @@ class PalaceCheckout {
     calculateTotal() {
         const subtotal = this.calculateSubtotal();
         const deliveryFee = this.state.orderType === 'delivery' ? this.config.deliveryFee : 0;
-        return subtotal + deliveryFee;
+        
+        // ============================================
+        // CALCULATE PACKAGING FEE (€0.50 per food item)
+        // ============================================
+        const PACKAGING_FEE_PER_ITEM = 0.50;
+        const nonFoodCategories = [
+            'sides', 'nonalcoholic', 'sauces', 'drink',
+            'coffees', 'lemonades', 'specialty', 'cocktails', 
+            'alcohol', 'shots', 'desserts'
+        ];
+    
+        let packagingFeeCount = 0;
+    
+        this.state.cart.forEach(item => {
+            const itemCategory = this.getItemCategory(item.originalId || item.id) || item.category;
+            
+            // Only count food items
+            if (itemCategory && !nonFoodCategories.includes(itemCategory)) {
+                packagingFeeCount += item.quantity;
+            }
+        });
+    
+        const packagingFee = packagingFeeCount * PACKAGING_FEE_PER_ITEM;
+        
+        console.log(`💰 Total Calculation: Subtotal €${subtotal} + Delivery €${deliveryFee} + Packaging €${packagingFee} = €${subtotal + deliveryFee + packagingFee}`);
+        
+        return subtotal + deliveryFee + packagingFee;
     }
 
     /**
