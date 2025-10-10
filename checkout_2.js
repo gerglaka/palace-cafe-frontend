@@ -1378,7 +1378,11 @@ class PalaceCheckout {
         // Phone number formatting (keep your existing one)
         const phoneField = document.getElementById('phone');
         if (phoneField) {
-            phoneField.addEventListener('input', this.formatPhoneNumber.bind(this));
+            phoneField.addEventListener('blur', this.validatePhoneNumber.bind(this));
+            phoneField.addEventListener('input', () => {
+                // Clear error as user types
+                this.clearFieldError(phoneField);
+            });
         }
     
         // Postal code validation
@@ -2296,25 +2300,21 @@ class PalaceCheckout {
     /**
      * Format phone number as user types
      */
-    formatPhoneNumber(event) {
-        let value = event.target.value.replace(/\D/g, '');
-        
-        // Slovak phone number format: +421 xxx xxx xxx
-        if (value.startsWith('421')) {
-            value = value.substring(3);
+    validatePhoneNumber(event) {
+        const phone = event.target.value.trim();
+
+        if (!phone) {
+            this.clearFieldError(event.target);
+            return;
         }
-        
-        if (value.length > 0) {
-            if (value.length <= 3) {
-                value = `+421 ${value}`;
-            } else if (value.length <= 6) {
-                value = `+421 ${value.substring(0, 3)} ${value.substring(3)}`;
-            } else {
-                value = `+421 ${value.substring(0, 3)} ${value.substring(3, 6)} ${value.substring(6, 9)}`;
-            }
+
+        const isValid = this.isValidPhone(phone);
+
+        if (!isValid) {
+            this.showFieldError(event.target, 'Kérjük, adj meg egy érvényes telefonszámot');
+        } else {
+            this.clearFieldError(event.target);
         }
-        
-        event.target.value = value;
     }
 
     /**
@@ -2343,8 +2343,38 @@ class PalaceCheckout {
      * Check if phone number is valid (Slovak format)
      */
     isValidPhone(phone) {
-        const phoneRegex = /^\+421\s\d{3}\s\d{3}\s\d{3}$/;
-        return phoneRegex.test(phone);
+        // Extract only digits from the input
+        const digits = phone.replace(/\D/g, '');
+
+        // Must have at least 9 digits (international standard minimum)
+        if (digits.length < 9) {
+            return false;
+        }
+
+        // Cannot be all zeros
+        if (/^0+$/.test(digits)) {
+            return false;
+        }
+
+        // Cannot be sequential ascending (123456789, 234567890, etc.)
+        const isSequentialAscending = /(?:0123456789|1234567890|23456789|12345678|345678|456789)/.test(digits);
+        if (isSequentialAscending) {
+            return false;
+        }
+
+        // Cannot be sequential descending (987654321, etc.)
+        const isSequentialDescending = /(?:9876543210|987654321|87654321|7654321|654321)/.test(digits);
+        if (isSequentialDescending) {
+            return false;
+        }
+
+        // Cannot be all same digit repeated (111111111, 222222222, etc.)
+        if (/^(\d)\1+$/.test(digits)) {
+            return false;
+        }
+
+        // Passes all checks - looks like a real phone number
+        return true;
     }
 
     /**
