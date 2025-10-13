@@ -3439,70 +3439,87 @@ renderInvoicesTable() {
     }
 
     setupInvoiceModalActions(invoice) {
-        // Clean up existing listeners
-        this.cleanupModalListeners();
-
-        const modalActions = document.getElementById('invoiceModalActions');
-        const closeBtn = document.getElementById('closeInvoiceModalBtn');
-        if (modalActions && closeBtn) {
-            const stornoButtonHTML = this.renderStornoButton(invoice);
-            if (stornoButtonHTML) {
-                closeBtn.insertAdjacentHTML('afterend', stornoButtonHTML);
-            }
-        }
-
-        const downloadBtn = document.getElementById('downloadInvoiceBtn');
-        const emailBtn = document.getElementById('emailInvoiceBtn');
-        const viewOrderBtn = document.getElementById('viewOrderBtn');
-        const generateStornoBtn = document.getElementById('generateStornoBtn');
-        const modalCloseBtn = document.querySelector('#invoiceModal .modal-close');
-        const modalBackdrop = document.querySelector('#invoiceModal .modal-backdrop');
-
-        // Download action
-        if (downloadBtn) {
-            const downloadHandler = () => this.downloadInvoice(invoice.id);
-            downloadBtn.addEventListener('click', downloadHandler);
-            this.modalEventListeners.push({ element: downloadBtn, event: 'click', handler: downloadHandler });
-        }
-
-        //Storno generation action
-        if (generateStornoBtn) {
-            const stornoHandler = () => this.generateStornoInvoice(invoice);
-            generateStornoBtn.addEventListener('click', stornoHandler);
-            this.modalEventListeners.push({ element: generateStornoBtn, event: 'click', handler: stornoHandler });
-        }
-
-        // Email action
-        if (emailBtn) {
-            const emailHandler = () => this.emailInvoice(invoice.id);
-            emailBtn.addEventListener('click', emailHandler);
-            this.modalEventListeners.push({ element: emailBtn, event: 'click', handler: emailHandler });
-        }
-
-        // View order action
-        if (viewOrderBtn) {
-            const viewOrderHandler = () => this.viewRelatedOrder(invoice.orderId);
-            viewOrderBtn.addEventListener('click', viewOrderHandler);
-            this.modalEventListeners.push({ element: viewOrderBtn, event: 'click', handler: viewOrderHandler });
-        }
-
-        // Close actions
-        const closeHandler = () => this.hideInvoiceModal();
-        
-        if (closeBtn) {
-            closeBtn.addEventListener('click', closeHandler);
-            this.modalEventListeners.push({ element: closeBtn, event: 'click', handler: closeHandler });
-        }
-
-        if (modalCloseBtn) {
-            modalCloseBtn.addEventListener('click', closeHandler);
-            this.modalEventListeners.push({ element: modalCloseBtn, event: 'click', handler: closeHandler });
-        }
-
-        if (modalBackdrop) {
-            modalBackdrop.addEventListener('click', closeHandler);
-            this.modalEventListeners.push({ element: modalBackdrop, event: 'click', handler: closeHandler });
-        }
+      // Clean up existing listeners
+      this.cleanupModalListeners();
+    
+      const modalActions = document.getElementById('invoiceModalActions');
+    
+      if (!modalActions) return;
+    
+      // ✅ Clear and rebuild all buttons at once
+      modalActions.innerHTML = `
+        <button class="btn-secondary" id="closeInvoiceModalBtn">
+          Bezárás
+        </button>
+        ${this.renderStornoButton(invoice)}
+        <button class="btn-info" id="downloadInvoiceBtn">
+          <i class="fas fa-download"></i>
+          PDF letöltés
+        </button>
+        <button class="btn-primary" id="emailInvoiceBtn">
+          <i class="fas fa-envelope"></i>
+          Email küldés
+        </button>
+        <button class="btn-success" id="viewOrderBtn">
+          <i class="fas fa-shopping-cart"></i>
+          Rendelés megtekintése
+        </button>
+      `;
+    
+      // Now setup all the event listeners
+      const downloadBtn = document.getElementById('downloadInvoiceBtn');
+      const emailBtn = document.getElementById('emailInvoiceBtn');
+      const viewOrderBtn = document.getElementById('viewOrderBtn');
+      const generateStornoBtn = document.getElementById('generateStornoBtn');
+      const closeBtn = document.getElementById('closeInvoiceModalBtn');
+      const modalCloseBtn = document.querySelector('#invoiceModal .modal-close');
+      const modalBackdrop = document.querySelector('#invoiceModal .modal-backdrop');
+    
+      // Download action
+      if (downloadBtn) {
+        const downloadHandler = () => this.downloadInvoice(invoice.id);
+        downloadBtn.addEventListener('click', downloadHandler);
+        this.modalEventListeners.push({ element: downloadBtn, event: 'click', handler: downloadHandler });
+      }
+  
+      // Storno generation action
+      if (generateStornoBtn) {
+        const stornoHandler = () => this.generateStornoInvoice(invoice);
+        generateStornoBtn.addEventListener('click', stornoHandler);
+        this.modalEventListeners.push({ element: generateStornoBtn, event: 'click', handler: stornoHandler });
+      }
+  
+      // Email action
+      if (emailBtn) {
+        const emailHandler = () => this.emailInvoice(invoice.id);
+        emailBtn.addEventListener('click', emailHandler);
+        this.modalEventListeners.push({ element: emailBtn, event: 'click', handler: emailHandler });
+      }
+  
+      // View order action
+      if (viewOrderBtn) {
+        const viewOrderHandler = () => this.viewRelatedOrder(invoice.orderId);
+        viewOrderBtn.addEventListener('click', viewOrderHandler);
+        this.modalEventListeners.push({ element: viewOrderBtn, event: 'click', handler: viewOrderHandler });
+      }
+  
+      // Close actions
+      const closeHandler = () => this.hideInvoiceModal();
+      
+      if (closeBtn) {
+        closeBtn.addEventListener('click', closeHandler);
+        this.modalEventListeners.push({ element: closeBtn, event: 'click', handler: closeHandler });
+      }
+  
+      if (modalCloseBtn) {
+        modalCloseBtn.addEventListener('click', closeHandler);
+        this.modalEventListeners.push({ element: modalCloseBtn, event: 'click', handler: closeHandler });
+      }
+  
+      if (modalBackdrop) {
+        modalBackdrop.addEventListener('click', closeHandler);
+        this.modalEventListeners.push({ element: modalBackdrop, event: 'click', handler: closeHandler });
+      }
     }
 
     showInvoiceModal() {
