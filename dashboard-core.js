@@ -371,8 +371,16 @@ class AdminDashboard {
 
         const sidebarToggle = document.getElementById('sidebarToggle');
         if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', () => {
-                this.toggleSidebar();
+            sidebarToggle.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent event bubbling
+                
+                // On mobile (≤768px), just close the mobile sidebar
+                if (window.innerWidth <= 768) {
+                    closeMobileSidebar();
+                } else {
+                    // On desktop, use normal collapse behavior
+                    this.toggleSidebar();
+                }
             });
         }
 

@@ -5504,6 +5504,16 @@ body {
         opacity: 1;
         visibility: visible;
     }
+
+    .sidebar-toggle {
+        display: none !important;
+    }
+    
+    /* Adjust sidebar header since toggle is hidden */
+    .sidebar-header {
+        justify-content: center;
+        padding: 20px;
+    }    
 }
 
 /* Add these styles to admin.css */
