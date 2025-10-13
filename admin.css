@@ -1058,30 +1058,39 @@ body {
         left: 0;
         top: 0;
         height: 100vh;
-        width: 280px; /* Fixed width instead of variable */
+        width: 280px;
         max-width: 280px;
-        transform: translateX(-100%); /* Hide completely off-screen */
+        transform: translateX(-100%);
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 1001;
-        box-shadow: none; /* Remove shadow when hidden */
-        will-change: transform; /* Performance optimization */
+        box-shadow: none;
+        overflow-y: auto; /* Allow scrolling inside sidebar */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
     
-    /* When sidebar is open */
+    /* CRITICAL: Prevent scroll from hiding sidebar */
     .sidebar.mobile-open {
-        transform: translateX(0); /* Slide in */
-        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4); /* Add shadow when visible */
+        transform: translateX(0) !important;
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+        position: fixed !important; /* Force fixed positioning */
+        left: 0 !important;
+        top: 0 !important;
     }
     
-    /* Ensure sidebar doesn't affect collapsed state on mobile */
-    .sidebar.collapsed {
-        transform: translateX(-100%); /* Still hide when collapsed */
-        width: 280px; /* Keep same width */
+    /* Ensure sidebar stays hidden when not open */
+    .sidebar:not(.mobile-open) {
+        transform: translateX(-100%) !important;
     }
     
-    /* When both mobile-open AND collapsed (shouldn't happen but just in case) */
+    /* Collapsed state on mobile */
+    .sidebar.collapsed:not(.mobile-open) {
+        transform: translateX(-100%) !important;
+        width: 280px;
+    }
+    
+    /* When both mobile-open AND collapsed */
     .sidebar.collapsed.mobile-open {
-        transform: translateX(0);
+        transform: translateX(0) !important;
         width: 280px;
     }
     
