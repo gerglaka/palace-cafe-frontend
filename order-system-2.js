@@ -387,7 +387,7 @@ class OrderSystem {
         this.menuData = null;
         this.operatingHours = {
             0: null, // Sunday - CLOSED
-            1: null, // Monday - CLOSED
+            1: { open: '11:00', close: '19:30' },//null, // Monday - CLOSED
             2: null, // Tuesday - CLOSED
             3: { open: '11:00', close: '19:30' }, // Wednesday
             4: { open: '11:00', close: '19:30' }, // Thursday
