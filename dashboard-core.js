@@ -296,6 +296,8 @@ class AdminDashboard {
         const closeMobileSidebar = () => {
             if (sidebar) {
                 sidebar.classList.remove('mobile-open');
+                // Remove any inline transform styles to let CSS take over
+                sidebar.style.transform = '';
                 // Force reflow to ensure animation completes
                 void sidebar.offsetWidth;
             }
@@ -303,13 +305,6 @@ class AdminDashboard {
                 sidebarBackdrop.classList.remove('active');
             }
             document.body.style.overflow = '';
-            
-            // Extra safety: ensure sidebar is fully closed after animation
-            setTimeout(() => {
-                if (sidebar && !sidebar.classList.contains('mobile-open')) {
-                    sidebar.style.transform = 'translateX(-100%)';
-                }
-            }, 350); // Slightly longer than animation duration
         };
 
         // Open sidebar on mobile hamburger click
@@ -347,8 +342,13 @@ class AdminDashboard {
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(() => {
-                if (window.innerWidth > 768) {
-                    closeMobileSidebar();
+                if (window.innerWidth > 768 && sidebar) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebar.style.transform = ''; // Clear inline styles
+                    if (sidebarBackdrop) {
+                        sidebarBackdrop.classList.remove('active');
+                    }
+                    document.body.style.overflow = '';
                 }
             }, 250);
         });
