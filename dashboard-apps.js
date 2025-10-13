@@ -2920,41 +2920,55 @@ class InvoicesApp extends BaseApp {
     }
 
     renderRecentInvoices() {
-        const container = document.getElementById('recentInvoicesList');
-        if (!container) return;
-
-        // Take first 5 invoices for recent list
-        const recentInvoices = this.state.invoices.slice(0, 5);
-
-        if (recentInvoices.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <i class="fas fa-file-invoice"></i>
-                    <h3>Nincsenek számlák</h3>
-                    <p>Még nincsenek kiállított számlák.</p>
-                </div>
-            `;
-            return;
-        }
-
-        container.innerHTML = recentInvoices.map(invoice => `
-            <div class="invoice-item" onclick="invoicesApp.viewInvoiceDetails(${invoice.id})">
-                <div class="invoice-info">
-                    <h4>${invoice.invoiceNumber}</h4>
-                    <p>${this.escapeHtml(invoice.customerName)} • ${this.formatCurrency(invoice.totalGross)} • ${this.formatDate(invoice.createdAt)}</p>
-                </div>
-                <div class="invoice-badges">
-                    <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
-                        <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
-                        ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
-                    </span>
-                    <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
-                        <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
-                        ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
-                    </span>
-                </div>
-            </div>
-        `).join('');
+      const container = document.getElementById('recentInvoicesList');
+      if (!container) return;
+    
+      const recentInvoices = this.state.invoices.slice(0, 5);
+    
+      if (recentInvoices.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-file-invoice"></i>
+            <h3>Nincsenek számlák</h3>
+            <p>Még nincsenek kiállított számlák.</p>
+          </div>
+        `;
+        return;
+      }
+  
+      container.innerHTML = recentInvoices.map(invoice => `
+        <div class="invoice-item ${invoice.invoiceType === 'STORNO' ? 'storno-invoice' : ''}" 
+             onclick="invoicesApp.viewInvoiceDetails(${invoice.id})">
+          <div class="invoice-info">
+            <h4>
+              ${invoice.invoiceType === 'STORNO' ? '🚫 ' : ''}
+              ${invoice.invoiceNumber}
+              ${invoice.invoiceType === 'STORNO' ? '<span class="storno-badge">STORNO</span>' : ''}
+            </h4>
+            <p>
+              ${this.escapeHtml(invoice.customerName)} • 
+              ${this.formatCurrency(invoice.totalGross)} • 
+              ${this.formatDate(invoice.createdAt)}
+            </p>
+          </div>
+          <div class="invoice-badges">
+            ${invoice.invoiceType === 'STORNO' ? `
+              <span class="invoice-type-badge storno">
+                <i class="fas fa-ban"></i>
+                STORNO
+              </span>
+            ` : ''}
+            <span class="payment-method-badge ${invoice.paymentMethod.toLowerCase()}">
+              <i class="fas fa-${invoice.paymentMethod === 'CARD' ? 'credit-card' : 'money-bill-wave'}"></i>
+              ${invoice.paymentMethod === 'CARD' ? 'Kártya' : 'Készpénz'}
+            </span>
+            <span class="order-type-badge ${invoice.orderType?.toLowerCase() || 'pickup'}">
+              <i class="fas fa-${invoice.orderType === 'DELIVERY' ? 'truck' : 'store'}"></i>
+              ${invoice.orderType === 'DELIVERY' ? 'Szállítás' : 'Elvitel'}
+            </span>
+          </div>
+        </div>
+      `).join('');
     }
 
 renderInvoicesTable() {

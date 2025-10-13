@@ -7518,3 +7518,35 @@ body {
 .overview-card.storno h3 {
     color: #dc3545;
 }
+
+/* Invoice type badges */
+.invoice-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.invoice-type-badge.storno {
+  background-color: #C41E3A;
+  color: white;
+}
+
+.invoice-type-badge i {
+  font-size: 10px;
+}
+
+/* Storno invoice row styling */
+.invoice-item.storno-invoice {
+  border-left: 4px solid #C41E3A;
+  background: linear-gradient(to right, #fff5f5 0%, #ffffff 50%);
+}
+
+.invoice-item.storno-invoice:hover {
+  background: linear-gradient(to right, #ffe5e5 0%, #f9f9f9 50%);
+}
