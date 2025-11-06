@@ -379,7 +379,7 @@ class PalaceCafeWebsite {
 
 class OrderSystem {
     constructor() {
-        this.apiUrl = 'https://palace-cafe-backend-production.up.railway.app/api';
+        this.apiUrl = window.API_BASE_URL;
         this.cart = [];
         this.currentItem = null;
         this.customizationOptions = null;
@@ -2320,7 +2320,7 @@ window.addEventListener('beforeunload', () => {
  */
 class MenuDataLoader {
     constructor() {
-        this.apiUrl = 'https://palace-cafe-backend-production.up.railway.app/api';
+        this.apiUrl = window.API_BASE_URL;
         
         // Only run on menu page
         if (document.querySelector('.menu-main')) {

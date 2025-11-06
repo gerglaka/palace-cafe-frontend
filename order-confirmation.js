@@ -11,8 +11,8 @@
 class OrderConfirmation {
     constructor() {
         this.config = {
-            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api', // Make sure this matches your server
-            socketUrl: 'https://palace-cafe-backend-production.up.railway.app',
+            apiUrl: window.API_BASE_URL, 
+            socketUrl: window.SOCKET_URL,
             refreshInterval: 30000, // 30 seconds
             maxRetries: 3,
             retryDelay: 2000

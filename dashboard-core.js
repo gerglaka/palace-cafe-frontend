@@ -16,7 +16,7 @@ class AdminDashboard {
     constructor() {
         // Configuration
         this.config = {
-            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api/admin',
+            apiUrl: window.API_BASE_URL + '/admin',
             refreshInterval: 30000, // 30 seconds
             maxRetries: 3,
             retryDelay: 1000

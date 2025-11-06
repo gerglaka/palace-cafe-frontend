@@ -19,7 +19,7 @@ class BaseApp {
         this.isLoaded = false;
         this.data = {};
         this.config = {
-            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api/admin'
+            apiUrl: window.API_BASE_URL + '/admin'
         };
     }
 
@@ -372,8 +372,8 @@ class MenuApp extends BaseApp {
         super('menu');
 
         this.config = {
-            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api/admin', 
-            publicApiUrl: 'https://palace-cafe-backend-production.up.railway.app/api'   
+            apiUrl: window.API_BASE_URL + '/admin',
+            publicApiUrl: window.API_BASE_URL    
         };
         
         // State management
@@ -2189,7 +2189,7 @@ class InvoicesApp extends BaseApp {
         super('invoices');
 
         this.config = {
-            apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api/admin',
+            apiUrl: window.API_BASE_URL + '/admin',
             itemsPerPage: 20
         };
         
