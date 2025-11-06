@@ -36,7 +36,7 @@ class PalaceCheckout {
                 'saturday': { open: '11:00', close: '22:00' }
             },
             timeSlotInterval: 15, // minutes
-            apiBaseUrl: 'https://palace-cafe-backend-production.up.railway.app/api' // Adjust based on your backend setup
+            apiBaseUrl: window.API_BASE_URL
         };
 
         this.customizationOptions = null; // Will be loaded from API

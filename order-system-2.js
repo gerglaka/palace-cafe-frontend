@@ -2253,7 +2253,7 @@ class OrderSystem {
         try {
             console.log('🔌 Connecting to Socket.io for real-time updates...');
 
-            this.socket = io('https://palace-cafe-backend-production.up.railway.app', {
+            this.socket = io(window.SOCKET_URL, {
                 transports: ['websocket', 'polling'],
                 reconnection: true,
                 reconnectionDelay: 1000,
