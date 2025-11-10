@@ -27,6 +27,30 @@
     "orderOnline": "Online objednávka",
     "orderNow": "Objednať teraz"
   },
+
+    "menuPage": {
+    "heroTitle": "Menu",
+    "heroSubtitle": "Autentické chute od roku 2016",
+    "foodDropdown": "Jedlo",
+    "extrasDropdown": "Prílohy",
+    "drinksDropdown": "Nápoje",
+    "smashburgers": "SmashBurger",
+    "hamburgers": "Hamburger",
+    "qurritos": "Qurrito",
+    "mediterranean": "Stredomorské",
+    "sides": "Prílohy",
+    "desserts": "Dezerty",
+    "sauces": "Omáčky",
+    "nonalcoholic": "Nealkoholické nápoje",
+    "coffees": "Kávy",
+    "lemonades": "Limonády",
+    "specialty": "Špeciality",
+    "cocktails": "Koktaily",
+    "alcohol": "Vína & Pivá",
+    "shots": "Krátke nápoje",
+    "orderSectionTitle": "Niečo vás zaujalo?",
+    "orderSectionSubtitle": "Objednajte si online a vyzdvihnite u nás!"
+  },
   
   "order": {
     "title": "Online objednávka",
@@ -47,6 +71,17 @@
     "minimumOrder": "Minimálna hodnota objednávky",
     "minimumNotMet": "Minimálna hodnota objednávky je {{amount}}€",
     "quantity": "Množstvo"
+  },
+
+    "orderPage": {
+    "kitchenOverloaded": "Kuchyňa preťažená!",
+    "notAcceptingOrders": "Momentálne neprijímame nové objednávky",
+    "kitchenAtCapacity": "Naša kuchyňa teraz pracuje na plnú kapacitu a dočasne pozastavujeme prijímanie nových objednávok.",
+    "tryAgainLater": "Prosím, skúste to neskôr!",
+    "autoRefresh": "Automatické obnovenie:",
+    "secondsLater": "sekúnd",
+    "refreshNow": "Obnoviť teraz",
+    "backToHome": "Späť na domovskú stránku"
   },
   
   "customization": {

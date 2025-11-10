@@ -27,6 +27,30 @@
     "orderOnline": "Order online",
     "orderNow": "Order now"
   },
+
+    "menuPage": {
+    "heroTitle": "Menu",
+    "heroSubtitle": "Authentic flavors since 2016",
+    "foodDropdown": "Food",
+    "extrasDropdown": "Extras",
+    "drinksDropdown": "Drinks",
+    "smashburgers": "SmashBurger",
+    "hamburgers": "Hamburger",
+    "qurritos": "Qurrito",
+    "mediterranean": "Mediterranean",
+    "sides": "Sides",
+    "desserts": "Desserts",
+    "sauces": "Sauces",
+    "nonalcoholic": "Soft Drinks",
+    "coffees": "Coffees",
+    "lemonades": "Lemonades",
+    "specialty": "Specialty Drinks",
+    "cocktails": "Cocktails",
+    "alcohol": "Wines & Beers",
+    "shots": "Shots",
+    "orderSectionTitle": "Like what you see?",
+    "orderSectionSubtitle": "Order online and pick it up at our place!"
+  },
   
   "order": {
     "title": "Online Order",
@@ -47,6 +71,17 @@
     "minimumOrder": "Minimum order amount",
     "minimumNotMet": "Minimum order amount is {{amount}}€",
     "quantity": "Quantity"
+  },
+
+    "orderPage": {
+    "kitchenOverloaded": "Kitchen Overloaded!",
+    "notAcceptingOrders": "We are currently not accepting new orders",
+    "kitchenAtCapacity": "Our kitchen is currently operating at full capacity, and we are temporarily suspending new order intake.",
+    "tryAgainLater": "Please try again later!",
+    "autoRefresh": "Auto refresh:",
+    "secondsLater": "seconds",
+    "refreshNow": "Refresh now",
+    "backToHome": "Back to homepage"
   },
   
   "customization": {
