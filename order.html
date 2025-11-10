@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="hu">
+<html lang="hu" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: *.googleusercontent.com *.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://palace-cafe-backend-production.up.railway.app https://palace-cafe-backend-palace-bar-dev.up.railway.app; frame-src https://www.google.com https://maps.google.com https://search.google.com;">
-    <title>Rendelj Online - Palace Cafe & Bar</title>
+    <title data-i18n="order.title">Rendelj Online - Palace Cafe & Bar</title>
     <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
-    <meta name="description" content="Palace Cafe & Bar online rendelés - Gyors és egyszerű étterem házhoz szállítás">
+    <meta name="description" data-i18n="order.subtitle" content="Palace Cafe & Bar online rendelés - Gyors és egyszerű étterem házhoz szállítás">
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y68JWQJYEJ"></script>
     <script>
@@ -34,6 +34,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- i18n Translation System - LOAD FIRST! -->
+    <script src="i18n.js"></script>
 </head>
 <body>
     <!-- Kitchen On Fire Overlay (Hidden by default) -->
@@ -138,26 +141,26 @@
 
             <!-- Message Content -->
             <div class="fire-message-box">
-                <h1 class="fire-title">🔥 Konyha túlterhelt! 🔥</h1>
-                <p class="fire-subtitle">Jelenleg nem fogadunk új rendeléseket</p>
+                <h1 class="fire-title">🔥 <span data-i18n="orderPage.kitchenOverloaded">Konyha túlterhelt!</span> 🔥</h1>
+                <p class="fire-subtitle" data-i18n="orderPage.notAcceptingOrders">Jelenleg nem fogadunk új rendeléseket</p>
                 <div class="fire-explanation">
-                    <p>A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.</p>
-                    <p><strong>Kérjük, próbáld újra később!</strong></p>
+                    <p data-i18n="orderPage.kitchenAtCapacity">A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.</p>
+                    <p><strong data-i18n="orderPage.tryAgainLater">Kérjük, próbáld újra később!</strong></p>
                 </div>
 
                 <!-- Auto-refresh Timer -->
                 <div class="refresh-timer">
-                    <p>Automatikus frissítés: <span id="refreshCountdown">60</span> másodperc múlva</p>
+                    <p><span data-i18n="orderPage.autoRefresh">Automatikus frissítés:</span> <span id="refreshCountdown">60</span> <span data-i18n="orderPage.secondsLater">másodperc múlva</span></p>
                 </div>
 
                 <!-- Manual Refresh Button -->
                 <button class="refresh-btn" onclick="window.location.reload()">
-                    <span>Frissítés most</span>
+                    <span data-i18n="orderPage.refreshNow">Frissítés most</span>
                 </button>
 
                 <!-- Back to Home Button -->
                 <a href="index.html" class="back-home-btn">
-                    <span>← Vissza a főoldalra</span>
+                    <span>← <span data-i18n="orderPage.backToHome">Vissza a főoldalra</span></span>
                 </a>
             </div>
         </div>
@@ -166,11 +169,11 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-spinner"></div>
-        <p>Rendelés betöltése...</p>
+        <p data-i18n="loading.loading">Rendelés betöltése...</p>
     </div>
 
     <!-- Scroll to Top Button -->
-    <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére">
+    <button class="scroll-to-top" id="scrollToTop" data-i18n-title="buttons.back" aria-label="Vissza a tetejére">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -179,7 +182,7 @@
     <!-- Happy Hour Bar -->
     <div class="happy-hour-bar" id="happyHourBar">
         <div class="happy-hour-content">
-            <div class="happy-hour-message">
+            <div class="happy-hour-message" data-i18n="homepage.happyHour">
                 Várunk szeretettel a happy hour-re 12 és 15 óra között!
             </div>
         </div>
@@ -197,15 +200,14 @@
 
             <!-- Logo -->
             <div class="logo-container">
-                <a href="index.html">
+                <a href="index.html" data-i18n-title="nav.home">
                     <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
                 </a>
             </div>
 
             <!-- Desktop Navigation -->
             <ul class="nav-menu desktop-nav">
-                <li><a href="menu.html" class="nav-link">Menü</a></li>
-                <!--<li><a href="rolunk.html" class="nav-link">Rólunk</a></li>-->
+                <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menü</a></li>
                 <li>
                     <button class="cart-toggle-btn nav-link-cart highlighted" id="cartToggleBtn">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -217,25 +219,34 @@
                 </li>
             </ul>
 
-            <!-- Language Flags -->
+            <!-- Language Flags - UPDATED FOR i18n -->
             <div class="language-flags desktop-only">
-                <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
-                <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                <button data-lang="hu" class="flag-button" aria-label="Magyar">
+                    <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="flag-icon">
+                </button>
+                <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
+                    <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
+                </button>
+                <button data-lang="en" class="flag-button" aria-label="English">
+                    <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                </button>
             </div>
         </nav>
 
         <!-- Mobile Menu Dropdown -->
         <div class="mobile-menu" id="mobileMenu">
             <ul class="mobile-nav-list">
-                <li><a href="menu.html" class="mobile-nav-link">Menü</a></li>
-                <!--<li><a href="about.html" class="mobile-nav-link">Rólunk</a></li>-->
+                <li><a href="menu.html" class="mobile-nav-link" data-i18n="nav.menu">Menü</a></li>
                 <li class="mobile-flags">
-                    <a href="index-sk.html" aria-label="Slovenčina">
+                    <button data-lang="hu" class="flag-button" aria-label="Magyar">
+                        <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="mobile-flag-icon">
+                    </button>
+                    <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
                         <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
-                    </a>
-                    <a href="index-en.html" aria-label="English">
+                    </button>
+                    <button data-lang="en" class="flag-button" aria-label="English">
                         <img src="assets/images/icons/flag-en.png" alt="English" class="mobile-flag-icon">
-                    </a>
+                    </button>
                 </li>
             </ul>
         </div>
@@ -244,8 +255,8 @@
     <!-- Order Hero Section -->
     <section class="order-hero-section">
         <div class="order-hero-content">
-            <h1 class="order-hero-title">Online Rendelés</h1>
-            <p class="order-hero-subtitle">Válaszd ki kedvenceidet és rendeld meg egyszerűen</p>
+            <h1 class="order-hero-title" data-i18n="order.title">Online Rendelés</h1>
+            <p class="order-hero-subtitle" data-i18n="order.subtitle">Válaszd ki kedvenceidet és rendeld meg egyszerűen</p>
         </div>
     </section>
 
@@ -274,11 +285,11 @@
         </button>
     </div>
 
-    <!-- Food Customization Modal -->
+<!-- Food Customization Modal -->
     <div class="modal-overlay" id="customizationModal">
         <div class="modal-container">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Testreszabás</h3>
+                <h3 class="modal-title" id="modalTitle" data-i18n="customization.title">Testreszabás</h3>
                 <button class="modal-close" id="modalClose">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -297,7 +308,7 @@
 
                 <!-- Sauce Selection -->
                 <div class="customization-section" id="sauceSection">
-                    <h4 class="section-title">Válassz szószt</h4>
+                    <h4 class="section-title" data-i18n="customization.selectSauce">Válassz szószt</h4>
                     <div class="sauce-options" id="sauceOptions">
                         <!-- Sauces will be dynamically loaded from API -->
                     </div>
@@ -305,7 +316,7 @@
 
                 <!-- Fries Upgrade -->
                 <div class="customization-section" id="friesSection">
-                    <h4 class="section-title">Köret választás</h4>
+                    <h4 class="section-title" data-i18n="customization.selectFries">Köret választás</h4>
                     <div class="fries-options" id="friesOptions">
                         <!-- Fries options will be dynamically loaded from API -->
                     </div>
@@ -313,7 +324,7 @@
 
                 <!-- Extra Additions -->
                 <div class="customization-section" id="extrasSection">
-                    <h4 class="section-title">Extrák (+€0.30 / darab)</h4>
+                    <h4 class="section-title"><span data-i18n="customization.addExtras">Extrák</span> (+€0.30 / <span data-i18n="cart.item">darab</span>)</h4>
                     <div class="extras-grid">
                         <label class="extra-option">
                             <input type="checkbox" name="extras" value="bacon">
@@ -346,147 +357,186 @@
                         <label class="extra-option">
                             <input type="checkbox" name="extras" value="tomato">
                             <span class="extra-label">
-                                <span class="extra-name">paradicsom</span>
+                                <span class="extra-name">Paradicsom</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="lettuce">
+                            <span class="extra-label">
+                                <span class="extra-name">Saláta</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="pickle">
+                            <span class="extra-label">
+                                <span class="extra-name">Uborka</span>
                                 <span class="extra-price">+€0.30</span>
                             </span>
                         </label>
                         <label class="extra-option">
                             <input type="checkbox" name="extras" value="jalapeno">
                             <span class="extra-label">
-                                <span class="extra-name">Jalapeno</span>
+                                <span class="extra-name">Jalapeño</span>
                                 <span class="extra-price">+€0.30</span>
                             </span>
                         </label>
                     </div>
                 </div>
 
-                <!-- Special Instructions -->
-                <div class="customization-section">
-                    <h4 class="section-title">Különleges kérések</h4>
-                    <div class="special-requests">
-                        <label class="request-label">Eltávolítandó összetevők:</label>
-                        <textarea 
-                            id="removeInstructions" 
-                            placeholder="Pl: nincs hagyma, nincs paradicsom..."
-                            maxlength="200"
-                            rows="2"
-                        ></textarea>
-                        
-                        <label class="request-label">További megjegyzések:</label>
-                        <textarea 
-                            id="specialInstructions" 
-                            placeholder="Egyéb kérések vagy megjegyzések..."
-                            maxlength="200"
-                            rows="2"
-                        ></textarea>
+                <!-- Remove Items -->
+                <div class="customization-section" id="removeSection">
+                    <h4 class="section-title" data-i18n="customization.removeItems">Eltávolítandó összetevők</h4>
+                    <div class="remove-grid">
+                        <label class="remove-option">
+                            <input type="checkbox" name="remove" value="onion">
+                            <span class="remove-label">Hagyma</span>
+                        </label>
+                        <label class="remove-option">
+                            <input type="checkbox" name="remove" value="tomato">
+                            <span class="remove-label">Paradicsom</span>
+                        </label>
+                        <label class="remove-option">
+                            <input type="checkbox" name="remove" value="lettuce">
+                            <span class="remove-label">Saláta</span>
+                        </label>
+                        <label class="remove-option">
+                            <input type="checkbox" name="remove" value="pickle">
+                            <span class="remove-label">Uborka</span>
+                        </label>
                     </div>
+                </div>
+
+                <!-- Special Notes -->
+                <div class="customization-section">
+                    <h4 class="section-title" data-i18n="customization.specialNotes">Megjegyzés</h4>
+                    <textarea 
+                        class="special-notes-input" 
+                        id="specialNotesInput" 
+                        rows="3" 
+                        data-i18n-placeholder="customization.notesPlaceholder"
+                        placeholder="Speciális kérések (pl. extra fűszerezés, allergiák)"></textarea>
                 </div>
 
                 <!-- Quantity Selector -->
                 <div class="quantity-section">
-                    <label class="quantity-label">Mennyiség:</label>
+                    <label class="quantity-label" data-i18n="order.quantity">Mennyiség</label>
                     <div class="quantity-controls">
-                        <button type="button" class="quantity-btn" id="decreaseQuantity">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </button>
-                        <span class="quantity-display" id="quantityDisplay">1</span>
-                        <button type="button" class="quantity-btn" id="increaseQuantity">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                            </svg>
-                        </button>
+                        <button class="quantity-btn" id="decreaseQty">-</button>
+                        <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="99">
+                        <button class="quantity-btn" id="increaseQty">+</button>
                     </div>
                 </div>
             </div>
 
             <div class="modal-footer">
                 <div class="modal-total">
-                    <span class="total-label">Összesen:</span>
+                    <span class="total-label" data-i18n="order.total">Összesen</span>
                     <span class="total-price" id="modalTotalPrice">€0.00</span>
                 </div>
-                <button class="add-to-cart-modal-btn" id="addToCartModalBtn">
+                <button class="add-to-cart-btn" id="addToCartBtn">
+                    <span data-i18n="order.addToCart">Kosárba</span>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                        <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    Kosárba helyezés
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Shopping Cart Sidebar -->
+    <!-- Cart Sidebar -->
     <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3 class="cart-title">Kosár</h3>
-            <button class="cart-close" id="cartClose">
+        <div class="cart-sidebar-header">
+            <h3 class="cart-sidebar-title" data-i18n="cart.yourCart">Kosár</h3>
+            <button class="cart-sidebar-close" id="cartSidebarClose">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
             </button>
         </div>
-        
-        <div class="cart-content">
-            <div class="cart-empty" id="cartEmpty">
+
+        <!-- Delivery Type Selection -->
+        <div class="delivery-type-section">
+            <h4 class="delivery-type-title" data-i18n="order.deliveryType">Szállítási mód</h4>
+            <div class="delivery-type-options">
+                <label class="delivery-type-option">
+                    <input type="radio" name="deliveryType" value="delivery" checked>
+                    <span class="delivery-type-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M13 16V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h1m8-1a1 1 0 0 0 1 1h5.5a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5H14a1 1 0 0 0-1 1v8zm-6 1a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm8 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span data-i18n="order.delivery">Kiszállítás</span>
+                    </span>
+                </label>
+                <label class="delivery-type-option">
+                    <input type="radio" name="deliveryType" value="pickup">
+                    <span class="delivery-type-label">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span data-i18n="order.pickup">Elvitel</span>
+                    </span>
+                </label>
+            </div>
+        </div>
+
+        <div class="cart-items-container" id="cartItemsContainer">
+            <div class="empty-cart" id="emptyCartMessage">
                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
                     <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
-                <p>A kosár üres</p>
-                <small>Adj hozzá ételeket a rendeléshez</small>
+                <p data-i18n="cart.emptyMessage">Még nem adtál hozzá semmit a kosárhoz</p>
             </div>
-            
             <div class="cart-items" id="cartItems">
-                <!-- Cart items will be dynamically populated -->
+                <!-- Cart items will be dynamically added here -->
             </div>
         </div>
-        
-        <div class="cart-footer" id="cartFooter">
+
+        <div class="cart-sidebar-footer">
             <div class="cart-summary">
-                <div class="summary-row">
-                    <span>Részösszeg:</span>
+                <div class="cart-summary-row">
+                    <span data-i18n="order.subtotal">Részösszeg</span>
                     <span id="cartSubtotal">€0.00</span>
                 </div>
-                <!--<div class="summary-row">
-                    <span>Szállítási díj:</span>
-                    <span id="deliveryFee">€2.50</span>
-                </div>-->
-                <div class="summary-row total-row">
-                    <span>Összesen:</span>
-                    <span id="cartGrandTotal">€2.50</span>
+                <div class="cart-summary-row">
+                    <span data-i18n="order.deliveryFee">Szállítási díj</span>
+                    <span id="cartDeliveryFee">€0.00</span>
+                </div>
+                <div class="cart-summary-row cart-total-row">
+                    <span data-i18n="order.total">Összesen</span>
+                    <span id="cartTotalPrice">€0.00</span>
                 </div>
             </div>
-            <button class="checkout-btn" id="checkoutBtn">
+
+            <div class="minimum-order-notice" id="minimumOrderNotice" style="display: none;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <path d="M9 11L12 14L22 4M21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3.9 5 4.9 5 5 5H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 </svg>
-                Rendelés leadása
+                <span data-i18n="order.minimumNotMet" data-i18n-vars='{"amount": "12.00"}'>A minimum rendelési érték 12.00€</span>
+            </div>
+
+            <button class="checkout-btn" id="checkoutBtn" disabled>
+                <span data-i18n="order.checkout">Pénztár</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
             </button>
         </div>
     </div>
 
-    <!-- Success Toast -->
-    <div class="toast success-toast" id="successToast">
-        <div class="toast-content">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span class="toast-message" id="toastMessage">Kosárba helyezve!</span>
-        </div>
-    </div>
-
-    <!-- Footer -->
+<!-- Footer -->
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-left">
                 <ul class="footer-nav">
-                    <li><a href="index.html">Főoldal</a></li>
-                    <li><a href="menu.html">Menü</a></li>
-                    <!--<li><a href="rolunk.html">Rólunk</a></li>-->
-                    <li><a href="rendeles.html">Rendelés</a></li>
-                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer">Adatvédelmi Nyilatkozat</a></li>
-                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;">Süti beállítások</a></li>
-                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer">Felhasználási Feltételek</a></li>
+                    <li><a href="menu.html" data-i18n="nav.menu">Menü</a></li>
+                    <li><a href="order.html" data-i18n="nav.order">Rendelj Online</a></li>
+                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacyPolicy">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="homepage.cookieSettings">Süti beállítások</a></li>
+                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.termsConditions">Felhasználási Feltételek</a></li>
                 </ul>
             </div>
 
@@ -532,13 +582,13 @@
         <div class="cookie-content">
             <div class="cookie-icon">🍪</div>
             <div class="cookie-text">
-                <h3>Sütik használata</h3>
-                <p>A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
+                <h3 data-i18n="homepage.cookieTitle">Sütik használata</h3>
+                <p data-i18n="homepage.cookieText">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
             </div>
             <div class="cookie-actions">
-                <button id="cookieSettings" class="btn-settings">Beállítások</button>
-                <button id="acceptEssential" class="btn-essential">Csak szükséges</button>
-                <button id="acceptAll" class="btn-accept">Összes elfogadása</button>
+                <button id="cookieSettings" class="btn-settings" data-i18n="buttons.settings">Beállítások</button>
+                <button id="acceptEssential" class="btn-essential" data-i18n="homepage.onlyEssential">Csak szükséges</button>
+                <button id="acceptAll" class="btn-accept" data-i18n="homepage.acceptAll">Összes elfogadása</button>
             </div>
         </div>
     </div>
@@ -547,7 +597,7 @@
     <div id="cookieModal" class="cookie-modal">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
-                <h2>Süti beállítások</h2>
+                <h2 data-i18n="homepage.cookieSettings">Süti beállítások</h2>
                 <button id="closeCookieModal" class="cookie-close">&times;</button>
             </div>
             
@@ -559,8 +609,8 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Szükséges sütik</h4>
-                            <p>Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
+                            <h4 data-i18n="homepage.essentialCookies">Szükséges sütik</h4>
+                            <p data-i18n="homepage.essentialCookiesDesc">Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
                         </div>
                     </div>
                 </div>
@@ -572,8 +622,8 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Elemzési sütik</h4>
-                            <p>Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
+                            <h4 data-i18n="homepage.analyticsCookies">Elemzési sütik</h4>
+                            <p data-i18n="homepage.analyticsCookiesDesc">Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
                         </div>
                     </div>
                 </div>
@@ -585,22 +635,22 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Marketing sütik</h4>
-                            <p>Személyre szabott reklámok és közösségi média funkciók.</p>
+                            <h4 data-i18n="homepage.marketingCookies">Marketing sütik</h4>
+                            <p data-i18n="homepage.marketingCookiesDesc">Személyre szabott reklámok és közösségi média funkciók.</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="cookie-modal-footer">
-                <button id="saveSettings" class="btn-save">Beállítások mentése</button>
-                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link">Adatvédelmi tájékoztató</a>
+                <button id="saveSettings" class="btn-save" data-i18n="buttons.save">Beállítások mentése</button>
+                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="homepage.privacyInfo">Adatvédelmi tájékoztató</a>
             </div>
         </div>
     </div>
 
+    <!-- JavaScript Files -->
     <script src="config.js"></script>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="order-system-2.js"></script>
     <script src="cookies.js"></script>
 </body>
