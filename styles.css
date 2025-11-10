@@ -10585,3 +10585,28 @@ input:disabled + .cookie-slider {
         max-width: 280px;
     }
 }
+
+/* Language flag buttons */
+.flag-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    margin: 0 5px;
+    transition: opacity 0.3s ease, transform 0.2s ease;
+}
+
+.flag-button:hover {
+    opacity: 0.8;
+    transform: scale(1.1);
+}
+
+.flag-button.active {
+    opacity: 1;
+    transform: scale(1.15);
+}
+
+.flag-button.active .flag-icon {
+    border: 2px solid #d4af37;
+    border-radius: 4px;
+}
