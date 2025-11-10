@@ -28,6 +28,30 @@
     "orderNow": "Rendelj most"
   },
   
+    "menuPage": {
+    "heroTitle": "Menü",
+    "heroSubtitle": "Autentikus ízek 2016 óta",
+    "foodDropdown": "Ételek",
+    "extrasDropdown": "Extrák",
+    "drinksDropdown": "Italok",
+    "smashburgers": "SmashBurger",
+    "hamburgers": "Hamburger",
+    "qurritos": "Qurrito",
+    "mediterranean": "Mediterrán",
+    "sides": "Köretek",
+    "desserts": "Desszertek",
+    "sauces": "Szószok",
+    "nonalcoholic": "Üdítők",
+    "coffees": "Kávék",
+    "lemonades": "Limonádék",
+    "specialty": "Specialitások",
+    "cocktails": "Koktélok",
+    "alcohol": "Borok & Sörök",
+    "shots": "Röviditalok",
+    "orderSectionTitle": "Megtetszett valami?",
+    "orderSectionSubtitle": "Rendeld meg könnyedén online és vedd át nálunk!"
+  },
+
   "order": {
     "title": "Online Rendelés",
     "subtitle": "Válaszd ki kedvenc ételeidet",
@@ -47,6 +71,17 @@
     "minimumOrder": "Minimum rendelési összeg",
     "minimumNotMet": "A minimum rendelési érték {{amount}}€",
     "quantity": "Mennyiség"
+  },
+
+    "orderPage": {
+    "kitchenOverloaded": "Konyha túlterhelt!",
+    "notAcceptingOrders": "Jelenleg nem fogadunk új rendeléseket",
+    "kitchenAtCapacity": "A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.",
+    "tryAgainLater": "Kérjük, próbáld újra később!",
+    "autoRefresh": "Automatikus frissítés:",
+    "secondsLater": "másodperc múlva",
+    "refreshNow": "Frissítés most",
+    "backToHome": "Vissza a főoldalra"
   },
   
   "customization": {
