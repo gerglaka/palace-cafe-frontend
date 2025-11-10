@@ -9,8 +9,8 @@
 const API_CONFIG = {
     // Development environment (Railway dev + Vercel)
     DEVELOPMENT: {
-        apiUrl: 'https://palace-cafe-backend-palace-bar-dev.up.railway.app/api',
-        socketUrl: 'https://palace-cafe-backend-palace-bar-dev.up.railway.app',
+        apiUrl: 'https://palace-cafe-backend-production.up.railway.app/api',
+        socketUrl: 'https://palace-cafe-backend-production.up.railway.app',
         environment: 'development'
     },
     
