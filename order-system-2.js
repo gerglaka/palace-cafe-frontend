@@ -463,7 +463,7 @@ class OrderSystem {
 
     async loadMenu() {
         try {
-            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=${lang}`);
+            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=hu`);
             const result = await response.json();
 
             if (!result.success) {
@@ -2360,7 +2360,9 @@ class MenuDataLoader {
             
             // Now try to get menu
             console.log('📡 Fetching menu data...');
-            const menuResponse = await fetch(`${this.apiUrl}/menu`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || localStorage.getItem('lang') || 'hu';
+            const menuResponse = await fetch(`${this.apiUrl}/menu?lang=${lang}`);
             console.log('Menu response status:', menuResponse.status);
             console.log('Menu response ok:', menuResponse.ok);
             
