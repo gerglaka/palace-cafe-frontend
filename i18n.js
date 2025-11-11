@@ -44,11 +44,16 @@ class I18n {
     }
 
     applyTranslations() {
-        // Translate all elements with data-i18n
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            const text = this.t(key, el.textContent.trim());
-            if (text) el.textContent = text;
+            const text = this.t(key, el.innerHTML.trim()); // Use innerHTML, not textContent
+        
+            // Use innerHTML only if the translation contains HTML tags
+            if (text.includes('<') && text.includes('>')) {
+                el.innerHTML = text;
+            } else {
+                el.textContent = text;
+            }
         });
 
         // Translate attributes (alt, title, placeholder, aria-label)
