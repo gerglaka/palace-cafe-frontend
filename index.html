@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="hu" id="htmlRoot">
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="hero.title">Palace Cafe & Bar - Autentikus Ízek, Egyedi Élmények</title>
+    <title data-i18n="site.title">Palace Cafe & Bar - Autentikus Ízek, Egyedi Élmények</title>
     <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
-    <meta name="description" data-i18n="hero.subtitle" content="Palace Cafe & Bar - A legjobb burgerek, quesadillák és tacók a városban. Saját receptek, friss alapanyagok, felejthetetlen ízek.">
+    <meta name="description" content="Palace Cafe & Bar - A legjobb burgerek, quesadillák és tacók a városban. Saját receptek, friss alapanyagok, felejthetetlen ízek.">
     
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: *.googleusercontent.com *.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://palace-cafe-backend-production.up.railway.app https://palace-cafe-backend-palace-bar-dev.up.railway.app; frame-src https://www.google.com https://maps.google.com https://search.google.com;">
@@ -15,43 +15,34 @@
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y68JWQJYEJ"></script>
     <script>
-        // Initialize Google Analytics with consent mode
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        
-        // Set default consent states (denied until user accepts)
         gtag('consent', 'default', {
             'analytics_storage': 'denied',
             'ad_storage': 'denied',
             'functionality_storage': 'granted',
             'security_storage': 'granted'
         });
-        
         gtag('js', new Date());
         gtag('config', 'G-Y68JWQJYEJ', {
-            'anonymize_ip': true, // GDPR compliance
-            'allow_google_signals': false, // Start with privacy-first
+            'anonymize_ip': true,
+            'allow_google_signals': false,
             'allow_ad_personalization_signals': false
         });
     </script>
 
-    <!-- Stylesheets -->
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Preload Critical Resources -->
     <link rel="preload" href="assets/images/logos/logo-main.png" as="image">
     <link rel="preload" href="assets/images/backgrounds/bg-hero-1.png" as="image">
-    
-    <!-- i18n Translation System - LOAD FIRST! -->
-    <script src="i18n.js"></script>
 </head>
 <body>
     
     <!-- Scroll to Top Button -->
-    <button class="scroll-to-top" id="scrollToTop" data-i18n-title="buttons.back" aria-label="Vissza a tetejére">
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére" data-i18n="scrollToTop.ariaLabel">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 19V5M5 12L12 5L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
@@ -60,7 +51,7 @@
     <!-- Happy Hour Bar -->
     <div class="happy-hour-bar" id="happyHourBar">
         <div class="happy-hour-content">
-            <div class="happy-hour-message" data-i18n="homepage.happyHour">
+            <div class="happy-hour-message" data-i18n="happyHour.message">
                 Várunk szeretettel a happy hour-re 12 és 15 óra között!
             </div>
         </div>
@@ -69,59 +60,42 @@
     <!-- Main Navigation -->
     <header class="main-header" id="mainHeader">
         <nav class="nav-container">
-            <!-- Mobile Menu Icon -->
             <div class="mobile-menu-icon" id="mobileMenuIcon">
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
             </div>
 
-            <!-- Logo -->
             <div class="logo-container">
-                <a href="index.html" data-i18n-title="nav.home" aria-label="Palace Cafe & Bar kezdőlap">
+                <a href="index.html" aria-label="Palace Cafe & Bar kezdőlap" data-i18n="logo.ariaLabel">
                     <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
                 </a>
             </div>
 
-            <!-- Desktop Navigation -->
             <ul class="nav-menu desktop-nav">
                 <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menü</a></li>
                 <li><a href="order.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a></li>
             </ul>
 
-            <!-- Language Flags - UPDATED FOR i18n -->
-            <div class="language-flags desktop-only">
-                <button data-lang="hu" class="flag-button" aria-label="Magyar">
-                    <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="flag-icon">
-                </button>
-                <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
-                    <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
-                </button>
-                <button data-lang="en" class="flag-button" aria-label="English">
-                    <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
-                </button>
+            <!-- Language Switcher (Flags) -->
+            <div class="language-switcher">
+                <button data-lang="hu"><img src="assets/flags/hu.svg" alt="Magyar" data-i18n="lang.hu.alt"></button>
+                <button data-lang="sk"><img src="assets/flags/sk.svg" alt="Slovenčina" data-i18n="lang.sk.alt"></button>
+                <button data-lang="en"><img src="assets/flags/en.svg" alt="English" data-i18n="lang.en.alt"></button>
             </div>
 
-            <!-- Mobile Order Button -->
             <div class="mobile-order-btn mobile-only">
                 <a href="order.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a>
             </div>
         </nav>
 
-        <!-- Mobile Menu Dropdown -->
         <div class="mobile-menu" id="mobileMenu">
             <ul class="mobile-nav-list">
                 <li><a href="menu.html" class="mobile-nav-link" data-i18n="nav.menu">Menü</a></li>
                 <li class="mobile-flags">
-                    <button data-lang="hu" class="flag-button" aria-label="Magyar">
-                        <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="mobile-flag-icon">
-                    </button>
-                    <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
-                        <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
-                    </button>
-                    <button data-lang="en" class="flag-button" aria-label="English">
-                        <img src="assets/images/icons/flag-en.png" alt="English" class="mobile-flag-icon">
-                    </button>
+                    <button data-lang="hu"><img src="assets/flags/hu.svg" alt="Magyar" data-i18n="lang.hu.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="sk"><img src="assets/flags/sk.svg" alt="Slovenčina" data-i18n="lang.sk.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="en"><img src="assets/flags/en.svg" alt="English" data-i18n="lang.en.alt" class="mobile-flag-icon"></button>
                 </li>
             </ul>
         </div>
@@ -135,9 +109,9 @@
         
         <div class="hero-content">
             <div class="hero-text-container">
-                <h1 class="hero-title" data-i18n="homepage.heroTitle">Ez nem csak egy burger. Ez a MI burgerünk.</h1>
-                <p class="hero-subtitle" data-i18n="homepage.heroSubtitle">Fedezd fel a saját recept alapján készült kedvencünket – friss, szaftos, felejthetetlen.</p>
-                <a href="order.html" class="hero-cta-button" data-i18n="hero.orderNow">Rendelj most!</a>
+                <h1 class="hero-title" data-i18n="hero.title">Ez nem csak egy burger. Ez a MI burgerünk.</h1>
+                <p class="hero-subtitle" data-i18n="hero.subtitle">Fedezd fel a saját recept alapján készült kedvencünket – friss, szaftos, felejthetetlen.</p>
+                <a href="order.html" class="hero-cta-button" data-i18n="hero.cta">Rendelj most!</a>
             </div>
         </div>
     </section>
@@ -147,160 +121,140 @@
         <div class="welcome-container">
             <div class="welcome-left">
                 <div class="welcome-title-container" id="welcomeTitle">
-                    <div class="welcome-small" data-i18n="homepage.welcomeSmall">Üdvözöljük</div>
-                    <div class="welcome-large">Palace</div>
-                    <div class="welcome-medium" data-i18n="homepage.welcomeMedium">Cafe & Bárban</div>
+                    <div class="welcome-small" data-i18n="welcome.small">Üdvözöljük</div>
+                    <div class="welcome-large" data-i18n="welcome.large">Palace</div>
+                    <div class="welcome-medium" data-i18n="welcome.medium">Cafe & Bárban</div>
                 </div>
             </div>
             
             <div class="welcome-right">
                 <div class="story-container" id="storyContainer">
-                    <h3 class="story-title" data-i18n="homepage.openingHours">Nyitvatartás</h3>
+                    <h3 class="story-title" data-i18n="opening.title">Nyitvatartás</h3>
                     <div class="story-text">
-                        <p data-i18n="homepage.wednesdayThursday"><strong>Szerda - Csütörtök:</strong> 11:00 - 20:00</p>
-                        <p data-i18n="homepage.fridaySaturday"><strong>Péntek - Szombat:</strong> 11:00 - 22:00</p>
+                        <p data-i18n="opening.wedThu"><strong>Szerda - Csütörtök:</strong> 11:00 - 20:00</p>
+                        <p data-i18n="opening.friSat"><strong>Péntek - Szombat:</strong> 11:00 - 22:00</p>
                         <br>
-                        <p data-i18n="homepage.kitchenClosesEarly"><em>Konyha zárás fél órával hamarabb</em></p>
-                        <br>
-                        <p data-i18n="homepage.closedInfo"><strong>Vasárnap, Hétfő, Kedd:</strong> Zárva</p>
+                        <p data-i18n="opening.happyHour"><strong>Happy Hour:</strong> Szerda-Szombat 12:00-15:00</p>
+                        <p data-i18n="opening.special">Különleges ajánlatok és kedvezmények!</p>
                     </div>
                 </div>
+            </div>
+        </div>    
+        
+        <div class="welcome-bottom"> 
+            <div class="story-continuation">
+                <p data-i18n="story.part1">Tudjuk, hogy sok helyen lehet enni, de nálunk máshogy szól minden. Mert nem csak főzünk – meg akarjuk mutatni, mit jelent igazán jót enni.</p>
+                <p data-i18n="story.part2">Ez a mi ízvilágunk. És most már a tiéd is lehet.</p>
             </div>
         </div>
-    </section>
 
-    <!-- Restaurant Features Section -->
-    <section class="features-section">
-        <div class="features-container">
-            <div class="feature-card">
-                <div class="feature-icon">🍔</div>
-                <h3 data-i18n="homepage.feature1Title">Saját receptek</h3>
-                <p data-i18n="homepage.feature1Text">Minden ételünk egyedi, saját receptúra alapján készül</p>
+        <!-- Food Categories Carousel -->
+        <div class="food-categories" id="foodCategories">
+            <div class="category-carousel">
+                <div class="category-item active" data-category="0">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/backgrounds/bg-hamburgers.jpg" alt="Burger háttér" data-i18n="categories.burgers.altBg">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-burger-plate.png" alt="Burger tányéron" data-i18n="categories.burgers.altPlate">
+                        </div>
+                    </div>
+                    <h4 class="category-name" data-i18n="categories.burgers">Hamburgerek</h4>
+                </div>
+
+                <div class="category-item" data-category="1">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/menu/hot-qurrito.JPG" alt="Quesadilla háttér" data-i18n="categories.qurritos.altBg">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-quesadilla-plate.png" alt="Quesadilla tányéron" data-i18n="categories.qurritos.altPlate">
+                        </div>
+                    </div>
+                    <h4 class="category-name" data-i18n="categories.qurritos">Qurritók</h4>
+                </div>
+
+                <div class="category-item" data-category="2">
+                    <div class="category-images">
+                        <div class="background-image">
+                            <img src="assets/images/menu/taco-beef.JPG" alt="Tacos háttér" data-i18n="categories.tacos.altBg">
+                        </div>
+                        <div class="plate-image">
+                            <img src="assets/images/food/food-tacos-plate.png" alt="Tacos tányéron" data-i18n="categories.tacos.altPlate">
+                        </div>
+                    </div>
+                    <h4 class="category-name" data-i18n="categories.tacos">Tacók</h4>
+                </div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🥗</div>
-                <h3 data-i18n="homepage.feature2Title">Friss alapanyagok</h3>
-                <p data-i18n="homepage.feature2Text">Csak a legjobb minőségű, friss hozzávalókat használjuk</p>
+
+            <div class="category-indicators">
+                <div class="indicator active" data-category="0"></div>
+                <div class="indicator" data-category="1"></div>
+                <div class="indicator" data-category="2"></div>
             </div>
-            <div class="feature-card">
-                <div class="feature-icon">🚚</div>
-                <h3 data-i18n="homepage.feature3Title">Gyors kiszállítás</h3>
-                <p data-i18n="homepage.feature3Text">30-45 perc alatt házhoz szállítjuk rendelésed</p>
-            </div>
+            <a href="menu.html" class="menu-button" data-i18n="nav.menu">Menü</a>
         </div>
+        
+        <div class="maps-bar">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2665.7!2d18.1269!3d47.7638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476bad5b8e4b1111%3A0x123456789!2sN%C3%A1mestie%20gen.%20Klapku%209%2C%20945%2001%20Kom%C3%A1rno%2C%20Slovakia!5e0!3m2!1sen!2sus!4v1726396800000!5m2!1sen!2sus"
+                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                title="Palace Cafe & Bar Location" data-i18n="maps.title">
+            </iframe>
+        </div>  
     </section>
 
-    <!-- Signature Dishes Section -->
-    <section class="signature-section">
-        <div class="signature-container">
-            <h2 class="section-title" data-i18n="homepage.signatureDishes">Különleges fogásaink</h2>
-            <p class="section-subtitle" data-i18n="homepage.signatureDishesSubtitle">A Palace legjobb választéka, amit kötelező kipróbálni!</p>
-            
-            <div class="signature-grid">
-                <div class="signature-card">
-                    <div class="signature-image">
-                        <img src="assets/images/menu/signature-burger.jpg" alt="Palace Burger" loading="lazy">
-                        <div class="signature-badge" data-i18n="badges.bestseller">Bestseller</div>
-                    </div>
-                    <h3 data-i18n="homepage.palaceBurger">Palace Burger</h3>
-                    <p data-i18n="homepage.palaceBurgerDesc">A mi büszkeségünk: dupla húspogácsa, cheddar sajt, titkos szósz</p>
-                    <a href="order.html" class="signature-cta" data-i18n="buttons.orderNow">Rendelj most</a>
-                </div>
+    <!-- Gallery Section -->
+    <section class="gallery-section" id="gallerySection">
+        <div class="gallery-container">
+            <h2 class="gallery-title" data-i18n="gallery.title">Kövess minket Instagrammon!</h2>
 
-                <div class="signature-card">
-                    <div class="signature-image">
-                        <img src="assets/images/menu/qurrito.jpg" alt="Qurrito" loading="lazy">
-                        <div class="signature-badge" data-i18n="badges.popular">Népszerű</div>
-                    </div>
-                    <h3 data-i18n="homepage.qurrito">Qurrito</h3>
-                    <p data-i18n="homepage.qurritoDesc">Quesadilla és burrito fúziója, ropogós tortillába csomagolva</p>
-                    <a href="order.html" class="signature-cta" data-i18n="buttons.orderNow">Rendelj most</a>
-                </div>
-
-                <div class="signature-card">
-                    <div class="signature-image">
-                        <img src="assets/images/menu/smash-burger.jpg" alt="Smash Burger" loading="lazy">
-                        <div class="signature-badge" data-i18n="badges.new">Új</div>
-                    </div>
-                    <h3 data-i18n="homepage.smashBurger">Smash Burger</h3>
-                    <p data-i18n="homepage.smashBurgerDesc">Ropogósra sült, karamellizált húspogácsa a tökéletes burger élményért</p>
-                    <a href="order.html" class="signature-cta" data-i18n="buttons.orderNow">Rendelj most</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Instagram Feed Section -->
-    <section class="instagram-section">
-        <div class="instagram-container">
-            <h2 class="section-title" data-i18n="homepage.instagramTitle">Kövess minket Instagrammon!</h2>
-            <p class="section-subtitle" data-i18n="homepage.instagramSubtitle">Nézd meg legújabb kreatív alkotásainkat</p>
-            
             <div class="instagram-grid">
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post1.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post1.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post2.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post2.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post3.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post3.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post4.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post4.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post5.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post5.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post6.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post6.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post7.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post7.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post8.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post8.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post9.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post9.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
                 <div class="instagram-item">
-                    <img src="assets/images/instagram/post10.jpg" alt="Palace Cafe Instagram" loading="lazy">
-                    <div class="instagram-overlay">
-                        <div class="instagram-icon">📷</div>
-                    </div>
+                    <img src="assets/images/instagram/post10.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
+                    <div class="instagram-overlay"><div class="instagram-icon">Camera</div></div>
                 </div>
             </div>
 
             <div class="instagram-cta">
-                <a href="https://www.instagram.com/palace_cafe_bar/" target="_blank" class="instagram-button" rel="noopener noreferrer" data-i18n="homepage.followInstagram">
+                <a href="https://www.instagram.com/palace_cafe_bar/" target="_blank" class="instagram-button" rel="noopener noreferrer" data-i18n="gallery.cta">
                     Kövess minket Instagrammon
                 </a>
             </div>
@@ -314,14 +268,14 @@
                 <ul class="footer-nav">
                     <li><a href="menu.html" data-i18n="nav.menu">Menü</a></li>
                     <li><a href="order.html" data-i18n="nav.order">Rendelj Online</a></li>
-                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacyPolicy">Adatvédelmi Nyilatkozat</a></li>
-                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="homepage.cookieSettings">Süti beállítások</a></li>
-                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.termsConditions">Felhasználási Feltételek</a></li>
+                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacy">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="footer.cookies">Süti beállítások</a></li>
+                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.terms">Felhasználási Feltételek</a></li>
                 </ul>
             </div>
 
             <div class="footer-center">
-                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo" data-i18n="footer.logoAlt">
             </div>
 
             <div class="footer-right">
@@ -340,17 +294,17 @@
                     </a>
                 </div>
                 <div class="social-icons">
-                    <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
-                        <img src="photos/facebook-icon.png" alt="Facebook">
+                    <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook" data-i18n="social.facebook.ariaLabel">
+                        <img src="photos/facebook-icon.png" alt="Facebook" data-i18n="social.facebook.alt">
                     </a>
-                    <a href="https://www.instagram.com/palace_cafe_bar/" class="social-icon" aria-label="Instagram">
-                        <img src="photos/instagram-icon.png" alt="Instagram">
+                    <a href="https://www.instagram.com/palace_cafe_bar/" class="social-icon" aria-label="Instagram" data-i18n="social.instagram.ariaLabel">
+                        <img src="photos/instagram-icon.png" alt="Instagram" data-i18n="social.instagram.alt">
                     </a>
-                    <a href="https://maps.app.goo.gl/iqZTZX4jQcgGJDqq6" class="social-icon" aria-label="Google Maps">
-                        <img src="photos/maps-icon.png" alt="Google Maps">
+                    <a href="https://maps.app.goo.gl/iqZTZX4jQcgGJDqq6" class="social-icon" aria-label="Google Maps" data-i18n="social.maps.ariaLabel">
+                        <img src="photos/maps-icon.png" alt="Google Maps" data-i18n="social.maps.alt">
                     </a>
-                    <a href="https://www.tiktok.com/@palace.cafe.bar?lang=en-GB" class="social-icon" aria-label="TikTok">
-                        <img src="photos/tiktok-icon.png" alt="TikTok">
+                    <a href="https://www.tiktok.com/@palace.cafe.bar?lang=en-GB" class="social-icon" aria-label="TikTok" data-i18n="social.tiktok.ariaLabel">
+                        <img src="photos/tiktok-icon.png" alt="TikTok" data-i18n="social.tiktok.alt">
                     </a>
                 </div>
             </div>
@@ -360,15 +314,15 @@
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-consent">
         <div class="cookie-content">
-            <div class="cookie-icon">🍪</div>
+            <div class="cookie-icon">Cookie</div>
             <div class="cookie-text">
-                <h3 data-i18n="homepage.cookieTitle">Sütik használata</h3>
-                <p data-i18n="homepage.cookieText">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
+                <h3 data-i18n="cookie.title">Sütik használata</h3>
+                <p data-i18n="cookie.description">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
             </div>
             <div class="cookie-actions">
-                <button id="cookieSettings" class="btn-settings" data-i18n="buttons.settings">Beállítások</button>
-                <button id="acceptEssential" class="btn-essential" data-i18n="homepage.onlyEssential">Csak szükséges</button>
-                <button id="acceptAll" class="btn-accept" data-i18n="homepage.acceptAll">Összes elfogadása</button>
+                <button id="cookieSettings" class="btn-settings" data-i18n="cookie.settings">Beállítások</button>
+                <button id="acceptEssential" class="btn-essential" data-i18n="cookie.essential">Csak szükséges</button>
+                <button id="acceptAll" class="btn-accept" data-i18n="cookie.acceptAll">Összes elfogadása</button>
             </div>
         </div>
     </div>
@@ -377,10 +331,9 @@
     <div id="cookieModal" class="cookie-modal">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
-                <h2 data-i18n="homepage.cookieSettings">Süti beállítások</h2>
-                <button id="closeCookieModal" class="cookie-close">&times;</button>
+                <h2 data-i18n="cookie.modal.title">Süti beállítások</h2>
+                <button id="closeCookieModal" class="cookie-close">×</button>
             </div>
-
             <div class="cookie-modal-body">
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -389,12 +342,11 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4 data-i18n="homepage.essentialCookies">Szükséges sütik</h4>
-                            <p data-i18n="homepage.essentialCookiesDesc">Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
+                            <h4 data-i18n="cookie.essential.title">Szükséges sütik</h4>
+                            <p data-i18n="cookie.essential.desc">Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -402,12 +354,11 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4 data-i18n="homepage.analyticsCookies">Elemzési sütik</h4>
-                            <p data-i18n="homepage.analyticsCookiesDesc">Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
+                            <h4 data-i18n="cookie.analytics.title">Elemzési sütik</h4>
+                            <p data-i18n="cookie.analytics.desc">Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
                         </div>
                     </div>
                 </div>
-
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -415,22 +366,21 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4 data-i18n="homepage.marketingCookies">Marketing sütik</h4>
-                            <p data-i18n="homepage.marketingCookiesDesc">Személyre szabott reklámok és közösségi média funkciók.</p>
+                            <h4 data-i18n="cookie.marketing.title">Marketing sütik</h4>
+                            <p data-i18n="cookie.marketing.desc">Személyre szabott reklámok és közösségi média funkciók.</p>
                         </div>
                     </div>
                 </div>
             </div>
-
             <div class="cookie-modal-footer">
-                <button id="saveSettings" class="btn-save" data-i18n="buttons.save">Beállítások mentése</button>
-                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="homepage.privacyInfo">Adatvédelmi tájékoztató</a>
+                <button id="saveSettings" class="btn-save" data-i18n="cookie.save">Beállítások mentése</button>
+                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="cookie.privacy">Adatvédelmi tájékoztató</a>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Files -->
-    <script src="config.js"></script>    
+    <script src="config.js"></script>
+    <script src="js/i18n.js"></script>
     <script src="order-system-2.js"></script>
     <script src="cookies.js"></script>
 </body>
