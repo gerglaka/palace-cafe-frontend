@@ -463,7 +463,7 @@ class OrderSystem {
 
     async loadMenu() {
         try {
-            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=hu`);
+            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=${lang}`);
             const result = await response.json();
 
             if (!result.success) {
