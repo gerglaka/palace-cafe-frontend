@@ -73,15 +73,30 @@
     "quantity": "Množstvo"
   },
 
-    "orderPage": {
+  "orderPage": {
     "kitchenOverloaded": "Kuchyňa preťažená!",
     "notAcceptingOrders": "Momentálne neprijímame nové objednávky",
-    "kitchenAtCapacity": "Naša kuchyňa teraz pracuje na plnú kapacitu a dočasne pozastavujeme prijímanie nových objednávok.",
+    "kitchenAtCapacity": "Naša kuchyňa teraz pracuje na plnú kapacitu...",
     "tryAgainLater": "Prosím, skúste to neskôr!",
     "autoRefresh": "Automatické obnovenie:",
     "secondsLater": "sekúnd",
     "refreshNow": "Obnoviť teraz",
-    "backToHome": "Späť na domovskú stránku"
+    "backToHome": "Späť na domovskú stránku",
+    "selectFrom": "Vyberte z",
+    "noImage": "Bez obrázka",
+    "allergenInfo": "Informácie o alergéne",
+    "allergenEUInfo": "Tieto informácie o alergéne sú v súlade s nariadením EÚ.",
+    "opensAt": "Otvára",
+    "openUntil": "Otvorené do",
+    "closed": "Zatvorené",
+    "closedInfo": "Zatvorené",
+    "sunday": "Nedeľa",
+    "monday": "Pondelok",
+    "tuesday": "Utorok",
+    "wednesday": "Streda",
+    "thursday": "Štvrtok",
+    "friday": "Piatok",
+    "saturday": "Sobota"
   },
   
   "customization": {

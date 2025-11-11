@@ -73,15 +73,30 @@
     "quantity": "Quantity"
   },
 
-    "orderPage": {
+  "orderPage": {
     "kitchenOverloaded": "Kitchen Overloaded!",
     "notAcceptingOrders": "We are currently not accepting new orders",
-    "kitchenAtCapacity": "Our kitchen is currently operating at full capacity, and we are temporarily suspending new order intake.",
+    "kitchenAtCapacity": "Our kitchen is currently operating at full capacity...",
     "tryAgainLater": "Please try again later!",
     "autoRefresh": "Auto refresh:",
     "secondsLater": "seconds",
     "refreshNow": "Refresh now",
-    "backToHome": "Back to homepage"
+    "backToHome": "Back to homepage",
+    "selectFrom": "Select from",
+    "noImage": "No image",
+    "allergenInfo": "Allergen Information",
+    "allergenEUInfo": "This allergen information is according to EU regulations.",
+    "opensAt": "Opens at",
+    "openUntil": "Open until",
+    "closed": "Closed",
+    "closedInfo": "Closed",
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
   },
   
   "customization": {

@@ -73,15 +73,30 @@
     "quantity": "Mennyiség"
   },
 
-    "orderPage": {
+  "orderPage": {
     "kitchenOverloaded": "Konyha túlterhelt!",
     "notAcceptingOrders": "Jelenleg nem fogadunk új rendeléseket",
-    "kitchenAtCapacity": "A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.",
+    "kitchenAtCapacity": "A konyhánk most teljes kapacitással dolgozik...",
     "tryAgainLater": "Kérjük, próbáld újra később!",
     "autoRefresh": "Automatikus frissítés:",
     "secondsLater": "másodperc múlva",
     "refreshNow": "Frissítés most",
-    "backToHome": "Vissza a főoldalra"
+    "backToHome": "Vissza a főoldalra",
+    "selectFrom": "Válassz a",
+    "noImage": "Kép nincs",
+    "allergenInfo": "Allergén információ",
+    "allergenEUInfo": "Ez az allergén információ az EU szabályozás szerint.",
+    "opensAt": "Nyit",
+    "openUntil": "Nyitva",
+    "closed": "Zárva",
+    "closedInfo": "Zárva",
+    "sunday": "Vasárnap",
+    "monday": "Hétfő",
+    "tuesday": "Kedd",
+    "wednesday": "Szerda",
+    "thursday": "Csütörtök",
+    "friday": "Péntek",
+    "saturday": "Szombat"
   },
   
   "customization": {
