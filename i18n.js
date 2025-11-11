@@ -44,34 +44,43 @@ class I18n {
     }
 
     applyTranslations() {
+        // Translate all elements with data-i18n
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            const text = this.t(key, el.innerHTML.trim()); // Use innerHTML, not textContent
-        
-            // Use innerHTML only if the translation contains HTML tags
+            let text = this.t(key, el.innerHTML.trim());
+
+            // Detect and safely apply HTML
             if (text.includes('<') && text.includes('>')) {
-                el.innerHTML = text;
+                const temp = document.createElement('div');
+                temp.innerHTML = text;
+
+                // Optional: Sanitize (remove dangerous tags)
+                const ALLOWED = ['strong', 'em', 'br'];
+                temp.querySelectorAll('*').forEach(node => {
+                    if (!ALLOWED.includes(node.tagName.toLowerCase())) {
+                        node.replaceWith(...node.childNodes);
+                    }
+                });
+
+                el.innerHTML = temp.innerHTML;
             } else {
                 el.textContent = text;
             }
         });
 
-        // Translate attributes (alt, title, placeholder, aria-label)
+        // Attributes (alt, title, placeholder, aria-label)
         document.querySelectorAll('[data-i18n-alt]').forEach(el => {
             const key = el.getAttribute('data-i18n-alt');
             el.setAttribute('alt', this.t(key, el.getAttribute('alt')));
         });
-
         document.querySelectorAll('[data-i18n-title]').forEach(el => {
             const key = el.getAttribute('data-i18n-title');
             el.setAttribute('title', this.t(key, el.getAttribute('title')));
         });
-
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
             el.setAttribute('placeholder', this.t(key, el.getAttribute('placeholder')));
         });
-
         document.querySelectorAll('[data-i18n-aria]').forEach(el => {
             const key = el.getAttribute('data-i18n-aria');
             el.setAttribute('aria-label', this.t(key, el.getAttribute('aria-label')));
@@ -102,8 +111,8 @@ class I18n {
                 url.searchParams.set('lang', lang);
                 window.history.replaceState({}, '', url);
 
-                // Optional: reload to refresh API data
-                // window.location.reload();
+                // Reload to refresh API data (uncommented to fix dynamic menu loading)
+                window.location.reload();
             });
 
             // Set active state on load
