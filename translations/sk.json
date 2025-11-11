@@ -1,366 +1,93 @@
 {
+  "site": {
+    "title": "Palace Cafe & Bar - Autentické chute, jedinečné zážitky"
+  },
+  "scrollToTop": {
+    "ariaLabel": "Späť hore"
+  },
+  "happyHour": {
+    "message": "Tešíme sa na vás na happy hour od 12:00 do 15:00!"
+  },
+  "logo": {
+    "ariaLabel": "Domov Palace Cafe & Bar"
+  },
   "nav": {
-    "home": "Domov",
     "menu": "Menu",
-    "order": "Objednávka",
-    "about": "O nás",
-    "contact": "Kontakt",
-    "login": "Prihlásiť sa",
-    "logout": "Odhlásiť sa"
+    "order": "Objednaj online"
   },
-  
+  "lang": {
+    "hu": { "alt": "Maďarčina" },
+    "sk": { "alt": "Slovenčina" },
+    "en": { "alt": "Angličtina" }
+  },
   "hero": {
-    "title": "Palace Cafe & Bar",
-    "subtitle": "Autentické chute od roku 2016",
-    "orderNow": "Objednať teraz",
-    "viewMenu": "Zobraziť menu"
+    "title": "Toto nie je len burger. Toto je NAŠE burger.",
+    "subtitle": "Objav náš obľúbený burger podľa vlastného receptu – čerstvý, šťavnatý, nezabudnuteľný.",
+    "cta": "Objednaj teraz!"
   },
-  
-  "menu": {
-    "title": "Menu",
-    "subtitle": "Autentické chute od roku 2016",
-    "categories": {
-      "food": "Jedlo",
-      "extras": "Prílohy",
-      "drinks": "Nápoje"
-    },
-    "orderOnline": "Online objednávka",
-    "orderNow": "Objednať teraz"
+  "welcome": {
+    "small": "Vitajte",
+    "large": "Palace",
+    "medium": "Cafe & Bar"
   },
-
-    "menuPage": {
-    "heroTitle": "Menu",
-    "heroSubtitle": "Autentické chute od roku 2016",
-    "foodDropdown": "Jedlo",
-    "extrasDropdown": "Prílohy",
-    "drinksDropdown": "Nápoje",
-    "smashburgers": "SmashBurger",
-    "hamburgers": "Hamburger",
-    "qurritos": "Qurrito",
-    "mediterranean": "Stredomorské",
-    "sides": "Prílohy",
-    "desserts": "Dezerty",
-    "sauces": "Omáčky",
-    "nonalcoholic": "Nealkoholické nápoje",
-    "coffees": "Kávy",
-    "lemonades": "Limonády",
-    "specialty": "Špeciality",
-    "cocktails": "Koktaily",
-    "alcohol": "Vína & Pivá",
-    "shots": "Krátke nápoje",
-    "orderSectionTitle": "Niečo vás zaujalo?",
-    "orderSectionSubtitle": "Objednajte si online a vyzdvihnite u nás!"
+  "opening": {
+    "title": "Otváracie hodiny",
+    "wedThu": "<strong>Streda - Štvrtok:</strong> 11:00 - 20:00",
+    "friSat": "<strong>Piatok - Sobota:</strong> 11:00 - 22:00",
+    "happyHour": "<strong>Happy Hour:</strong> Streda-Sobota 12:00-15:00",
+    "special": "Špeciálne ponuky a zľavy!"
   },
-  
-  "order": {
-    "title": "Online objednávka",
-    "subtitle": "Vyberte si svoje obľúbené jedlá",
-    "deliveryType": "Spôsob doručenia",
-    "delivery": "Donáška",
-    "pickup": "Vyzdvihnutie",
-    "categories": "Kategórie",
-    "cart": "Košík",
-    "emptyCart": "Košík je prázdny",
-    "addToCart": "Do košíka",
-    "removeFromCart": "Odstrániť",
-    "checkout": "Pokladňa",
-    "continueShopping": "Pokračovať v nákupe",
-    "subtotal": "Medzisúčet",
-    "deliveryFee": "Poplatok za doručenie",
-    "total": "Celkom",
-    "minimumOrder": "Minimálna hodnota objednávky",
-    "minimumNotMet": "Minimálna hodnota objednávky je {{amount}}€",
-    "quantity": "Množstvo"
+  "story": {
+    "part1": "Vieme, že sa dá jesť na mnohých miestach, ale u nás je všetko iné. Pretože my nevaríme len – chceme ukázať, čo znamená naozaj dobre jesť.",
+    "part2": "Toto je náš svet chutí. A teraz môže byť aj tvoj."
   },
-
-  "orderPage": {
-    "kitchenOverloaded": "Kuchyňa preťažená!",
-    "notAcceptingOrders": "Momentálne neprijímame nové objednávky",
-    "kitchenAtCapacity": "Naša kuchyňa teraz pracuje na plnú kapacitu...",
-    "tryAgainLater": "Prosím, skúste to neskôr!",
-    "autoRefresh": "Automatické obnovenie:",
-    "secondsLater": "sekúnd",
-    "refreshNow": "Obnoviť teraz",
-    "backToHome": "Späť na domovskú stránku",
-    "selectFrom": "Vyberte z",
-    "noImage": "Bez obrázka",
-    "allergenInfo": "Informácie o alergéne",
-    "allergenEUInfo": "Tieto informácie o alergéne sú v súlade s nariadením EÚ.",
-    "opensAt": "Otvára",
-    "openUntil": "Otvorené do",
-    "closed": "Zatvorené",
-    "closedInfo": "Zatvorené",
-    "sunday": "Nedeľa",
-    "monday": "Pondelok",
-    "tuesday": "Utorok",
-    "wednesday": "Streda",
-    "thursday": "Štvrtok",
-    "friday": "Piatok",
-    "saturday": "Sobota"
+  "categories": {
+    "burgers": "Hamburgre",
+    "qurritos": "Qurritá",
+    "tacos": "Tacá",
+    "burgers.altBg": "Burger pozadie",
+    "burgers.altPlate": "Burger na tanieri",
+    "qurritos.altBg": "Quesadilla pozadie",
+    "qurritos.altPlate": "Quesadilla na tanieri",
+    "tacos.altBg": "Tacos pozadie",
+    "tacos.altPlate": "Tacos na tanieri"
   },
-  
-  "customization": {
-    "title": "Prispôsobenie",
-    "customize": "Prispôsobiť",
-    "selectSauce": "Vyberte si omáčku",
-    "sauce": "Omáčka",
-    "noSauce": "Bez omáčky",
-    "selectFries": "Vyberte si hranolky",
-    "fries": "Hranolky",
-    "regularFries": "Normálne hranolky",
-    "upgrade": "Vylepšenie",
-    "addExtras": "Pridať doplnky",
-    "extras": "Doplnky",
-    "removeItems": "Odstrániť ingrediencie",
-    "remove": "Odstrániť",
-    "specialNotes": "Poznámka",
-    "notesPlaceholder": "Špeciálne požiadavky (napr. extra korenie, alergie)",
-    "addToCart": "Do košíka",
-    "cancel": "Zrušiť",
-    "close": "Zavrieť",
-    "save": "Uložiť",
-    "update": "Aktualizovať",
-    "delete": "Vymazať",
-    "edit": "Upraviť",
-    "price": "Cena",
-    "free": "Zadarmo",
-    "included": "Obsahuje"
+  "maps": {
+    "title": "Poloha Palace Cafe & Bar"
   },
-  
-  "cart": {
-    "title": "Košík",
-    "yourCart": "Váš košík",
-    "empty": "Košík je prázdny",
-    "emptyMessage": "Ešte ste do košíka nepridali nič",
-    "item": "položka",
-    "items": "položky",
-    "subtotal": "Medzisúčet",
-    "deliveryFee": "Poplatok za doručenie",
-    "total": "Celkom",
-    "checkout": "Pokladňa",
-    "continueShopping": "Pokračovať v nákupe",
-    "clear": "Vyprázdniť košík",
-    "clearConfirm": "Naozaj chcete vyprázdniť košík?",
-    "removeItem": "Odstrániť položku",
-    "editItem": "Upraviť položku",
-    "quantity": "Množstvo",
-    "unitPrice": "Jednotková cena",
-    "customizations": "Prispôsobenia"
+  "gallery": {
+    "title": "Sleduj nás na Instagrame!",
+    "cta": "Sleduj nás na Instagrame"
   },
-  
-  "checkout": {
-    "title": "Pokladňa",
-    "personalInfo": "Osobné údaje",
-    "deliveryInfo": "Informácie o doručení",
-    "paymentInfo": "Platobné informácie",
-    "orderSummary": "Súhrn objednávky",
-    "name": "Meno",
-    "namePlaceholder": "Vaše celé meno",
-    "email": "E-mail",
-    "emailPlaceholder": "priklad@email.com",
-    "phone": "Telefónne číslo",
-    "phonePlaceholder": "+421 XXX XXX XXX",
-    "address": "Adresa",
-    "addressPlaceholder": "Ulica a číslo domu",
-    "city": "Mesto",
-    "cityPlaceholder": "Bratislava",
-    "postalCode": "PSČ",
-    "postalCodePlaceholder": "811 01",
-    "deliveryNotes": "Poznámky k doručeniu",
-    "deliveryNotesPlaceholder": "Napr: 3. poschodie, meno zvončeka, kód brány",
-    "specialNotes": "Špeciálne poznámky",
-    "specialNotesPlaceholder": "Akékoľvek špeciálne požiadavky...",
-    "paymentMethod": "Spôsob platby",
-    "cash": "Hotovosť",
-    "card": "Banková karta",
-    "online": "Online platba",
-    "agreeTerms": "Súhlasím so Všeobecnými obchodnými podmienkami",
-    "placeOrder": "Odoslať objednávku",
-    "processing": "Spracovanie...",
-    "backToCart": "Späť do košíka"
+  "instagram": {
+    "alt": "Palace Cafe Instagram"
   },
-  
-  "validation": {
-    "required": "Toto pole je povinné",
-    "invalidEmail": "Neplatná e-mailová adresa",
-    "invalidPhone": "Neplatné telefónne číslo",
-    "invalidPostalCode": "Neplatné PSČ",
-    "minLength": "Vyžaduje sa minimálne {{min}} znakov",
-    "maxLength": "Maximálne {{max}} znakov povolených",
-    "mustAgreeTerms": "Musíte súhlasiť s obchodnými podmienkami",
-    "minimumOrder": "Minimálna hodnota objednávky je {{amount}}€",
-    "selectDeliveryType": "Vyberte spôsob doručenia",
-    "cartEmpty": "Košík je prázdny",
-    "fillAllFields": "Prosím, vyplňte všetky povinné polia"
-  },
-  
-  "notifications": {
-    "success": "Úspech!",
-    "error": "Chyba!",
-    "warning": "Upozornenie!",
-    "info": "Informácie",
-    "addedToCart": "Pridané do košíka",
-    "removedFromCart": "Odstránené z košíka",
-    "cartUpdated": "Košík aktualizovaný",
-    "cartCleared": "Košík vyprázdnený",
-    "orderPlaced": "Objednávka odoslaná!",
-    "orderPlacedMessage": "Vaša objednávka bola úspešne odoslaná. Čoskoro vás budeme kontaktovať!",
-    "orderFailed": "Objednávka zlyhala",
-    "orderFailedMessage": "Nastala chyba pri odosielaní objednávky. Prosím, skúste to znova!",
-    "loadingMenu": "Načítava sa menu...",
-    "menuLoadFailed": "Nepodarilo sa načítať menu",
-    "networkError": "Chyba siete. Skontrolujte svoje internetové pripojenie!",
-    "serverError": "Chyba servera. Prosím, skúste to neskôr!",
-    "itemNotAvailable": "Tento produkt momentálne nie je dostupný",
-    "sessionExpired": "Relácia vypršala. Prosím, obnovte stránku!"
-  },
-  
-  "modal": {
-    "close": "Zavrieť",
-    "confirm": "Potvrdiť",
-    "cancel": "Zrušiť",
-    "yes": "Áno",
-    "no": "Nie",
-    "ok": "OK",
-    "save": "Uložiť",
-    "delete": "Vymazať",
-    "edit": "Upraviť",
-    "view": "Zobraziť"
-  },
-  
-  "status": {
-    "pending": "Čaká sa",
-    "confirmed": "Potvrdené",
-    "preparing": "Pripravuje sa",
-    "ready": "Hotové",
-    "outForDelivery": "Na ceste",
-    "delivered": "Doručené",
-    "completed": "Dokončené",
-    "cancelled": "Zrušené"
-  },
-  
-  "time": {
-    "estimatedDelivery": "Odhadovaný čas doručenia",
-    "minutes": "minút",
-    "hours": "hodín",
-    "days": "dní",
-    "asap": "Čo najskôr",
-    "scheduleFor": "Naplánovať na",
-    "selectTime": "Vyberte čas"
-  },
-  
   "footer": {
-    "aboutUs": "O nás",
-    "contactUs": "Kontakt",
-    "termsConditions": "Všeobecné obchodné podmienky",
-    "privacyPolicy": "Zásady ochrany osobných údajov",
-    "openingHours": "Otváracie hodiny",
-    "followUs": "Sledujte nás",
-    "allRightsReserved": "Všetky práva vyhradené",
-    "phone": "Telefón",
-    "email": "E-mail",
-    "address": "Adresa"
+    "privacy": "Vyhlásenie o ochrane osobných údajov",
+    "cookies": "Nastavenia súborov cookie",
+    "terms": "Podmienky používania",
+    "logoAlt": "Palace Cafe & Bar"
   },
-  
-  "badges": {
-    "bestseller": "Bestseller",
-    "new": "Nové",
-    "spicy": "Pálivé",
-    "vegetarian": "Vegetariánske",
-    "vegan": "Vegánske",
-    "glutenFree": "Bezlepkové",
-    "popular": "Obľúbené",
-    "chefSpecial": "Špeciálna ponuka šéfkuchára"
+  "social": {
+    "facebook": { "ariaLabel": "Facebook", "alt": "Facebook" },
+    "instagram": { "ariaLabel": "Instagram", "alt": "Instagram" },
+    "maps": { "ariaLabel": "Google Maps", "alt": "Google Maps" },
+    "tiktok": { "ariaLabel": "TikTok", "alt": "TikTok" }
   },
-  
-    "homepage": {
-    "happyHour": "Tešíme sa na vás počas happy hour medzi 12:00 a 15:00!",
-    "heroTitle": "Toto nie je len burger. Toto je NÁŠ burger.",
-    "heroSubtitle": "Objavte našu obľúbenú položku pripravenú podľa vlastného receptu – čerstvú, šťavnatú, nezabudnuteľnú.",
-    "welcomeSmall": "Vitajte v",
-    "welcomeMedium": "Cafe & Bare",
-    "openingHours": "Otváracie hodiny",
-    "wednesdayThursday": "Streda - Štvrtok: 11:00 - 20:00",
-    "fridaySaturday": "Piatok - Sobota: 11:00 - 22:00",
-    "kitchenClosesEarly": "Kuchyňa sa zatvára o pol hodiny skôr",
-    "closedInfo": "Nedeľa, Pondelok, Utorok: Zatvorené",
-    "feature1Title": "Vlastné recepty",
-    "feature1Text": "Každé jedlo je jedinečné, pripravené podľa našich vlastných receptov",
-    "feature2Title": "Čerstvé suroviny",
-    "feature2Text": "Používame len najkvalitnejšie, čerstvé ingrediencie",
-    "feature3Title": "Rýchle doručenie",
-    "feature3Text": "Doručíme vašu objednávku za 30-45 minút",
-    "signatureDishes": "Naše špeciality",
-    "signatureDishesSubtitle": "Najlepší výber z Palace, ktorý musíte vyskúšať!",
-    "palaceBurger": "Palace Burger",
-    "palaceBurgerDesc": "Naša hrdosť: dvojitý hovädzí kotlét, cheddar syr, tajná omáčka",
-    "qurrito": "Qurrito",
-    "qurritoDesc": "Fúzia quesadilly a burrita, zabalená v chrumkavej tortille",
-    "smashBurger": "Smash Burger",
-    "smashBurgerDesc": "Chrumkavo opečený, karamelizovaný kotlét pre dokonalý zážitok z burgeru",
-    "instagramTitle": "Sledujte nás na Instagrame!",
-    "instagramSubtitle": "Pozrite si naše najnovšie kreatívne výtvory",
-    "followInstagram": "Sledujte nás na Instagrame",
-    "cookieTitle": "Používanie cookies",
-    "cookieText": "Na správne fungovanie webovej stránky a lepší užívateľský zážitok používame súbory cookies. Vyberte si, ktoré kategórie prijímate.",
-    "cookieSettings": "Nastavenia cookies",
-    "onlyEssential": "Iba nevyhnutné",
-    "acceptAll": "Prijať všetko",
-    "essentialCookies": "Nevyhnutné cookies",
-    "essentialCookiesDesc": "Tieto cookies sú nevyhnutné pre základné funkcie webovej stránky.",
-    "analyticsCookies": "Analytické cookies",
-    "analyticsCookiesDesc": "Pomáhajú nám pochopiť, ako návštevníci používajú webovú stránku (Google Analytics).",
-    "marketingCookies": "Marketingové cookies",
-    "marketingCookiesDesc": "Personalizované reklamy a funkcie sociálnych médií.",
-    "privacyInfo": "Informácie o ochrane osobných údajov"
-  },
-
-  "buttons": {
-    "submit": "Odoslať",
-    "cancel": "Zrušiť",
-    "close": "Zavrieť",
-    "save": "Uložiť",
-    "delete": "Vymazať",
-    "edit": "Upraviť",
-    "view": "Zobraziť",
-    "add": "Pridať",
-    "remove": "Odstrániť",
-    "update": "Aktualizovať",
-    "confirm": "Potvrdiť",
-    "back": "Späť",
-    "next": "Ďalej",
-    "finish": "Dokončiť",
-    "search": "Hľadať",
-    "filter": "Filtrovať",
-    "sort": "Zoradiť",
-    "refresh": "Obnoviť",
-    "download": "Stiahnuť",
-    "upload": "Nahrať",
-    "print": "Tlačiť",
-    "share": "Zdieľať",
-    "orderNow": "Objednať teraz",
-    "settings": "Nastavenia"
-  },
-  
-  "errors": {
-    "general": "Niečo sa pokazilo. Prosím, skúste to znova!",
-    "network": "Chyba siete. Skontrolujte svoje internetové pripojenie!",
-    "server": "Chyba servera. Prosím, skúste to neskôr!",
-    "notFound": "Stránka sa nenašla",
-    "unauthorized": "Nemáte oprávnenie na túto akciu",
-    "forbidden": "Prístup zamietnutý",
-    "timeout": "Požiadavka vypršala",
-    "invalidData": "Neplatné údaje",
-    "requiredField": "Toto pole je povinné"
-  },
-  
-  "loading": {
-    "pleaseWait": "Prosím, počkajte...",
-    "loading": "Načítava sa...",
-    "processing": "Spracováva sa...",
-    "saving": "Ukladá sa...",
-    "uploading": "Nahráva sa...",
-    "downloading": "Sťahuje sa...",
-    "searching": "Hľadá sa..."
+  "cookie": {
+    "title": "Používanie cookies",
+    "description": "Na správne fungovanie webu a lepší používateľský zážitok používame cookies. Vyberte, ktoré kategórie prijímate.",
+    "settings": "Nastavenia",
+    "essential": "Len nevyhnutné",
+    "acceptAll": "Prijať všetky",
+    "modal": { "title": "Nastavenia cookies" },
+    "essential.title": "Nevyhnutné cookies",
+    "essential.desc": "Tieto cookies sú nevyhnutné pre základné funkcie webu.",
+    "analytics.title": "Analytické cookies",
+    "analytics.desc": "Pomáhajú pochopiť, ako návštevníci používajú web (Google Analytics).",
+    "marketing.title": "Marketingové cookies",
+    "marketing.desc": "Personalizované reklamy a funkcie sociálnych médií.",
+    "save": "Uložiť nastavenia",
+    "privacy": "Vyhlásenie o ochrane súkromia"
   }
 }
