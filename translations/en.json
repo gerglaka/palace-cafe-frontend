@@ -89,5 +89,51 @@
     "marketing.desc": "Personalized ads and social media features.",
     "save": "Save Settings",
     "privacy": "Privacy Statement"
+  },
+  "menu": {
+    "title": "Menu - Palace Cafe & Bar",
+    "hero": {
+      "title": "Menu",
+      "subtitle": "Authentic flavors since 2021"
+    },
+    "nav": {
+      "foods": "Foods",
+      "extras": "Extras",
+      "drinks": "Drinks",
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Mediterranean",
+      "sides": "Sides",
+      "desserts": "Desserts",
+      "sauces": "Sauces",
+      "nonalcoholic": "Soft Drinks",
+      "coffees": "Coffees",
+      "lemonades": "Lemonades",
+      "specialty": "Specialties",
+      "cocktails": "Cocktails",
+      "alcohol": "Wines & Beers",
+      "shots": "Shots"
+    },
+    "categories": {
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Mediterranean & Tex-Mex",
+      "sides": "Sides",
+      "desserts": "Desserts",
+      "sauces": "Sauces",
+      "nonalcoholic": "Soft Drinks",
+      "coffees": "Coffees",
+      "lemonades": "Lemonades",
+      "specialty": "Specialties",
+      "cocktails": "Cocktails",
+      "alcohol": "Wines & Beers",
+      "shots": "Shots"
+    }
+  },
+  "order": {
+    "title": "Like something?",
+    "subtitle": "Order easily online and pick up with us!"
   }
 }

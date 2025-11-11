@@ -89,5 +89,51 @@
     "marketing.desc": "Személyre szabott reklámok és közösségi média funkciók.",
     "save": "Beállítások mentése",
     "privacy": "Adatvédelmi tájékoztató"
+  },
+  "menu": {
+    "title": "Menü - Palace Cafe & Bar",
+    "hero": {
+      "title": "Menü",
+      "subtitle": "Autentikus ízek 2021 óta"
+    },
+    "nav": {
+      "foods": "Ételek",
+      "extras": "Extrák",
+      "drinks": "Italok",
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Mediterrán",
+      "sides": "Köretek",
+      "desserts": "Desszertek",
+      "sauces": "Szószok",
+      "nonalcoholic": "Üdítők",
+      "coffees": "Kávék",
+      "lemonades": "Limonádék",
+      "specialty": "Specialitások",
+      "cocktails": "Koktélok",
+      "alcohol": "Borok & Sörök",
+      "shots": "Röviditalok"
+    },
+    "categories": {
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Mediterrán & Tex-Mex",
+      "sides": "Köretek",
+      "desserts": "Desszertek",
+      "sauces": "Szószok",
+      "nonalcoholic": "Üdítők",
+      "coffees": "Kávék",
+      "lemonades": "Limonádék",
+      "specialty": "Specialitások",
+      "cocktails": "Koktélok",
+      "alcohol": "Borok & Sörök",
+      "shots": "Röviditalok"
+    }
+  },
+  "order": {
+    "title": "Megtetszett valami?",
+    "subtitle": "Rendeld meg könnyedén online és vedd át nálunk!"
   }
 }

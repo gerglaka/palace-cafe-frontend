@@ -89,5 +89,51 @@
     "marketing.desc": "Personalizované reklamy a funkcie sociálnych médií.",
     "save": "Uložiť nastavenia",
     "privacy": "Vyhlásenie o ochrane súkromia"
+  },
+  "menu": {
+    "title": "Menu - Palace Cafe & Bar",
+    "hero": {
+      "title": "Menu",
+      "subtitle": "Autentické chute od roku 2021"
+    },
+    "nav": {
+      "foods": "Jedlá",
+      "extras": "Prílohy",
+      "drinks": "Nápoje",
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Stredomorská",
+      "sides": "Prílohy",
+      "desserts": "Dezerty",
+      "sauces": "Omáčky",
+      "nonalcoholic": "Nealko",
+      "coffees": "Kávy",
+      "lemonades": "Limonády",
+      "specialty": "Špeciality",
+      "cocktails": "Koktaily",
+      "alcohol": "Víno & Pivo",
+      "shots": "Panáky"
+    },
+    "categories": {
+      "smashburgers": "SmashBurger",
+      "hamburgers": "Hamburger",
+      "qurritos": "Qurrito",
+      "mediterranean": "Stredomorská & Tex-Mex",
+      "sides": "Prílohy",
+      "desserts": "Dezerty",
+      "sauces": "Omáčky",
+      "nonalcoholic": "Nealko nápoje",
+      "coffees": "Kávy",
+      "lemonades": "Limonády",
+      "specialty": "Špeciality",
+      "cocktails": "Koktaily",
+      "alcohol": "Víno & Pivo",
+      "shots": "Panáky"
+    }
+  },
+  "order": {
+    "title": "Niečo sa ti páči?",
+    "subtitle": "Objednaj si jednoducho online a vyzdvihni u nás!"
   }
 }
