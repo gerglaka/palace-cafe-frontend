@@ -134,6 +134,54 @@
   },
   "order": {
     "title": "Megtetszett valami?",
-    "subtitle": "Rendeld meg könnyedén online és vedd át nálunk!"
+    "subtitle": "Rendeld meg könnyedén online és vedd át nálunk!",
+    "hero": "Online Rendelés",
+    "hero": {
+      "subtitle": "Válaszd ki kedvenceidet és rendeld meg egyszerűen"
+  },
+
+
+
+    "customize": {
+      "text": "Testreszabás"
+    },
+    "choose": {
+      "sauce": "Válassz szószt",
+      "sides": "Köret választás"
+    },
+    "extras": {
+      "text": "Extrák (+€0.30 / darab)",
+      "bacon": "Bacon",
+      "cheddar": "Cheddar Sajt",
+      "melted": "Olvadt Cheddar",
+      "onions": "Pirított Hagyma",
+      "tomato": "paradicsom",
+      "jalapeno": "Jalapeno"
+    },
+    "special": {
+      "request": "Különleges kérések"
+    },
+    "remove": {
+      "instructions": "Eltávolítandó összetevők:",
+      "placeholder": "Pl: nincs hagyma, nincs paradicsom..."
+    },
+    "request": {
+      "label": "További megjegyzések:",
+      "placeholder": "Egyéb kérések vagy megjegyzések..."
+    },
+    "quantity": "Mennyiség:",
+    "modal": {
+      "sum": "Összesen:"
+    },
+    "addedtocart": "Kosárba helyezve!"
+  },
+  "cart": {
+    "addtocart": "Kosárba helyezés",
+    "carttitle": "Kosár",
+    "cartisempty": "A kosár üres",
+    "additems": "Adj hozzá ételeket a rendeléshez",
+    "subtotal": "Részösszeg:",
+    "totalAmount": "Összesen:",
+    "placeorder": "Rendelés leadása"
   }
 }

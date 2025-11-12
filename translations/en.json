@@ -134,6 +134,55 @@
   },
   "order": {
     "title": "Like something?",
-    "subtitle": "Order easily online and pick up with us!"
-  }
+    "subtitle": "Order easily online and pick up with us!",
+    "hero": "Online Order",
+    "hero": {
+      "subtitle": "Choose your favorites and order easily"
+    },
+
+
+
+    "customize": {
+      "text": "Customization"
+    },
+    "choose": {
+      "sauce": "Choose sauce",
+      "sides": "Side selection"
+    },
+    "extras": {
+      "text": "Extras (+€0.30 / each)",
+      "bacon": "Bacon",
+      "cheddar": "Cheddar Cheese",
+      "melted": "Melted Cheddar",
+      "onions": "Fried Onion",
+      "tomato": "tomato",
+      "jalapeno": "Jalapeño"
+    },
+    "special": {
+      "request": "Special requests"
+    },
+    "remove": {
+      "instructions": "Ingredients to remove:",
+      "placeholder": "E.g. no onion, no tomato..."
+    },
+    "request": {
+      "label": "Additional notes:",
+      "placeholder": "Other requests or comments..."
+    },
+    "quantity": "Quantity:",
+    "modal": {
+      "sum": "Total:"
+    },
+    "addedtocart": "Added to cart!"
+  },
+  "cart": {
+    "addtocart": "Add to cart",
+    "carttitle": "Cart",
+    "cartisempty": "Your cart is empty",
+    "additems": "Add items to your order",
+    "subtotal": "Subtotal:",
+    "totalAmount": "Total:",
+    "placeorder": "Place order"
+  }  
 }
+

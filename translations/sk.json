@@ -134,6 +134,53 @@
   },
   "order": {
     "title": "Niečo sa ti páči?",
-    "subtitle": "Objednaj si jednoducho online a vyzdvihni u nás!"
-  }
+    "subtitle": "Objednaj si jednoducho online a vyzdvihni u nás!",
+    "hero": "Online objednávka",
+    "hero": {
+      "subtitle": "Vyber si svoje obľúbené a objednaj jednoducho"
+    },
+  
+    "customize": {
+      "text": "Prispôsobenie"
+    },
+    "choose": {
+      "sauce": "Vyber omáčku",
+      "sides": "Výber prílohy"
+    },
+    "extras": {
+      "text": "Príplatky (+€0.30 / ks)",
+      "bacon": "Slanina",
+      "cheddar": "Cheddar syr",
+      "melted": "Roztopený cheddar",
+      "onions": "Opekaná cibuľa",
+      "tomato": "paradajka",
+      "jalapeno": "Jalapeño"
+    },
+    "special": {
+      "request": "Špeciálne požiadavky"
+    },
+    "remove": {
+      "instructions": "Odstrániť prísady:",
+      "placeholder": "Napr. bez cibule, bez paradajok..."
+    },
+    "request": {
+      "label": "Ďalšie poznámky:",
+      "placeholder": "Iné požiadavky alebo komentáre..."
+    },
+    "quantity": "Množstvo:",
+    "modal": {
+      "sum": "Spolu:"
+    },
+    "addedtocart": "Pridané do košíka!"
+  },
+  "cart": {
+    "addtocart": "Pridať do košíka",
+    "carttitle": "Košík",
+    "cartisempty": "Košík je prázdny",
+    "additems": "Pridaj jedlá do objednávky",
+    "subtotal": "Medzisúčet:",
+    "totalAmount": "Spolu:",
+    "placeorder": "Odoslať objednávku"
+  }  
+
 }
