@@ -135,12 +135,11 @@
   "order": {
     "title": "Megtetszett valami?",
     "subtitle": "Rendeld meg könnyedén online és vedd át nálunk!",
-    "hero": "Online Rendelés",
+    "addToCart": "Kosárba",
     "hero": {
+      "title": "Online Rendelés",
       "subtitle": "Válaszd ki kedvenceidet és rendeld meg egyszerűen"
   },
-
-
 
     "customize": {
       "text": "Testreszabás"
@@ -175,6 +174,29 @@
     },
     "addedtocart": "Kosárba helyezve!"
   },
+
+  "orderPage": {
+    "selectFrom": "Válassz a",
+    "noImage": "Kép nincs"
+  },
+
+  "customization": {
+    "sauce": "Szósz",
+    "extras": "Extrák",
+    "remove": "Eltávolítás",
+    "note": "Megjegyzés",
+    "included": "Alapár",
+    "extrasTitle": "Extrák (+€0.30 / darab)",
+    "extraBacon": "Bacon",
+    "extraCheddar": "Cheddar Sajt",
+    "extraMeltedCheddar": "Olvadt Cheddar",
+    "extraOnion": "Pirított Hagyma",
+    "extraTomato": "Paradicsom",
+    "extraLettuce": "Saláta",
+    "extraPickle": "Uborka",
+    "extraJalapeno": "Jalapeño"
+  },
+
   "cart": {
     "addtocart": "Kosárba helyezés",
     "carttitle": "Kosár",
@@ -183,5 +205,78 @@
     "subtotal": "Részösszeg:",
     "totalAmount": "Összesen:",
     "placeorder": "Rendelés leadása"
+  },
+
+  "checkout": {
+    "hero": "Pénztár",
+    "herosubtext": "Rendelésed véglegesítése",
+    "stepone": "Menü",
+    "steptwo": "Pénztár",
+    "stepthree": "Befejezés",
+    "cart": {
+      "content": "Kosár tartalma"
+    },
+    "subtotal": "Részösszeg:",
+    "packagefee": "Csomagolási díj:",
+    "deliveryfee": "Szállítási díj:",
+    "fulltotal": "Összesen:",
+    "ordertpye": "Rendelés típusa",
+    "pickup": "Átvétel",
+    "pickupsubtext": "Vedd át a rendelésedet az étteremben",
+    "delivery": "Házhozszállítás",
+    "deliverysubtext": "Kiszállítjuk neked (+€2.50)",
+    "findme": "Találj meg",
+    "address": {
+      "street": "Utca és házszám *",
+      "city": "Város *",
+      "postalcode": "Irányítószám *",
+      "extrainfo": "Kiegészítő információk"
+    },
+    "time": "Időpont",
+    "asap": "Amilyen hamar csak lehet",
+    "tiimestamp": "Időpont megadása",
+    "typetime": "Időpont megadása",
+    "timesubtext": "Add meg, mikor szeretnéd átvenni a rendelésedet",
+    "wishedtime": "Kívánt időpont",
+    "timeformat": "Formátum: ÓÓ:PP (pl. 14:30)",
+    "openhours": "Nyitvatartás:",
+    "contact": {
+      "title": "Kapcsolati adatok",
+      "firstname": "Keresztnév *",
+      "lastname": "Vezetéknév *",
+      "phone": "Telefonszám *",
+      "email": "Email cím *"
+    },
+    "offerdrink": "Esetleg egy ital is?",
+    "offerdrinksub": "Válassz kedvenc italaidbool a rendeléshez:",
+    "loaddrinks": "Italok betöltése...",
+    "loaddrinkerror": "Nem sikerült betölteni az italokat. Próbáld újra később!",
+    "payment": {
+      "pay": "Fizetés",
+      "cash": "Készpénz",
+      "cashsub": "Fizetés átvételkor/kiszállításkor",
+      "card": "Bankkártya",
+      "cardsub": "Azonnali online fizetés",
+      "cardinfo": "Kártyaadatok",
+      "terms": "Elfogadom az ",
+      "termssub": "Általános Szerződési Feltételeket",
+      "privacy": "Hozzájárulok személyes adataim kezeléséhez az",
+      "privacysub": "Adatvédelmi Tájékoztató",
+      "payable": "Fizetendő összeg:"
+    },
+    "missing": "Hiányzó információk:",
+    "placeorder": "Rendelés leadása",
+    "processing": "Feldolgozás...",
+    "customize": "Tétel szerkesztése",
+    "custom": {
+      "sauce": "Szósz választása *",
+      "side": "Sültkrimpli választása",
+      "extras": "Extrák",
+      "special": "Speciális kérések",
+      "leave": "Kihagyni:",
+      "other": "Egyéb megjegyzések:",
+      "save": "Módosítások mentése"
+    },
+    "quant": "Mennyiség:"
   }
 }

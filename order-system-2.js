@@ -404,6 +404,14 @@ class OrderSystem {
         this.init();
     }
 
+    t(key, vars = {}) {
+        if (typeof window.i18n === 'undefined' || typeof window.i18n.t !== 'function') {
+            console.warn('i18n not loaded, returning key:', key);
+            return key;
+        }
+        return window.i18n.t(key, vars);
+    }
+
     /**
      * Build dynamic category mapping from API response
      * This maps category slugs to translated names
@@ -463,7 +471,10 @@ class OrderSystem {
 
     async loadMenu() {
         try {
-            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=hu`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || localStorage.getItem('lang') || 'hu';
+
+            const response = await fetch(`${this.apiUrl}/menu/deliverable?lang=${lang}`);
             const result = await response.json();
 
             if (!result.success) {
@@ -487,7 +498,11 @@ class OrderSystem {
 
     async loadCustomizationOptions() {
         try {
-            const response = await fetch(`${this.apiUrl}/customization?lang=hu`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || localStorage.getItem('lang') || 'hu';
+
+            const currentLang = window.i18n?.currentLang || 'hu';
+            const response = await fetch(`${this.apiUrl}/customization?lang=${currentLang}`);
             const result = await response.json();
 
             if (!result.success) {
@@ -505,7 +520,10 @@ class OrderSystem {
 
     async loadAllergenData() {
         try {
-            const response = await fetch(`${this.apiUrl}/allergens?lang=hu`);
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') || localStorage.getItem('lang') || 'hu';
+
+            const response = await fetch(`${this.apiUrl}/allergens?=${lang}`);
             const result = await response.json();
 
             if (!result.success) {
@@ -889,7 +907,7 @@ class OrderSystem {
             section.innerHTML = `
                 <div class="category-header">
                     <h2 class="category-title">${categoryName}</h2>
-                    <p class="category-description">Válassz a ${categoryName.toLowerCase()} kategóriából</p>
+                    <p class="category-description">${this.t('orderPage.selectFrom')} ${categoryName.toLowerCase()}</p>
                 </div>
                 <div class="food-grid" id="${category.slug}-grid">
                     ${this.renderCategoryItems(category.items)}
@@ -903,7 +921,7 @@ class OrderSystem {
     renderCategoryItems(items) {
         return items.map(item => {
             const badge = item.badge ? `<div class="food-badge ${item.badge.toLowerCase()}">${item.badge}</div>` : '';
-            const image = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" loading="lazy">` : '<div class="no-image">Kép nincs</div>';
+            const image = item.imageUrl ? `<img src="${item.imageUrl}" alt="${item.name}" loading="lazy">` : `<div class="no-image">${this.t('orderPage.noImage')}</div>`;
 
             return `
                 <div class="food-card" data-item-id="${item.id}">
@@ -921,7 +939,7 @@ class OrderSystem {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                     <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
-                                Kosárba
+                                ${this.t('order.addToCart')}
                             </button>
                         </div>
                     </div>
@@ -1114,7 +1132,7 @@ class OrderSystem {
             // Items WITH sides included - regular fries free, others show addon price
             optionsHTML = this.customizationOptions.friesOptions.map(option => {
                 const isRegularFries = option.slug === 'regular-fries'; // Fixed: was 'regular'
-                const priceLabel = isRegularFries ? 'Alapár' : `+€${option.priceAddon.toFixed(2)}`;
+                const priceLabel = isRegularFries ? this.t('customization.included') : `+€${option.priceAddon.toFixed(2)}`;
                 const isChecked = isRegularFries ? 'checked' : '';
 
                 return `
@@ -1520,7 +1538,7 @@ class OrderSystem {
     
         if (item.customization.sauce && this.customizationOptions?.sauces) {
             const sauce = this.customizationOptions.sauces.find(s => s.slug === item.customization.sauce);
-            if (sauce) customizations.push(`Szósz: ${sauce.name}`);
+            if (sauce) customizations.push(`${this.t('customization.sauce')}: ${sauce.name}`);
         }
     
         if (item.customization.fries && this.customizationOptions?.friesOptions) {
@@ -1528,9 +1546,9 @@ class OrderSystem {
             if (friesOption) {
                 if (item.includesSides) {
                     // Items WITH sides included - only show price for non-regular fries
-                    if (friesOption.slug !== 'regular-fries' && friesOption.priceAddon > 0) {  // ← FIXED
+                    if (friesOption.slug !== 'regular-fries' && friesOption.priceAddon > 0) {
                         customizations.push(`${friesOption.name} (+€${friesOption.priceAddon.toFixed(2)})`);
-                    } else if (friesOption.slug === 'regular-fries') {  // ← FIXED
+                    } else if (friesOption.slug === 'regular-fries') {
                         // Don't show price for regular fries when sides are included
                         customizations.push(`${friesOption.name}`);
                     }
@@ -1544,22 +1562,22 @@ class OrderSystem {
         }
     
         if (item.customization.extras?.length > 0) {
-            const extraPrice = 0.30; // Hardcoded price matching your calculateItemTotal
+            const extraPrice = 0.30;
             const extraLabels = item.customization.extras.map(extra => {
                 // Try to get name from API first, fallback to slug
                 const extraData = this.customizationOptions?.extras?.find(e => e.slug === extra);
                 const extraName = extraData ? extraData.name : extra;
                 return `${extraName} (+€${extraPrice.toFixed(2)})`;
             });
-            customizations.push(`Extrák: ${extraLabels.join(', ')}`);
+            customizations.push(`${this.t('customization.extras')}: ${extraLabels.join(', ')}`);
         }
 
         if (item.customization.removeInstructions) {
-            customizations.push(`Eltávolítás: ${item.customization.removeInstructions}`);
+            customizations.push(`${this.t('customization.remove')}: ${item.customization.removeInstructions}`);
         }
 
         if (item.customization.specialInstructions) {
-            customizations.push(`Megjegyzés: ${item.customization.specialInstructions}`);
+            customizations.push(`${this.t('customization.note')}: ${item.customization.specialInstructions}`);
         }
 
         return customizations.join(' • ');

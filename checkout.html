@@ -51,7 +51,7 @@
     <!-- Happy Hour Bar -->
     <div class="happy-hour-bar" id="happyHourBar">
         <div class="happy-hour-content">
-            <div class="happy-hour-message">
+            <div class="happy-hour-message" data-i18n="happyHour.message">
                 Várunk szeretettel a happy hour-re 12 és 15 óra között!
             </div>
         </div>
@@ -76,19 +76,21 @@
 
             <!-- Desktop Navigation -->
             <ul class="nav-menu desktop-nav">
-                <li><a href="menu.html" class="nav-link active">Menü</a></li>
-                <!--<li><a href="about.html" class="nav-link">Rólunk</a></li>-->
-                <li><a href="order.html" class="nav-link highlighted">Rendelj online</a></li>
+                <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menü</a></li>
+                <li><a href="order.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a></li>
             </ul>
 
             <!-- Language Flags -->
             <div class="language-flags desktop-only">
-                <a href="menu-sk.html" aria-label="Slovenčina">
+                <button data-lang="hu" class="flag-button" aria-label="Magyar">
+                    <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="flag-icon">
+                </button>
+                <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
                     <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
-                </a>
-                <a href="menu-en.html" aria-label="English">
+                </button>
+                <button data-lang="en" class="flag-button" aria-label="English">
                     <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
-                </a>
+                </button>
             </div>
 
             <!-- Mobile Order Button -->
@@ -100,15 +102,12 @@
         <!-- Mobile Menu Dropdown -->
         <div class="mobile-menu" id="mobileMenu">
             <ul class="mobile-nav-list">
-                <li><a href="menu.html" class="mobile-nav-link">Menü</a></li>
+                <li><a href="menu.html" class="mobile-nav-link" data-i18n="nav.menu">Menü</a></li>
                 <!--<li><a href="about.html" class="mobile-nav-link">Rólunk</a></li>-->
                 <li class="mobile-flags">
-                    <a href="index-sk.html" aria-label="Slovenčina">
-                        <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
-                    </a>
-                    <a href="index-en.html" aria-label="English">
-                        <img src="assets/images/icons/flag-en.png" alt="English" class="mobile-flag-icon">
-                    </a>
+                    <button data-lang="hu"><img src="assets/flags/hu.svg" alt="Magyar" data-i18n="lang.hu.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="sk"><img src="assets/flags/sk.svg" alt="Slovenčina" data-i18n="lang.sk.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="en"><img src="assets/flags/en.svg" alt="English" data-i18n="lang.en.alt" class="mobile-flag-icon"></button>
                 </li>
             </ul>
         </div>
@@ -117,8 +116,8 @@
     <!-- Menu Hero Section -->
     <section class="menu-hero-section">
         <div class="menu-hero-content">
-            <h1 class="menu-hero-title">Pénztár</h1>
-            <p class="menu-hero-subtitle">Rendelésed véglegesítése</p>
+            <h1 class="menu-hero-title" data-i18n="checkout.hero">Pénztár</h1>
+            <p class="menu-hero-subtitle" data-i18n="checkout.herosubtext">Rendelésed véglegesítése</p>
         </div>
     </section>
 
@@ -129,17 +128,17 @@
             <div class="checkout-progress">
                 <div class="progress-step completed">
                     <div class="step-number">1</div>
-                    <div class="step-label">Menü</div>
+                    <div class="step-label" data-i18n="checkout.stepone">Menü</div>
                 </div>
                 <div class="progress-line completed"></div>
                 <div class="progress-step active">
                     <div class="step-number">2</div>
-                    <div class="step-label">Pénztár</div>
+                    <div class="step-label" data-i18n="checkout.steptwo">Pénztár</div>
                 </div>
                 <div class="progress-line"></div>
                 <div class="progress-step">
                     <div class="step-number">3</div>
-                    <div class="step-label">Befejezés</div>
+                    <div class="step-label" data-i18n="checkout.stepthree">Befejezés</div>
                 </div>
             </div>
 
@@ -152,30 +151,30 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Kosár tartalma
+                            <span data-i18n="checkout.cart.content">Kosár tartalma</span>
                         </h2>
                         <div class="cart-items" id="cartItems">
                             <!-- Cart items will be dynamically populated from order page -->
                         </div>
                         <div class="cart-summary">
                             <div class="summary-row">
-                                <span>Részösszeg:</span>
+                                <span data-i18n="checkout.subtotal">Részösszeg:</span>
                                 <span id="subtotal">€0.00</span>
                             </div>
                             <div class="summary-row packaging-fee">
-                                <span>Csomagolási díj:</span>
+                                <span data-i18n="checkout.packagefee">Csomagolási díj:</span>
                                 <span id="packagingFee">€0.50</span>
                             </div>
                             <div class="summary-row delivery-fee" style="display: none;">
-                                <span>Szállítási díj:</span>
+                                <span data-i18n="checkout.deliveryfee">Szállítási díj:</span>
                                 <span id="deliveryFee">€2.50</span>
                             </div>
                             <div class="summary-row packaging-fee" style="display: none;">
-                                <span>Csomagolási díj:</span>
+                                <span data-i18n="checkout.packagefee">Csomagolási díj:</span>
                                 <span id="packagingFee">0x €0.50</span>
                             </div>                            
                             <div class="summary-row total">
-                                <span>Összesen:</span>
+                                <span data-i18n="checkout.fulltotal">Összesen:</span>
                                 <span id="totalAmount">€0.00</span>
                             </div>
                         </div>
@@ -189,7 +188,7 @@
                                 <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2"/>
                                 <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Rendelés típusa
+                            <span data-i18n="checkout.ordertpye">Rendelés típusa</span>
                         </h2>
                         <div class="order-type-options">
                             <label class="order-option active" data-type="pickup">
@@ -200,8 +199,8 @@
                                         <path d="M7 7V5A2 2 0 0 1 9 3H15A2 2 0 0 1 17 5V7" stroke="currentColor" stroke-width="2"/>
                                     </svg>
                                     <div>
-                                        <h3>Átvétel</h3>
-                                        <p>Vedd át a rendelésedet az étteremben</p>
+                                        <h3 data-i18n="checkout.pickup">Átvétel</h3>
+                                        <p data-i18n="checkout.pickupsubtext">Vedd át a rendelésedet az étteremben</p>
                                     </div>
                                 </div>
                             </label>
@@ -213,8 +212,8 @@
                                         <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
                                     </svg>
                                     <div>
-                                        <h3>Házhozszállítás</h3>
-                                        <p>Kiszállítjuk neked (+€2.50)</p>
+                                        <h3 data-i18n="checkout.delivery">Házhozszállítás</h3>
+                                        <p data-i18n="checkout.deliverysubtext">Kiszállítjuk neked (+€2.50)</p>
                                     </div>
                                 </div>
                             </label>
@@ -228,27 +227,27 @@
                             </svg>
                             Szállítási cím
                         </h2>
-                        <button type="button" id="locateMeBtn" class="locate-me-btn">Találj meg</button>
+                        <button type="button" id="locateMeBtn" class="locate-me-btn" data-i18n="checkout.findme">Találj meg</button>
                         <div class="address-form">
                             <div class="form-row">
                                 <div class="form-group full-width">
-                                    <label for="street">Utca és házszám *</label>
+                                    <label for="street" data-i18n="checkout.address.street">Utca és házszám *</label>
                                     <input type="text" id="street" name="street" required placeholder="pl. Fő utca 123">
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="city">Város *</label>
+                                    <label for="city" data-i18n="checkout.address.city">Város *</label>
                                     <input type="text" id="city" name="city" value="Komárno" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="postalCode">Irányítószám *</label>
+                                    <label for="postalCode" data-i18n="checkout.address.postalcode">Irányítószám *</label>
                                     <input type="text" id="postalCode" name="postalCode" placeholder="94501" required>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group full-width">
-                                    <label for="deliveryNotes">Kiegészítő információk</label>
+                                    <label for="deliveryNotes" data-i18n="checkout.address.extrainfo">Kiegészítő információk</label>
                                     <textarea id="deliveryNotes" name="deliveryNotes" placeholder="pl. 2. emelet, csengő neve, stb." rows="3"></textarea>
                                 </div>
                             </div>
@@ -266,26 +265,26 @@
                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
                                 <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Időpont
+                            <span data-i18n="checkout.time">Időpont</span>
                         </h2>
                         <div class="time-options">
                             <div class="time-selector">
                                 <label>
                                     <input type="radio" name="timeType" value="asap" checked>
                                     <span class="radio-custom"></span>
-                                    <span>Amilyen hamar csak lehet</span>
+                                    <span data-i18n="checkout.asap">Amilyen hamar csak lehet</span>
                                 </label>
                                 <label>
                                     <input type="radio" name="timeType" value="scheduled">
                                     <span class="radio-custom"></span>
-                                    <span>Időpont megadása</span>
+                                    <span data-i18n="checkout.tiimestamp">Időpont megadása</span>
                                 </label>
                             </div>
                             <div class="scheduled-time" id="scheduledTime" style="display: none;">
                                 <div class="time-picker-container">
                                     <div class="picker-header">
-                                        <div class="picker-title">Időpont megadása</div>
-                                        <div class="picker-subtitle">Add meg, mikor szeretnéd átvenni a rendelésedet</div>
+                                        <div class="picker-title" data-i18n="checkout.typetime">Időpont megadása</div>
+                                        <div class="picker-subtitle" data-i18n="checkout.timesubtext">Add meg, mikor szeretnéd átvenni a rendelésedet</div>
                                     </div>
                                     <div class="time-input-group">
                                         <label class="input-label" for="orderTimeInput">
@@ -293,7 +292,7 @@
                                                 <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
                                                 <polyline points="12,6 12,12 16,14" stroke="currentColor" stroke-width="2"/>
                                             </svg>
-                                            Kívánt időpont
+                                            <span data-i18n="checkout.wishedtime">Kívánt időpont</span>
                                         </label>
                                         <div class="time-input-container">
                                             <input 
@@ -303,11 +302,11 @@
                                                 maxlength="5"
                                                 class="time-input"
                                             >
-                                            <div class="time-help-text">Formátum: ÓÓ:PP (pl. 14:30)</div>
+                                            <div class="time-help-text" data-i18n="checkout.timeformat">Formátum: ÓÓ:PP (pl. 14:30)</div>
                                         </div>
                                         <div class="time-validation-message" id="timeValidationMessage"></div>
                                         <div class="operating-hours-info" id="operatingHoursInfo">
-                                            <strong>Nyitvatartás:</strong>
+                                            <strong data-i18n="checkout.openhours">Nyitvatartás:</strong>
                                             <div id="todayHours"></div>
                                             <div id="tomorrowHours"></div>
                                         </div>
@@ -324,26 +323,26 @@
                                 <path d="M20 21V19A4 4 0 0 0 16 15H8A4 4 0 0 0 4 19V21" stroke="currentColor" stroke-width="2"/>
                                 <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Kapcsolati adatok
+                            <span data-i18n="checkout.contact.title">Kapcsolati adatok</span>
                         </h2>
                         <div class="customer-form">
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="firstName">Keresztnév *</label>
+                                    <label for="firstName" data-i18n="checkout.contact.firstname">Keresztnév *</label>
                                     <input type="text" id="firstName" name="firstName" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="lastName">Vezetéknév *</label>
+                                    <label for="lastName" data-i18n="checkout.contact.lastname">Vezetéknév *</label>
                                     <input type="text" id="lastName" name="lastName" required>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label for="phone">Telefonszám *</label>
+                                    <label for="phone" data-i18n="checkout.contact.phone">Telefonszám *</label>
                                     <input type="tel" id="phone" name="phone" required placeholder="Pl. +421 910 123 456 vagy 0910 123 456">
                                 </div>
                                 <div class="form-group">
-                                    <label for="email">Email cím *</label>
+                                    <label for="email" data-i18n="checkout.contact.email">Email cím *</label>
                                     <input type="email" id="email" name="email" required placeholder="pelda@email.com">
                                 </div>
                             </div>
@@ -357,19 +356,19 @@
                                 <path d="M5 12V7A5 5 0 0 1 15 7V12" stroke="currentColor" stroke-width="2"/>
                                 <path d="M5 12A7 7 0 1 0 19 12" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Esetleg egy ital is?
+                            <span data-i18n="checkout.offerdrink">Esetleg egy ital is?</span> 
                         </h2>
-                        <p class="suggestion-subtitle">Válassz kedvenc italaidbool a rendeléshez:</p>
+                        <p class="suggestion-subtitle" data-i18n="checkout.offerdrinksub">Válassz kedvenc italaidbool a rendeléshez:</p>
                         <div class="drink-options-container">
                             <div class="drink-options" id="drinkOptions">
                                 <!-- Will be loaded from NonAlcoholic category via API -->
                             </div>
                             <div class="drink-loading" id="drinkLoading" style="display: none;">
                                 <div class="loading-spinner"></div>
-                                <p>Italok betöltése...</p>
+                                <p data-i18n="checkout.loaddrinks">Italok betöltése...</p>
                             </div>
                             <div class="drink-error" id="drinkError" style="display: none;">
-                                <p>Nem sikerült betölteni az italokat. Próbáld újra később!</p>
+                                <p data-i18n="checkout.loaddrinkerror">Nem sikerült betölteni az italokat. Próbáld újra később!</p>
                             </div>
                         </div>
                     </section>
@@ -384,7 +383,7 @@
                                 <rect x="1" y="4" width="22" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
                                 <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Fizetés
+                            <span data-i18n="checkout.payment.pay">Fizetés</span>
                         </h2>
                     
                         <div class="payment-options">
@@ -393,8 +392,8 @@
                                 <div class="payment-content">
                                     <div class="payment-icon">💵</div>
                                     <div>
-                                        <h3>Készpénz</h3>
-                                        <p>Fizetés átvételkor/kiszállításkor</p>
+                                        <h3 data-i18n="checkout.payment.cash">Készpénz</h3>
+                                        <p data-i18n="checkout.payment.cashsub" >Fizetés átvételkor/kiszállításkor</p>
                                     </div>
                                 </div>
                             </label>
@@ -404,8 +403,8 @@
                                 <div class="payment-content">
                                     <div class="payment-icon">💳</div>
                                     <div>
-                                        <h3>Bankkártya</h3>
-                                        <p>Azonnali online fizetés</p>
+                                        <h3 data-i18n="checkout.payment.card">Bankkártya</h3>
+                                        <p data-i18n="checkout.payment.cardsub">Azonnali online fizetés</p>
                                     </div>
                                 </div>
                             </label>
@@ -414,7 +413,7 @@
                         <!-- Stripe Card Payment Form (Hidden by default) -->
                         <div class="card-payment-section" id="cardPaymentSection" style="display: none;">
                             <div class="card-form-container">
-                                <h4 class="card-form-title">Kártyaadatok</h4>
+                                <h4 class="card-form-title" data-i18n="checkout.payment.cardinfo">Kártyaadatok</h4>
                                 <div class="stripe-elements-container">
                                     <!-- Stripe Elements will be mounted here -->
                                     <div id="card-element" class="stripe-card-element">
@@ -432,7 +431,8 @@
                                 <input type="checkbox" id="termsAccept" required>
                                 <span class="checkbox-custom"></span>
                                 <span class="checkbox-text">
-                                    Elfogadom az <a href="documents/Podmienky používania webovej stránky.pdf" target="_blank" rel="noopener noreferrer">Általános Szerződési Feltételeket</a> *
+                                    <span data-i18n="checkout.payment.terms">Elfogadom az </span>
+                                    <a href="documents/Podmienky používania webovej stránky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="checkout.payment.termssub">Általános Szerződési Feltételeket</a> *
                                 </span>
                             </label>
                         
@@ -440,7 +440,8 @@
                                 <input type="checkbox" id="privacyAccept" required>
                                 <span class="checkbox-custom"></span>
                                 <span class="checkbox-text">
-                                    Hozzájárulok személyes adataim kezeléséhez az <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" rel="noopener noreferrer">Adatvédelmi Tájékoztató</a> szerint *
+                                    <span data-i18n="checkout.payment.privacy">Hozzájárulok személyes adataim kezeléséhez az</span>
+                                    <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="checkout.payment.privacysub">Adatvédelmi Tájékoztató</a> szerint *
                                 </span>
                             </label>
                         </div>
@@ -448,7 +449,7 @@
                         <!-- Order Summary -->
                         <div class="order-summary-final">
                             <div class="summary-total">
-                                <span>Fizetendő összeg:</span>
+                                <span data-i18n="checkout.payment.payable">Fizetendő összeg:</span>
                                 <span class="final-amount" id="finalAmount">€0.00</span>
                             </div>
                         </div>
@@ -459,17 +460,17 @@
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                                     <path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2"/>
                                 </svg>
-                                <span class="validation-title">Hiányzó információk:</span>
+                                <span class="validation-title" data-i18n="checkout.missing">Hiányzó információk:</span>
                             </div>
                             <ul class="validation-list" id="validationList"></ul>
                         </div>                        
                     
                         <!-- Submit Button -->
                         <button type="button" class="place-order-btn" id="placeOrderBtn" disabled>
-                            <span class="btn-text">Rendelés leadása</span>
+                            <span class="btn-text" data-i18n="checkout.placeorder">Rendelés leadása</span>
                             <div class="btn-loading" id="orderLoading" style="display: none;">
                                 <div class="loading-spinner"></div>
-                                <span>Feldolgozás...</span>
+                                <span data-i18n="checkout.processing">Feldolgozás...</span>
                             </div>
                             <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                                 <path d="M5 12H19M12 5L19 12L12 19" stroke="currentColor" stroke-width="2"/>
@@ -485,7 +486,7 @@
     <div class="modal-overlay" id="customizationModal" style="display: none;">
         <div class="modal-container">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalFoodName">Tétel szerkesztése</h3>
+                <h3 class="modal-title" id="modalFoodName" data-i18n="checkout.customize">Tétel szerkesztése</h3>
                 <button class="modal-close" id="closeCustomizationModal">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                         <line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2"/>
@@ -507,37 +508,37 @@
             
                 <!-- Sauce Selection -->
                 <div class="customization-section" id="sauceSection">
-                    <h4 class="section-title">Szósz választása *</h4>
+                    <h4 class="section-title" data-i18n="checkout.custom.sauce">Szósz választása *</h4>
                     <div class="sauce-options" id="sauceOptions"></div>
                 </div>
             
                 <!-- Fries Upgrade -->
                 <div class="customization-section" id="friesSection">
-                    <h4 class="section-title">Sültkrimpli választása</h4>
+                    <h4 class="section-title" data-i18n="checkout.custom.side">Sültkrimpli választása</h4>
                     <div class="upgrade-options" id="friesOptions"></div>
                 </div>
             
                 <!-- Extras -->
                 <div class="customization-section" id="extrasSection">
-                    <h4 class="section-title">Extrák</h4>
+                    <h4 class="section-title" data-i18n="checkout.custom.extras">Extrák</h4>
                     <div class="extras-grid" id="extrasOptions"></div>
                 </div>
             
                 <!-- Special Requests -->
                 <div class="customization-section">
-                    <h4 class="section-title">Speciális kérések</h4>
+                    <h4 class="section-title" data-i18n="checkout.custom.special">Speciális kérések</h4>
                     <div class="special-requests">
-                        <label class="request-label" for="removeInstructions">Kihagyni:</label>
+                        <label class="request-label" for="removeInstructions" data-i18n="checkout.custom.leave">Kihagyni:</label>
                         <textarea id="removeInstructions" placeholder="pl. hagyma, paradicsom..."></textarea>
                         
-                        <label class="request-label" for="specialInstructions">Egyéb megjegyzések:</label>
+                        <label class="request-label" for="specialInstructions" data-i18n="checkout.custom.other">Egyéb megjegyzések:</label>
                         <textarea id="specialInstructions" placeholder="pl. extra szósz, allergia megjegyzés..."></textarea>
                     </div>
                 </div>
             
                 <!-- Quantity Section -->
                 <div class="quantity-section">
-                    <div class="quantity-label">Mennyiség:</div>
+                    <div class="quantity-label" data-i18n="checkout.quant">Mennyiség:</div>
                     <div class="quantity-controls">
                         <button type="button" class="quantity-btn" id="decreaseQuantity">-</button>
                         <span class="quantity-display" id="quantityDisplay">1</span>
@@ -548,14 +549,14 @@
         
             <div class="modal-footer">
                 <div class="modal-total">
-                    <div class="total-label">Összesen:</div>
+                    <div class="total-label" data-i18n="checkoout.fulltotal">Összesen:</div>
                     <div class="total-price" id="modalTotalPrice">€0.00</div>
                 </div>
                 <button type="button" class="add-to-cart-modal-btn" id="addToCartModalBtn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                         <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
                     </svg>
-                    <span class="btn-text">Módosítások mentése</span>
+                    <span class="btn-text" data-i18n="checkout.custom.save">Módosítások mentése</span>
                 </button>
             </div>
         </div>
@@ -566,12 +567,12 @@
         <div class="footer-container">
             <div class="footer-left">
                 <ul class="footer-nav">
-                    <li><a href="/menu">Menü</a></li>
-                    <!--<li><a href="/rolunk">Rólunk</a></li>-->
-                    <li><a href="/rendeles">Rendelj Online</a></li>
-                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer">Adatvédelmi Nyilatkozat</a></li>
-                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;">Süti beállítások</a></li>
-                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer">Felhasználási Feltételek</a></li>
+                    <li><a href="menu.html" data-i18n="nav.menu">Menü</a></li>
+                    <!--<li><a href="rolunk.html">Rólunk</a></li>-->
+                    <li><a href="order.html" data-i18n="nav.order">Rendelés</a></li>
+                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacy">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="footer.cookies">Süti beállítások</a></li>
+                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.terms">Felhasználási Feltételek</a></li>
                 </ul>
             </div>
 
@@ -580,7 +581,6 @@
             </div>
 
             <div class="footer-right">
-
                 <div class="footer-contact">
                     <a href="tel:+421910447348" class="footer-contact-link">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -595,7 +595,6 @@
                         <span>info@palacebar.sk</span>
                     </a>
                 </div>
-
                 <div class="social-icons">
                     <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
                         <img src="photos/facebook-icon.png" alt="Facebook">
@@ -619,13 +618,13 @@
         <div class="cookie-content">
             <div class="cookie-icon">🍪</div>
             <div class="cookie-text">
-                <h3>Sütik használata</h3>
-                <p>A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
+                <h3 data-i18n="cookie.title">Sütik használata</h3>
+                <p data-i18n="cookie.description">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
             </div>
             <div class="cookie-actions">
-                <button id="cookieSettings" class="btn-settings">Beállítások</button>
-                <button id="acceptEssential" class="btn-essential">Csak szükséges</button>
-                <button id="acceptAll" class="btn-accept">Összes elfogadása</button>
+                <button id="cookieSettings" class="btn-settings" data-i18n="cookie.settings">Beállítások</button>
+                <button id="acceptEssential" class="btn-essential" data-i18n="cookie.essential">Csak szükséges</button>
+                <button id="acceptAll" class="btn-accept" data-i18n="cookie.acceptAll">Összes elfogadása</button>
             </div>
         </div>
     </div>
@@ -634,7 +633,7 @@
     <div id="cookieModal" class="cookie-modal">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
-                <h2>Süti beállítások</h2>
+                <h2 data-i18n="cookie.modal.title">Süti beállítások</h2>
                 <button id="closeCookieModal" class="cookie-close">&times;</button>
             </div>
             
@@ -646,8 +645,8 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Szükséges sütik</h4>
-                            <p>Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
+                            <h4 data-i18n="cookie.essential.title">Szükséges sütik</h4>
+                            <p data-i18n="cookie.essential.desc">Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
                         </div>
                     </div>
                 </div>
@@ -659,8 +658,8 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Elemzési sütik</h4>
-                            <p>Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
+                            <h4 data-i18n="cookie.analytics.title">Elemzési sütik</h4>
+                            <p data-i18n="cookie.analytics.desc">Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
                         </div>
                     </div>
                 </div>
@@ -672,22 +671,23 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Marketing sütik</h4>
-                            <p>Személyre szabott reklámok és közösségi média funkciók.</p>
+                            <h4 data-i18n="cookie.marketing.title">Marketing sütik</h4>
+                            <p data-i18n="cookie.marketing.desc">Személyre szabott reklámok és közösségi média funkciók.</p>
                         </div>
                     </div>
                 </div>
             </div>
             
             <div class="cookie-modal-footer">
-                <button id="saveSettings" class="btn-save">Beállítások mentése</button>
-                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link">Adatvédelmi tájékoztató</a>
+                <button id="saveSettings" class="btn-save" data-i18n="cookie.save">Beállítások mentése</button>
+                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="cookie.privacy">Adatvédelmi tájékoztató</a>
             </div>
         </div>
     </div>
 
     <script src="config.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
+    <script src="i18n.js"></script>
     <script src="checkout_2.js"></script>
     <script src="order-system-2.js"></script>
     <script src="cookies.js"></script>

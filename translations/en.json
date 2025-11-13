@@ -135,12 +135,11 @@
   "order": {
     "title": "Like something?",
     "subtitle": "Order easily online and pick up with us!",
-    "hero": "Online Order",
+    "addToCart": "Add to cart",
     "hero": {
+      "title": "Online Order",
       "subtitle": "Choose your favorites and order easily"
     },
-
-
 
     "customize": {
       "text": "Customization"
@@ -175,6 +174,29 @@
     },
     "addedtocart": "Added to cart!"
   },
+  
+  "orderPage": {
+    "selectFrom": "Choose from",
+    "noImage": "No image"
+  },
+
+  "customization": {
+  "sauce": "Sauce",
+  "extras": "Extras",
+  "remove": "Remove",
+  "note": "Note",
+  "included": "Included",
+  "extrasTitle": "Extras (+€0.30 / each)",
+  "extraBacon": "Bacon",
+  "extraCheddar": "Cheddar Cheese",
+  "extraMeltedCheddar": "Melted Cheddar",
+  "extraOnion": "Fried Onion",
+  "extraTomato": "Tomato",
+  "extraLettuce": "Lettuce",
+  "extraPickle": "Pickle",
+  "extraJalapeno": "Jalapeño"
+  },
+  
   "cart": {
     "addtocart": "Add to cart",
     "carttitle": "Cart",
@@ -183,6 +205,79 @@
     "subtotal": "Subtotal:",
     "totalAmount": "Total:",
     "placeorder": "Place order"
-  }  
+  },
+
+  "checkout": {
+    "hero": "Checkout",
+    "herosubtext": "Finalize your order",
+    "stepone": "Menu",
+    "steptwo": "Checkout",
+    "stepthree": "Complete",
+    "cart": {
+      "content": "Cart contents"
+    },
+    "subtotal": "Subtotal:",
+    "packagefee": "Packaging fee:",
+    "deliveryfee": "Delivery fee:",
+    "fulltotal": "Total:",
+    "ordertpye": "Order type",
+    "pickup": "Pickup",
+    "pickupsubtext": "Pick up your order at the restaurant",
+    "delivery": "Delivery",
+    "deliverysubtext": "We'll deliver to you (+€2.50)",
+    "findme": "Locate me",
+    "address": {
+      "street": "Street and house number *",
+      "city": "City *",
+      "postalcode": "Postal code *",
+      "extrainfo": "Additional information"
+    },
+    "time": "Time",
+    "asap": "As soon as possible",
+    "tiimestamp": "Schedule time",
+    "typetime": "Schedule time",
+    "timesubtext": "Specify when you want to pick up your order",
+    "wishedtime": "Desired time",
+    "timeformat": "Format: HH:MM (e.g. 14:30)",
+    "openhours": "Opening hours:",
+    "contact": {
+      "title": "Contact information",
+      "firstname": "First name *",
+      "lastname": "Last name *",
+      "phone": "Phone number *",
+      "email": "Email address *"
+    },
+    "offerdrink": "Perhaps a drink too?",
+    "offerdrinksub": "Choose from your favorite drinks for the order:",
+    "loaddrinks": "Loading drinks...",
+    "loaddrinkerror": "Failed to load drinks. Please try again later!",
+    "payment": {
+      "pay": "Payment",
+      "cash": "Cash",
+      "cashsub": "Payment upon pickup/delivery",
+      "card": "Credit card",
+      "cardsub": "Instant online payment",
+      "cardinfo": "Card details",
+      "terms": "I accept the ",
+      "termssub": "Terms and Conditions",
+      "privacy": "I consent to the processing of my personal data according to the",
+      "privacysub": "Privacy Policy",
+      "payable": "Amount due:"
+    },
+    "missing": "Missing information:",
+    "placeorder": "Place order",
+    "processing": "Processing...",
+    "customize": "Edit item",
+    "custom": {
+      "sauce": "Choose sauce *",
+      "side": "Choose fries",
+      "extras": "Extras",
+      "special": "Special requests",
+      "leave": "Leave out:",
+      "other": "Other notes:",
+      "save": "Save changes"
+    },
+    "quant": "Quantity:"
+  }
 }
 

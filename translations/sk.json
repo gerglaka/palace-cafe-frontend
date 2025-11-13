@@ -135,8 +135,9 @@
   "order": {
     "title": "Niečo sa ti páči?",
     "subtitle": "Objednaj si jednoducho online a vyzdvihni u nás!",
-    "hero": "Online objednávka",
+    "addToCart": "Pridať do košíka",
     "hero": {
+      "title": "Online objednávka",
       "subtitle": "Vyber si svoje obľúbené a objednaj jednoducho"
     },
   
@@ -173,6 +174,29 @@
     },
     "addedtocart": "Pridané do košíka!"
   },
+
+  "orderPage": {
+    "selectFrom": "Vyber z",
+    "noImage": "Bez obrázka"
+  },
+
+  "customization": {
+  "sauce": "Omáčka",
+  "extras": "Príplatky",
+  "remove": "Odstrániť",
+  "note": "Poznámka",
+  "included": "Zahrnuté",
+  "extrasTitle": "Príplatky (+€0.30 / ks)",
+  "extraBacon": "Slanina",
+  "extraCheddar": "Cheddar syr",
+  "extraMeltedCheddar": "Roztopený cheddar",
+  "extraOnion": "Opekaná cibuľa",
+  "extraTomato": "Paradajka",
+  "extraLettuce": "Šalát",
+  "extraPickle": "Uhorka",
+  "extraJalapeno": "Jalapeño"
+  },
+
   "cart": {
     "addtocart": "Pridať do košíka",
     "carttitle": "Košík",
@@ -181,6 +205,78 @@
     "subtotal": "Medzisúčet:",
     "totalAmount": "Spolu:",
     "placeorder": "Odoslať objednávku"
-  }  
-
+  },
+  
+  "checkout": {
+    "hero": "Pokladňa",
+    "herosubtext": "Dokončenie objednávky",
+    "stepone": "Menu",
+    "steptwo": "Pokladňa",
+    "stepthree": "Dokončenie",
+    "cart": {
+      "content": "Obsah košíka"
+    },
+    "subtotal": "Medzisúčet:",
+    "packagefee": "Poplatok za balenie:",
+    "deliveryfee": "Poplatok za doručenie:",
+    "fulltotal": "Spolu:",
+    "ordertpye": "Typ objednávky",
+    "pickup": "Vyzdvihnutie",
+    "pickupsubtext": "Vyzdvihnite si objednávku v reštaurácii",
+    "delivery": "Rozvoz",
+    "deliverysubtext": "Doručíme vám (+€2.50)",
+    "findme": "Nájdi ma",
+    "address": {
+      "street": "Ulica a číslo domu *",
+      "city": "Mesto *",
+      "postalcode": "PSČ *",
+      "extrainfo": "Doplňujúce informácie"
+    },
+    "time": "Čas",
+    "asap": "Čo najskôr",
+    "tiimestamp": "Zadať čas",
+    "typetime": "Zadať čas",
+    "timesubtext": "Zadajte, kedy si chcete vyzdvihnúť objednávku",
+    "wishedtime": "Požadovaný čas",
+    "timeformat": "Formát: HH:MM (napr. 14:30)",
+    "openhours": "Otváracie hodiny:",
+    "contact": {
+      "title": "Kontaktné údaje",
+      "firstname": "Meno *",
+      "lastname": "Priezvisko *",
+      "phone": "Telefónne číslo *",
+      "email": "Emailová adresa *"
+    },
+    "offerdrink": "Možno aj nápoj?",
+    "offerdrinksub": "Vyberte si z obľúbených nápojov k objednávke:",
+    "loaddrinks": "Načítavanie nápojov...",
+    "loaddrinkerror": "Nepodarilo sa načítať nápoje. Skúste to neskôr!",
+    "payment": {
+      "pay": "Platba",
+      "cash": "Hotovosť",
+      "cashsub": "Platba pri prevzatí/doručení",
+      "card": "Bankovou kartou",
+      "cardsub": "Okamžitá online platba",
+      "cardinfo": "Údaje o karte",
+      "terms": "Súhlasím s ",
+      "termssub": "Všeobecnými obchodnými podmienkami",
+      "privacy": "Súhlasím so spracovaním osobných údajov podľa",
+      "privacysub": "Zásad ochrany osobných údajov",
+      "payable": "Suma na úhradu:"
+    },
+    "missing": "Chýbajúce informácie:",
+    "placeorder": "Odoslať objednávku",
+    "processing": "Spracovanie...",
+    "customize": "Upraviť položku",
+    "custom": {
+      "sauce": "Výber omáčky *",
+      "side": "Výber hranoliek",
+      "extras": "Príplatky",
+      "special": "Špeciálne požiadavky",
+      "leave": "Vynechať:",
+      "other": "Iné poznámky:",
+      "save": "Uložiť zmeny"
+    },
+    "quant": "Množstvo:"
+  }
 }
