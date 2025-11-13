@@ -389,5 +389,17 @@
     "new": "Újabb rendelés",
     "backtoindex": "Vissza a főoldalra",
     "toasterror": "Hiba történt a rendelés betöltése során"
+  },
+
+  "ocjs": {
+    "ordersuccess": "Rendelés sikeresen teljesítve!",
+    "orderupdate": "Rendelés állapot frissítve",
+    "waitingforaccept": "Elfogadásra vár",
+    "done": "Teljesítve",
+    "minute": "perc",
+    "almostready": "Hamarosan kész",
+    "undercalc": "Számítás alatt",
+    "underdelivery": "Szállítás alatt",
+    "readyforpickup": "Átvehető"
   }
 }

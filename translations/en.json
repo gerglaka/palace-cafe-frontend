@@ -389,6 +389,17 @@
     "new": "New order",
     "backtoindex": "Back to homepage",
     "toasterror": "Error loading order"
+  },
+  "ocjs": {
+    "ordersuccess": "Order successfully completed!",
+    "orderupdate": "Order status updated",
+    "waitingforaccept": "Waiting for acceptance",
+    "done": "Completed",
+    "minute": "min",
+    "almostready": "Almost ready",
+    "undercalc": "Calculating",
+    "underdelivery": "Out for delivery",
+    "readyforpickup": "Ready for pickup"
   }
 }
 

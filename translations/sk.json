@@ -389,5 +389,16 @@
     "new": "Nová objednávka",
     "backtoindex": "Späť na domovskú stránku",
     "toasterror": "Chyba pri načítaní objednávky"
-  }
+  },
+  "ocjs": {
+    "ordersuccess": "Objednávka úspešne dokončená!",
+    "orderupdate": "Stav objednávky aktualizovaný",
+    "waitingforaccept": "Čaká na prijatie",
+    "done": "Dokončené",
+    "minute": "min",
+    "almostready": "Čoskoro hotové",
+    "undercalc": "Vypočítava sa",
+    "underdelivery": "V doručení",
+    "readyforpickup": "Pripravené na vyzdvihnutie"
+  }  
 }
