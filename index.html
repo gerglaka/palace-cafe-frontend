@@ -3,44 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="site.title">Palace Cafe & Bar - Autentikus Ízek, Egyedi Élmények</title>
-    <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
-    <meta name="description" content="Palace Cafe & Bar - A legjobb burgerek, quesadillák és tacók a városban. Saját receptek, friss alapanyagok, felejthetetlen ízek.">
-    
-    <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https: *.googleusercontent.com *.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com https://region1.google-analytics.com https://palace-cafe-backend-production.up.railway.app https://palace-cafe-backend-palace-bar-dev.up.railway.app; frame-src https://www.google.com https://maps.google.com https://search.google.com;">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <title>Rendelj Online - Palace Cafe & Bar</title>
+    <link rel="icon" type="image/png" href="assets/images/logos/logo-main.png">
+    <meta name="description" content="Palace Cafe & Bar online rendelés - Gyors és egyszerű étterem házhoz szállítás">
     
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Y68JWQJYEJ"></script>
     <script>
+        // Initialize Google Analytics with consent mode
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
+        
+        // Set default consent states (denied until user accepts)
         gtag('consent', 'default', {
             'analytics_storage': 'denied',
             'ad_storage': 'denied',
             'functionality_storage': 'granted',
             'security_storage': 'granted'
         });
+        
         gtag('js', new Date());
         gtag('config', 'G-Y68JWQJYEJ', {
-            'anonymize_ip': true,
-            'allow_google_signals': false,
+            'anonymize_ip': true, // GDPR compliance
+            'allow_google_signals': false, // Start with privacy-first
             'allow_ad_personalization_signals': false
         });
-    </script>
-
+    </script>    
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="preload" href="assets/images/logos/logo-main.png" as="image">
-    <link rel="preload" href="assets/images/backgrounds/bg-hero-1.png" as="image">
 </head>
 <body>
-    
+    <!-- Kitchen On Fire Overlay (Hidden by default) -->
+    <div id="kitchenFireOverlay" class="kitchen-fire-overlay" style="display: none;">
+        <div class="fire-overlay-content">
+            <!-- Animated SVG Kitchen Scene -->
+            <div class="fire-animation-container">
+                <!-- Flames SVG -->
+                <svg class="flames-svg" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Gradient Definitions -->
+                    <defs>
+                        <linearGradient id="flameGradient1" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ff4500;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff8c00;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffd700;stop-opacity:0.8" />
+                        </linearGradient>
+                        <linearGradient id="flameGradient2" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#ff6347;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ffa500;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffff00;stop-opacity:0.8" />
+                        </linearGradient>
+                        <linearGradient id="flameGradient3" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" style="stop-color:#dc143c;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#ff6347;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffa500;stop-opacity:0.8" />
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Flame 1 (Left) -->
+                    <path class="flame flame-1" d="M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z" fill="url(#flameGradient1)">
+                        <animate attributeName="d" 
+                                 dur="1.5s" 
+                                 repeatCount="indefinite"
+                                 values="M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z;
+                                         M100,250 Q100,200 115,175 Q135,155 140,110 Q145,155 165,175 Q180,200 180,250 Z;
+                                         M100,250 Q100,200 120,180 Q140,160 140,120 Q140,160 160,180 Q180,200 180,250 Z"/>
+                    </path>
+
+                    <!-- Flame 2 (Center) -->
+                    <path class="flame flame-2" d="M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z" fill="url(#flameGradient2)">
+                        <animate attributeName="d" 
+                                 dur="1.3s" 
+                                 repeatCount="indefinite"
+                                 values="M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z;
+                                         M200,250 Q200,210 210,185 Q225,165 230,115 Q235,165 250,185 Q260,210 260,250 Z;
+                                         M200,250 Q200,210 215,190 Q230,170 230,125 Q230,170 245,190 Q260,210 260,250 Z"/>
+                    </path>
+
+                    <!-- Flame 3 (Right) -->
+                    <path class="flame flame-3" d="M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z" fill="url(#flameGradient3)">
+                        <animate attributeName="d" 
+                                 dur="1.7s" 
+                                 repeatCount="indefinite"
+                                 values="M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z;
+                                         M280,250 Q280,205 290,180 Q305,160 310,120 Q315,160 330,180 Q340,205 340,250 Z;
+                                         M280,250 Q280,205 295,185 Q310,165 310,130 Q310,165 325,185 Q340,205 340,250 Z"/>
+                    </path>
+
+                    <!-- Smoke Circles -->
+                    <circle class="smoke smoke-1" cx="140" cy="100" r="15" fill="#555" opacity="0.3">
+                        <animate attributeName="cy" from="100" to="20" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.3" to="0" dur="3s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="15" to="30" dur="3s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle class="smoke smoke-2" cx="230" cy="110" r="18" fill="#666" opacity="0.4">
+                        <animate attributeName="cy" from="110" to="30" dur="3.5s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.4" to="0" dur="3.5s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="18" to="35" dur="3.5s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle class="smoke smoke-3" cx="310" cy="105" r="16" fill="#777" opacity="0.35">
+                        <animate attributeName="cy" from="105" to="25" dur="3.2s" repeatCount="indefinite"/>
+                        <animate attributeName="opacity" from="0.35" to="0" dur="3.2s" repeatCount="indefinite"/>
+                        <animate attributeName="r" from="16" to="32" dur="3.2s" repeatCount="indefinite"/>
+                    </circle>
+                </svg>
+
+                <!-- Cartoon Chef Character -->
+                <div class="chef-character">
+                    <div class="chef-body">
+                        <div class="chef-head">
+                            <div class="chef-hat">
+                                <div class="chef-hat-top"></div>
+                            </div>
+                            <div class="chef-face">
+                                <div class="chef-eyes">
+                                    <div class="chef-eye left"></div>
+                                    <div class="chef-eye right"></div>
+                                </div>
+                                <div class="chef-mouth"></div>
+                            </div>
+                        </div>
+                        <div class="chef-torso"></div>
+                        <div class="chef-arms">
+                            <div class="chef-arm left"></div>
+                            <div class="chef-arm right"></div>
+                        </div>
+                    </div>
+                    <!-- Fire Extinguisher -->
+                    <div class="fire-extinguisher">🧯</div>
+                </div>
+            </div>
+
+            <!-- Message Content -->
+            <div class="fire-message-box">
+                <h1 class="fire-title">🔥 Konyha túlterhelt! 🔥</h1>
+                <p class="fire-subtitle">Jelenleg nem fogadunk új rendeléseket</p>
+                <div class="fire-explanation">
+                    <p>A konyhánk most teljes kapacitással dolgozik, és átmenetileg szüneteltetjük az új rendelések felvételét.</p>
+                    <p><strong>Kérjük, próbáld újra később!</strong></p>
+                </div>
+
+                <!-- Auto-refresh Timer -->
+                <div class="refresh-timer">
+                    <p>Automatikus frissítés: <span id="refreshCountdown">60</span> másodperc múlva</p>
+                </div>
+
+                <!-- Manual Refresh Button -->
+                <button class="refresh-btn" onclick="window.location.reload()">
+                    <span>Frissítés most</span>
+                </button>
+
+                <!-- Back to Home Button -->
+                <a href="index.html" class="back-home-btn">
+                    <span>← Vissza a főoldalra</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>Rendelés betöltése...</p>
+    </div>
+
     <!-- Scroll to Top Button -->
     <button class="scroll-to-top" id="scrollToTop" aria-label="Vissza a tetejére">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,24 +188,36 @@
     <!-- Main Navigation -->
     <header class="main-header" id="mainHeader">
         <nav class="nav-container">
+            <!-- Mobile Menu Icon -->
             <div class="mobile-menu-icon" id="mobileMenuIcon">
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
             </div>
 
+            <!-- Logo -->
             <div class="logo-container">
-                <a href="main.html" aria-label="Palace Cafe & Bar kezdőlap">
+                <a href="main.html">
                     <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar Logo" class="logo">
                 </a>
             </div>
 
+            <!-- Desktop Navigation -->
             <ul class="nav-menu desktop-nav">
                 <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menü</a></li>
-                <li><a href="index.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a></li>
+                <!--<li><a href="rolunk.html" class="nav-link">Rólunk</a></li>-->
+                <li>
+                    <button class="cart-toggle-btn nav-link-cart highlighted" id="cartToggleBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="cart-count" id="cartCount">0</span>
+                        <span class="cart-total" id="cartTotal">€0.00</span>
+                    </button>
+                </li>
             </ul>
 
-            <!-- Language Switcher (Flags) -->
+            <!-- Language Flags -->
             <div class="language-flags desktop-only">
                 <button data-lang="hu" class="flag-button" aria-label="Magyar">
                     <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="flag-icon">
@@ -89,15 +229,13 @@
                     <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
                 </button>
             </div>
-
-            <div class="mobile-order-btn mobile-only">
-                <a href="index.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a>
-            </div>
         </nav>
 
+        <!-- Mobile Menu Dropdown -->
         <div class="mobile-menu" id="mobileMenu">
             <ul class="mobile-nav-list">
                 <li><a href="menu.html" class="mobile-nav-link" data-i18n="nav.menu">Menü</a></li>
+                <!--<li><a href="about.html" class="mobile-nav-link">Rólunk</a></li>-->
                 <li class="mobile-flags">
                     <button data-lang="hu"><img src="assets/flags/hu.svg" alt="Magyar" data-i18n="lang.hu.alt" class="mobile-flag-icon"></button>
                     <button data-lang="sk"><img src="assets/flags/sk.svg" alt="Slovenčina" data-i18n="lang.sk.alt" class="mobile-flag-icon"></button>
@@ -107,165 +245,255 @@
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero-section" id="heroSection">
-        <div class="hero-background">
-            <div class="hero-slide active" style="background-image: url('assets/images/backgrounds/bg-hero-3.png')"></div>
-        </div>
-        
-        <div class="hero-content">
-            <div class="hero-text-container">
-                <h1 class="hero-title" data-i18n="hero.title">Ez nem csak egy burger. Ez a MI burgerünk.</h1>
-                <p class="hero-subtitle" data-i18n="hero.subtitle">Fedezd fel a saját recept alapján készült kedvencünket – friss, szaftos, felejthetetlen.</p>
-                <a href="index.html" class="hero-cta-button" data-i18n="hero.cta">Rendelj most!</a>
-            </div>
+    <!-- Order Hero Section -->
+    <section class="order-hero-section">
+        <div class="order-hero-content">
+            <h1 class="order-hero-title" data-i18n="order.hero.title">Online Rendelés</h1>
+            <p class="order-hero-subtitle" data-i18n="order.hero.subtitle">Válaszd ki kedvenceidet és rendeld meg egyszerűen</p>
         </div>
     </section>
 
-    <!-- Welcome Section -->
-    <section class="welcome-section" id="welcomeSection">
-        <div class="welcome-container">
-            <div class="welcome-left">
-                <div class="welcome-title-container" id="welcomeTitle">
-                    <div class="welcome-small" data-i18n="welcome.small">Üdvözöljük</div>
-                    <div class="welcome-large" data-i18n="welcome.large">Palace</div>
-                    <div class="welcome-medium" data-i18n="welcome.medium">Cafe & Bárban</div>
+    <!-- Category Navigation Bar -->
+    <nav class="category-nav" id="categoryNav">
+        <div class="category-nav-container">
+            <div class="category-nav-scroll" id="categoryNavScroll">
+                <!-- Categories will be dynamically loaded from API -->
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="order-main" id="orderMain">
+        <!-- Food categories will be dynamically loaded from API -->
+    </main>
+
+    <!-- Mobile Cart Button -->
+    <div class="mobile-cart-button" id="mobileCartButton">
+        <button class="mobile-cart-btn" id="mobileCartBtn">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="mobile-cart-count" id="mobileCartCount">0</span>
+            <span class="mobile-cart-total" id="mobileCartTotal">€0.00</span>
+        </button>
+    </div>
+
+    <!-- Food Customization Modal -->
+    <div class="modal-overlay" id="customizationModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle" data-i18n="order.customize.text">Testreszabás</h3>
+                <button class="modal-close" id="modalClose">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-food-info">
+                    <img class="modal-food-image" id="modalFoodImage" src="" alt="">
+                    <div class="modal-food-details">
+                        <h4 class="modal-food-name" id="modalFoodName"></h4>
+                        <p class="modal-food-description" id="modalFoodDescription"></p>
+                        <div class="modal-food-price" id="modalFoodPrice"></div>
+                    </div>
                 </div>
+
+                <!-- Sauce Selection -->
+                <div class="customization-section" id="sauceSection">
+                    <h4 class="section-title" data-i18n="order.choose.sauce">Válassz szószt</h4>
+                    <div class="sauce-options" id="sauceOptions">
+                        <!-- Sauces will be dynamically loaded from API -->
+                    </div>
+                </div>
+
+                <!-- Fries Upgrade -->
+                <div class="customization-section" id="friesSection">
+                    <h4 class="section-title" data-i18n="order.choose.sides">Köret választás</h4>
+                    <div class="fries-options" id="friesOptions">
+                        <!-- Fries options will be dynamically loaded from API -->
+                    </div>
+                </div>
+
+                <!-- Extra Additions -->
+                <div class="customization-section" id="extrasSection">
+                    <h4 class="section-title" data-i18n="customization.extrasTitle">Extrák (+€0.30 / darab)</h4>
+                    <div class="extras-grid">
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="bacon">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraBacon">Bacon</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="cheese">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraCheddar">Cheddar Sajt</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="cheddar">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraMeltedCheddar">Olvadt Cheddar</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="onion">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraOnion">Pirított Hagyma</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="tomato">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraTomato">Paradicsom</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="lettuce">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraLettuce">Saláta</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="pickle">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraPickle">Uborka</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                        <label class="extra-option">
+                            <input type="checkbox" name="extras" value="jalapeno">
+                            <span class="extra-label">
+                                <span class="extra-name" data-i18n="customization.extraJalapeno">Jalapeño</span>
+                                <span class="extra-price">+€0.30</span>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Special Instructions -->
+                <div class="customization-section">
+                    <h4 class="section-title" data-i18n="order.special.request">Különleges kérések</h4>
+                    <div class="special-requests">
+                        <label class="request-label" data-i18n="order.remove.instructions">Eltávolítandó összetevők:</label>
+                        <textarea 
+                            id="removeInstructions" 
+                            data-i18n-placeholder="order.remove.placeholder"
+                            placeholder="Pl: nincs hagyma, nincs paradicsom..."
+                            maxlength="200"
+                            rows="2"
+                        ></textarea>
+                        
+                        <label class="request-label" data-i18n="order.request.label">További megjegyzések:</label>
+                        <textarea 
+                            id="specialInstructions" 
+                            data-i18n-placeholder="order.request.placeholder"
+                            placeholder="Egyéb kérések vagy megjegyzések..."
+                            maxlength="200"
+                            rows="2"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="quantity-section">
+                    <label class="quantity-label" data-i18n="order.quantity">Mennyiség:</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="quantity-btn" id="decreaseQuantity">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                        <span class="quantity-display" id="quantityDisplay">1</span>
+                        <button type="button" class="quantity-btn" id="increaseQuantity">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="modal-total">
+                    <span class="total-label" data-i18n="order.modal.sum">Összesen:</span>
+                    <span class="total-price" id="modalTotalPrice">€0.00</span>
+                </div>
+                <button class="add-to-cart-modal-btn" id="addToCartModalBtn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span data-i18n="cart.addtocart">Kosárba helyezés</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3 class="cart-title" data-i18n="cart.carttitle">Kosár</h3>
+            <button class="cart-close" id="cartClose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+        
+        <div class="cart-content">
+            <div class="cart-empty" id="cartEmpty">
+                <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17C17 18.1 16.1 19 15 19H9C7.9 19 7 18.1 7 17V13M17 13H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <p data-i18n="cart.cartisempty">A kosár üres</p>
+                <small data-i18n="cart.additems">Adj hozzá ételeket a rendeléshez</small>
             </div>
             
-            <div class="welcome-right">
-                <div class="story-container" id="storyContainer">
-                    <h3 class="story-title" data-i18n="opening.title">Nyitvatartás</h3>
-                    <div class="story-text">
-                        <p data-i18n="opening.wedThu"><strong>Szerda - Csütörtök:</strong> 11:00 - 20:00</p>
-                        <p data-i18n="opening.friSat"><strong>Péntek - Szombat:</strong> 11:00 - 22:00</p>
-                        <br>
-                        <p data-i18n="opening.happyHour"><strong>Happy Hour:</strong> Szerda-Szombat 12:00-15:00</p>
-                        <p data-i18n="opening.special">Különleges ajánlatok és kedvezmények!</p>
-                    </div>
-                </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be dynamically populated -->
             </div>
-        </div>    
-        
-        <div class="welcome-bottom"> 
-            <div class="story-continuation">
-                <p data-i18n="story.part1">Tudjuk, hogy sok helyen lehet enni, de nálunk máshogy szól minden. Mert nem csak főzünk – meg akarjuk mutatni, mit jelent igazán jót enni.</p>
-                <p data-i18n="story.part2">Ez a mi ízvilágunk. És most már a tiéd is lehet.</p>
-            </div>
-        </div>
-
-        <!-- Food Categories Carousel -->
-        <div class="food-categories" id="foodCategories">
-            <div class="category-carousel">
-                <div class="category-item active" data-category="0">
-                    <div class="category-images">
-                        <div class="background-image">
-                            <img src="assets/images/backgrounds/bg-hamburgers.jpg" alt="Burger háttér" data-i18n="categories.burgers.altBg">
-                        </div>
-                        <div class="plate-image">
-                            <img src="assets/images/food/food-burger-plate.png" alt="Burger tányéron" data-i18n="categories.burgers.altPlate">
-                        </div>
-                    </div>
-                    <h4 class="category-name" data-i18n="categories.burgers">Hamburgerek</h4>
-                </div>
-
-                <div class="category-item" data-category="1">
-                    <div class="category-images">
-                        <div class="background-image">
-                            <img src="assets/images/menu/hot-qurrito.JPG" alt="Quesadilla háttér" data-i18n="categories.qurritos.altBg">
-                        </div>
-                        <div class="plate-image">
-                            <img src="assets/images/food/food-quesadilla-plate.png" alt="Quesadilla tányéron" data-i18n="categories.qurritos.altPlate">
-                        </div>
-                    </div>
-                    <h4 class="category-name" data-i18n="categories.qurritos">Qurritók</h4>
-                </div>
-
-                <div class="category-item" data-category="2">
-                    <div class="category-images">
-                        <div class="background-image">
-                            <img src="assets/images/menu/taco-beef.JPG" alt="Tacos háttér" data-i18n="categories.tacos.altBg">
-                        </div>
-                        <div class="plate-image">
-                            <img src="assets/images/food/food-tacos-plate.png" alt="Tacos tányéron" data-i18n="categories.tacos.altPlate">
-                        </div>
-                    </div>
-                    <h4 class="category-name" data-i18n="categories.tacos">Tacók</h4>
-                </div>
-            </div>
-
-            <div class="category-indicators">
-                <div class="indicator active" data-category="0"></div>
-                <div class="indicator" data-category="1"></div>
-                <div class="indicator" data-category="2"></div>
-            </div>
-            <a href="menu.html" class="menu-button" data-i18n="nav.menu">Menü</a>
         </div>
         
-        <div class="maps-bar">
-            <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2665.7!2d18.1269!3d47.7638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476bad5b8e4b1111%3A0x123456789!2sN%C3%A1mestie%20gen.%20Klapku%209%2C%20945%2001%20Kom%C3%A1rno%2C%20Slovakia!5e0!3m2!1sen!2sus!4v1726396800000!5m2!1sen!2sus"
-                width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
-                title="Palace Cafe & Bar Location" data-i18n="maps.title">
-            </iframe>
-        </div>  
-    </section>
-
-    <!-- Gallery Section -->
-    <section class="gallery-section" id="gallerySection">
-        <div class="gallery-container">
-            <h2 class="gallery-title" data-i18n="gallery.title">Kövess minket Instagrammon!</h2>
-
-            <div class="instagram-grid">
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post1.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
+        <div class="cart-footer" id="cartFooter">
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span data-i18n="cart.subtotal">Részösszeg:</span>
+                    <span id="cartSubtotal">€0.00</span>
                 </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post2.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post3.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post4.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post5.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post6.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post7.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post8.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post9.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
-                </div>
-                <div class="instagram-item">
-                    <img src="assets/images/instagram/post10.jpg" alt="Palace Cafe Instagram" loading="lazy" data-i18n="instagram.alt">
-                    <div class="instagram-overlay"><div class="instagram-icon">📷</div></div>
+                <!--<div class="summary-row">
+                    <span>Szállítási díj:</span>
+                    <span id="deliveryFee">€2.50</span>
+                </div>-->
+                <div class="summary-row total-row">
+                    <span data-i18n="cart.totalAmount">Összesen:</span>
+                    <span id="cartGrandTotal">€2.50</span>
                 </div>
             </div>
-
-            <div class="instagram-cta">
-                <a href="https://www.instagram.com/palace_cafe_bar/" target="_blank" class="instagram-button" rel="noopener noreferrer" data-i18n="gallery.cta">
-                    Kövess minket Instagrammon
-                </a>
-            </div>
+            <button class="checkout-btn" id="checkoutBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M9 11L12 14L22 4M21 12V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3.9 5 4.9 5 5 5H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span data-i18n="cart.placeorder">Rendelés leadása</span>
+            </button>
         </div>
-    </section>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="toast success-toast" id="successToast">
+        <div class="toast-content">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M9 11L12 14L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="toast-message" id="toastMessage" data-i18n="order.addedtocart">Kosárba helyezve!</span>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="main-footer">
@@ -273,7 +501,8 @@
             <div class="footer-left">
                 <ul class="footer-nav">
                     <li><a href="menu.html" data-i18n="nav.menu">Menü</a></li>
-                    <li><a href="index.html" data-i18n="nav.order">Rendelj Online</a></li>
+                    <!--<li><a href="rolunk.html">Rólunk</a></li>-->
+                    <li><a href="index.html" data-i18n="nav.order">Rendelés</a></li>
                     <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacy">Adatvédelmi Nyilatkozat</a></li>
                     <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="footer.cookies">Süti beállítások</a></li>
                     <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.terms">Felhasználási Feltételek</a></li>
@@ -281,7 +510,7 @@
             </div>
 
             <div class="footer-center">
-                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo" data-i18n="footer.logoAlt">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
             </div>
 
             <div class="footer-right">
@@ -320,7 +549,7 @@
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-consent">
         <div class="cookie-content">
-            <div class="cookie-icon">Cookie</div>
+            <div class="cookie-icon">🍪</div>
             <div class="cookie-text">
                 <h3 data-i18n="cookie.title">Sütik használata</h3>
                 <p data-i18n="cookie.description">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
@@ -332,14 +561,15 @@
             </div>
         </div>
     </div>
-
+    
     <!-- Cookie Settings Modal -->
     <div id="cookieModal" class="cookie-modal">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
                 <h2 data-i18n="cookie.modal.title">Süti beállítások</h2>
-                <button id="closeCookieModal" class="cookie-close">×</button>
+                <button id="closeCookieModal" class="cookie-close">&times;</button>
             </div>
+            
             <div class="cookie-modal-body">
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -353,6 +583,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -365,6 +596,7 @@
                         </div>
                     </div>
                 </div>
+                
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -378,6 +610,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="cookie-modal-footer">
                 <button id="saveSettings" class="btn-save" data-i18n="cookie.save">Beállítások mentése</button>
                 <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="cookie.privacy">Adatvédelmi tájékoztató</a>
@@ -388,6 +621,7 @@
     <script src="config.js"></script>
     <script src="i18n.js"></script>
     <script src="order-system-2.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <script src="cookies.js"></script>
 </body>
 </html>
