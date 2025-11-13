@@ -46,6 +46,14 @@ class OrderConfirmation {
         this.init();
     }
 
+    t(key, vars = {}) {
+        if (typeof window.i18n === 'undefined' || typeof window.i18n.t !== 'function') {
+            console.warn('i18n not loaded, returning key:', key);
+            return key;
+        }
+        return window.i18n.t(key, vars);
+    }
+
     /**
      * Initialize the order confirmation page
      */
@@ -234,9 +242,9 @@ class OrderConfirmation {
 
                 // Show appropriate toast message
                 if (updateData.status === 'DELIVERED') {
-                    this.showToast('Rendelés sikeresen teljesítve!', 'success');
+                    this.showToast(this.t("ocjs.ordersuccess"), 'success');
                 } else {
-                    this.showToast('Rendelés állapot frissítve', 'success');
+                    this.showToast(this.t("ocjs.orderupdate"), 'success');
                 }
 
             } else {
@@ -281,7 +289,7 @@ class OrderConfirmation {
 
                 this.updateTrackingInfo();
 
-                this.showToast('Rendelés sikeresen teljesítve!', 'success');
+                this.showToast(this.t("ocjs.ordersuccess"), 'success');
             } else {
                 console.log('🎉 No local order data, loading from API...');
                 this.loadOrderData();
@@ -365,27 +373,27 @@ class OrderConfirmation {
         if (orderTime) {
             const createdAt = new Date(order.createdAt);
             const timeString = this.formatTime(createdAt);
-            orderTime.textContent = `Ma, ${timeString}`;
+            orderTime.textContent = `${this.t("chjs.today")}, ${timeString}`;
         }
         
         // Update estimated time
         if (estimatedTime) {
             if (order.status === 'PENDING') {
-                estimatedTime.textContent = 'Elfogadásra vár';
+                estimatedTime.textContent = this.t("ocjs.waitingforaccept");
             } else if (order.status === 'DELIVERED') {
-                estimatedTime.textContent = 'Teljesítve';
+                estimatedTime.textContent = this.t("ocjs.done");
             } else if (order.estimatedTime) {
                 const estimated = new Date(order.estimatedTime);
                 const now = new Date();
                 const diffMinutes = Math.ceil((estimated - now) / (1000 * 60));
                 
                 if (diffMinutes > 0) {
-                    estimatedTime.textContent = `${diffMinutes} perc`;
+                    estimatedTime.textContent = `${diffMinutes} ${this.t("ocjs.minute")}`;
                 } else {
-                    estimatedTime.textContent = 'Hamarosan kész';
+                    estimatedTime.textContent = this.t("ocjs.almostready");
                 }
             } else {
-                estimatedTime.textContent = 'Számítás alatt';
+                estimatedTime.textContent = this.t("ocjs.undercalc");
             }
         }
     }
@@ -594,7 +602,7 @@ class OrderConfirmation {
         const minutes = Math.ceil(timeDiff / (1000 * 60));
 
         if (this.timerValue) {
-            this.timerValue.textContent = `${minutes} perc`;
+            this.timerValue.textContent = `${minutes} ${this.t("ocjs.minute")}`;
 
             // Add blinking effect when under 5 minutes
             if (minutes <= 5) {
@@ -648,7 +656,7 @@ class OrderConfirmation {
             // Update final step label
             const finalStepLabel = document.getElementById('finalStepLabel');
             if (finalStepLabel) {
-                finalStepLabel.textContent = 'Szállítás alatt';
+                finalStepLabel.textContent = this.t("ocjs.underdelivery");
             }
         } else {
             if (deliveryStep) deliveryStep.style.display = 'none';
@@ -657,7 +665,7 @@ class OrderConfirmation {
             // Update final step label for pickup
             const finalStepLabel = document.getElementById('finalStepLabel');
             if (finalStepLabel) {
-                finalStepLabel.textContent = 'Átvehető';
+                finalStepLabel.textContent = this.t("ocjs.readyforpickup");
             }
         }
         

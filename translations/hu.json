@@ -365,5 +365,29 @@
 
     "casherrormes": "Hiba történt a rendelés leadásakor",
     "casherrornoti": "Hiba történt a rendelés leadásakor. Kérjük, próbáld újra!"
+  },
+  "oc": {
+    "herotitle": "Köszönjük a rendelésedet!",
+    "herosubtitle": "Rendelésedet sikeresen leadva és feldolgozás alatt áll",
+    "ordernumber": "Rendelés száma:",
+    "confirmed": "Megerősítve",
+    "loading": "Betöltés...",
+    "preparing": "Elkészül",
+    "underprocess": "Rendelés feldolgozás alatt...",
+    "orderdetails": "Rendelés részletei",
+    "orderloading": "Rendelés részletek betöltése...",
+    "deliveryinfoloading": "Szállítási információk betöltése...",
+    "customerdataload": "Vásárló adatok betöltése...",
+    "paymentinfo": "Fizetési információ",
+    "paymentinfoload": "Fizetési adatok betöltése...",
+    "question": "Kérdésed van?",
+    "phone": "Telefon:",
+    "email": "Email:",
+    "openhourstitle": "Nyitvatartás:",
+    "openhours": "Sze-Csü: 11:00-20:00<br>Pé-Szo: 11:00-22:00",
+    "print": "Rendelés nyomtatása",
+    "new": "Újabb rendelés",
+    "backtoindex": "Vissza a főoldalra",
+    "toasterror": "Hiba történt a rendelés betöltése során"
   }
 }

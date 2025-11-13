@@ -54,7 +54,7 @@
     <!-- Happy Hour Bar -->
     <div class="happy-hour-bar" id="happyHourBar">
         <div class="happy-hour-content">
-            <div class="happy-hour-message">
+            <div class="happy-hour-message" data-i18n="happyHour.message">
                 Várunk szeretettel a happy hour-re 12 és 15 óra között!
             </div>
         </div>
@@ -79,15 +79,21 @@
 
             <!-- Desktop Navigation -->
             <ul class="nav-menu desktop-nav">
-                <li><a href="menu.html" class="nav-link">Menü</a></li>
-                <!--<li><a href="about.html" class="nav-link">Rólunk</a></li>-->
-                <li><a href="order.html" class="nav-link highlighted">Rendelj online</a></li>
+                <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menü</a></li>
+                <li><a href="order.html" class="nav-link highlighted" data-i18n="nav.order">Rendelj online</a></li>
             </ul>
 
             <!-- Language Flags -->
             <div class="language-flags desktop-only">
-                <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
-                <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                <button data-lang="hu" class="flag-button" aria-label="Magyar">
+                    <img src="assets/images/icons/flag-hu.png" alt="Magyar" class="flag-icon">
+                </button>
+                <button data-lang="sk" class="flag-button" aria-label="Slovenčina">
+                    <img src="assets/images/icons/flag-sk.png" alt="Slovenčina" class="flag-icon">
+                </button>
+                <button data-lang="en" class="flag-button" aria-label="English">
+                    <img src="assets/images/icons/flag-en.png" alt="English" class="flag-icon">
+                </button>
             </div>
 
             <!-- Mobile Order Button -->
@@ -102,8 +108,9 @@
                 <li><a href="/menu" class="mobile-nav-link">Menü</a></li>
                 <!--<li><a href="/rolunk" class="mobile-nav-link">Rólunk</a></li>-->
                 <li class="mobile-flags">
-                    <img src="photos/flag-sk.png" alt="Slovenčina" class="mobile-flag-icon">
-                    <img src="photos/flag-uk.png" alt="English" class="mobile-flag-icon">
+                    <button data-lang="hu"><img src="assets/flags/hu.svg" alt="Magyar" data-i18n="lang.hu.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="sk"><img src="assets/flags/sk.svg" alt="Slovenčina" data-i18n="lang.sk.alt" class="mobile-flag-icon"></button>
+                    <button data-lang="en"><img src="assets/flags/en.svg" alt="English" data-i18n="lang.en.alt" class="mobile-flag-icon"></button>
                 </li>
             </ul>
         </div>
@@ -122,8 +129,8 @@
                     <path d="m9 12 2 2 4-4" stroke="var(--cream-white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
             </div>
-            <h1 class="conf-hero-title">Köszönjük a rendelésedet!</h1>
-            <p class="conf-hero-subtitle">Rendelésedet sikeresen leadva és feldolgozás alatt áll</p>
+            <h1 class="conf-hero-title" data-i18n="oc.herotitle">Köszönjük a rendelésedet!</h1>
+            <p class="conf-hero-subtitle" data-i18n="oc.herosubtitle">Rendelésedet sikeresen leadva és feldolgozás alatt áll</p>
         </div>
     </section>
 
@@ -135,10 +142,10 @@
             <section class="conf-section conf-status-card">
                 <div class="conf-status-header">
                     <div class="conf-status-info">
-                        <h2 class="conf-order-number">Rendelés száma: <span id="orderNumber">#PCB-Loading...</span></h2>
+                        <h2 class="conf-order-number" data-i18n="oc.ordernumber">Rendelés száma: <span id="orderNumber">#PCB-Loading...</span></h2>
                         <div class="conf-order-status">
-                            <span class="conf-status-badge conf-confirmed" id="statusBadge">Megerősítve</span>
-                            <span class="conf-status-time" id="orderTime">Betöltés...</span>
+                            <span class="conf-status-badge conf-confirmed" id="statusBadge" data-i18n="oc.confirmed">Megerősítve</span>
+                            <span class="conf-status-time" id="orderTime" data-i18n="oc.loading">Betöltés...</span>
                         </div>
                     </div>
                 </div>
@@ -154,13 +161,13 @@
                     <!-- Timer Display -->
                     <div class="conf-timer-display" id="timerDisplay" style="display: none;">
                         <div class="conf-timer-content">
-                            <div class="conf-timer-label">Elkészül</div>
+                            <div class="conf-timer-label" data-i18n="oc.preparing">Elkészül</div>
                             <div class="conf-timer-value" id="timerValue">--</div>
                         </div>
                     </div>
                     
                     <!-- Status Description -->
-                    <div class="conf-status-description" id="statusDescription">
+                    <div class="conf-status-description" id="statusDescription" data-i18n="oc.underprocess">
                         Rendelés feldolgozás alatt...
                     </div>
                 </div>
@@ -176,30 +183,30 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Rendelés részletei
+                            <span data-i18n="oc.orderdetails">Rendelés részletei</span>
                         </h2>
                         <div class="conf-order-items" id="orderItems">
                             <!-- Order items will be populated by JavaScript -->
                             <div class="conf-loading-placeholder">
                                 <div class="conf-loading-spinner"></div>
-                                <p>Rendelés részletek betöltése...</p>
+                                <p data-i18n="oc.orderloading">Rendelés részletek betöltése...</p>
                             </div>
                         </div>
                         <div class="conf-order-summary">
                             <div class="conf-summary-row">
-                                <span>Részösszeg:</span>
+                                <span data-i18n="cart.subtotal">Részösszeg:</span>
                                 <span id="subtotalAmount">€0.00</span>
                             </div>
                             <div class="conf-summary-row conf-packaging-fee">
-                                <span>Csomagolási díj:</span>
+                                <span data-i18n="checkout.packagefee">Csomagolási díj:</span>
                                 <span id="confPackagingFee">€0.50</span>
                             </div>
                             <div class="conf-summary-row conf-delivery-fee" id="deliveryFeeRow" style="display: none;">
-                                <span>Szállítási díj:</span>
+                                <span data-i18n="checkout.deliveryfee">Szállítási díj:</span>
                                 <span id="deliveryFeeAmount">€2.50</span>
                             </div>
                             <div class="conf-summary-row conf-total">
-                                <span>Összesen:</span>
+                                <span data-i18n="checkout.fulltotal">Összesen:</span>
                                 <span id="totalAmount">€0.00</span>
                             </div>
                         </div>
@@ -211,13 +218,13 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" id="deliveryPickupIcon">
                                 <path d="M19 7h-3V6a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v7H3a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h1v1a1 1 0 0 0 1 1h1.5a1 1 0 0 0 1-1v-1h8v1a1 1 0 0 0 1 1H17a1 1 0 0 0 1-1v-1h1a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-1V8a1 1 0 0 0-1-1zM6 7h8v1H6V7z" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            <span id="deliveryPickupText">Átvétel</span>
+                            <span id="deliveryPickupText" data-i18n="checkout.pickup">Átvétel</span>
                         </h2>
                         <div class="conf-delivery-pickup-details" id="deliveryPickupDetails">
                             <!-- Details will be populated by JavaScript -->
                             <div class="conf-loading-placeholder">
                                 <div class="conf-loading-spinner"></div>
-                                <p>Szállítási információk betöltése...</p>
+                                <p data-i18n="oc.deliveryinfoloading">Szállítási információk betöltése...</p>
                             </div>
                         </div>
                     </section>
@@ -229,13 +236,13 @@
                                 <path d="M20 21V19A4 4 0 0 0 16 15H8A4 4 0 0 0 4 19V21" stroke="currentColor" stroke-width="2"/>
                                 <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Kapcsolati adatok
+                            <span data-i18n="checkout.contact.title">Kapcsolati adatok</span>
                         </h2>
                         <div class="conf-customer-info" id="customerInfo">
                             <!-- Customer info will be populated by JavaScript -->
                             <div class="conf-loading-placeholder">
                                 <div class="conf-loading-spinner"></div>
-                                <p>Vásárló adatok betöltése...</p>
+                                <p data-i18n="oc.customerdataload">Vásárló adatok betöltése...</p>
                             </div>
                         </div>
                     </section>
@@ -252,13 +259,13 @@
                                 <rect x="1" y="4" width="22" height="16" rx="2" stroke="currentColor" stroke-width="2"/>
                                 <line x1="1" y1="10" x2="23" y2="10" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Fizetési információ
+                            <span data-i18n="oc.paymentinfo">Fizetési információ</span>
                         </h2>
                         <div class="conf-payment-details" id="paymentDetails">
                             <!-- Payment details will be populated by JavaScript -->
                             <div class="conf-loading-placeholder">
                                 <div class="conf-loading-spinner"></div>
-                                <p>Fizetési adatok betöltése...</p>
+                                <p data-i18n="oc.paymentinfoload">Fizetési adatok betöltése...</p>
                             </div>
                         </div>
                     </section>
@@ -269,28 +276,28 @@
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                                 <path d="M22 16.92V19A2 2 0 0 1 20.11 21 19.79 19.79 0 0 1 2 3.11 2 2 0 0 1 5 1H7.09A2 2 0 0 1 9 2.56L10.26 5.5A2 2 0 0 1 9.81 7.81L8.09 9.53A14 14 0 0 0 14.47 15.91L16.19 14.19A2 2 0 0 1 18.5 13.74L21.44 15A2 2 0 0 1 22 16.92Z" stroke="currentColor" stroke-width="2"/>
                             </svg>
-                            Kérdésed van?
+                            <span data-i18n="oc.question">Kérdésed van?</span>
                         </h2>
                         <div class="conf-contact-details">
                             <div class="conf-contact-item">
                                 <div class="conf-contact-icon">📞</div>
                                 <div class="conf-contact-info">
-                                    <div class="conf-contact-label">Telefon:</div>
+                                    <div class="conf-contact-label" data-i18n="oc.phone">Telefon:</div>
                                     <div class="conf-contact-value">+421 910 447 348</div>
                                 </div>
                             </div>
                             <div class="conf-contact-item">
                                 <div class="conf-contact-icon">✉️</div>
                                 <div class="conf-contact-info">
-                                    <div class="conf-contact-label">Email:</div>
+                                    <div class="conf-contact-label" data-i18n="oc.email">Email:</div>
                                     <div class="conf-contact-value">info@palacecafe.sk</div>
                                 </div>
                             </div>
                             <div class="conf-contact-item">
                                 <div class="conf-contact-icon">🕐</div>
                                 <div class="conf-contact-info">
-                                    <div class="conf-contact-label">Nyitvatartás:</div>
-                                    <div class="conf-contact-value">
+                                    <div class="conf-contact-label" data-i18n="oc.openhourstitle">Nyitvatartás:</div>
+                                    <div class="conf-contact-value" data-i18n="oc.openhours">
                                         Sze-Csü: 11:00-20:00<br>
                                         Pé-Szo: 11:00-22:00
                                     </div>
@@ -310,20 +317,20 @@
                             <path d="M6 18H4A2 2 0 0 1 2 16V11A2 2 0 0 1 4 9H20A2 2 0 0 1 22 11V16A2 2 0 0 1 20 18H18" stroke="currentColor" stroke-width="2"/>
                             <rect x="6" y="14" width="12" height="8" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        Rendelés nyomtatása
+                        <span data-i18n="oc.print"> Rendelés nyomtatása</span>
                     </button>
                     <a href="/menu" class="conf-action-btn conf-secondary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.3 15.7 4.6 16.5 5.1 16.5H17M17 13V17A2 2 0 0 1 15 19H9A2 2 0 0 1 7 17V13H17Z" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        Újabb rendelés
+                        <span data-i18n="oc.new">Újabb rendelés</span>
                     </a>
                     <a href="/" class="conf-action-btn conf-primary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M3 9L12 2L21 9V20A2 2 0 0 1 19 22H5A2 2 0 0 1 3 20V9Z" stroke="currentColor" stroke-width="2"/>
                             <polyline points="9,22 9,12 15,12 15,22" stroke="currentColor" stroke-width="2"/>
                         </svg>
-                        Vissza a főoldalra
+                        <span data-i18n="oc.backtoindex">Vissza a főoldalra</span>
                     </a>
                 </div>
             </section>
@@ -336,21 +343,19 @@
         <div class="footer-container">
             <div class="footer-left">
                 <ul class="footer-nav">
-                    <li><a href="/menu">Menü</a></li>
-                    <!--<li><a href="/rolunk">Rólunk</a></li>-->
-                    <li><a href="/rendeles">Rendelj Online</a></li>
-                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer">Adatvédelmi Nyilatkozat</a></li>
-                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;">Süti beállítások</a></li>
-                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer">Felhasználási Feltételek</a></li>
+                    <li><a href="menu.html" data-i18n="nav.menu">Menü</a></li>
+                    <li><a href="order.html" data-i18n="nav.order">Rendelj Online</a></li>
+                    <li><a href="documents/zasady-ochrany-osobnych-udajov.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacy">Adatvédelmi Nyilatkozat</a></li>
+                    <li><a href="#" onclick="window.palaceCookieConsent?.showModal(); return false;" data-i18n="footer.cookies">Süti beállítások</a></li>
+                    <li><a href="documents/podmienky-pouzivania-webovej-stranky.pdf" target="_blank" rel="noopener noreferrer" data-i18n="footer.terms">Felhasználási Feltételek</a></li>
                 </ul>
             </div>
 
             <div class="footer-center">
-                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo">
+                <img src="assets/images/logos/logo-main.png" alt="Palace Cafe & Bar" class="footer-logo" data-i18n="footer.logoAlt">
             </div>
 
             <div class="footer-right">
-
                 <div class="footer-contact">
                     <a href="tel:+421910447348" class="footer-contact-link">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -365,7 +370,6 @@
                         <span>info@palacebar.sk</span>
                     </a>
                 </div>
-
                 <div class="social-icons">
                     <a href="https://www.facebook.com/profile.php?id=100071470893401" class="social-icon" aria-label="Facebook">
                         <img src="photos/facebook-icon.png" alt="Facebook">
@@ -394,34 +398,33 @@
                     <line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2"/>
                 </svg>
             </div>
-            <div class="conf-toast-message" id="errorMessage">Hiba történt a rendelés betöltése során</div>
+            <div class="conf-toast-message" id="errorMessage" data-i18n="oc.toasterror">Hiba történt a rendelés betöltése során</div>
         </div>
     </div>
 
     <!-- Cookie Consent Banner -->
     <div id="cookieConsent" class="cookie-consent">
         <div class="cookie-content">
-            <div class="cookie-icon">🍪</div>
+            <div class="cookie-icon">Cookie</div>
             <div class="cookie-text">
-                <h3>Sütik használata</h3>
-                <p>A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
+                <h3 data-i18n="cookie.title">Sütik használata</h3>
+                <p data-i18n="cookie.description">A weboldal megfelelő működéséhez és a jobb felhasználói élmény érdekében sütiket használunk. Válaszd ki, mely kategóriákat fogadod el.</p>
             </div>
             <div class="cookie-actions">
-                <button id="cookieSettings" class="btn-settings">Beállítások</button>
-                <button id="acceptEssential" class="btn-essential">Csak szükséges</button>
-                <button id="acceptAll" class="btn-accept">Összes elfogadása</button>
+                <button id="cookieSettings" class="btn-settings" data-i18n="cookie.settings">Beállítások</button>
+                <button id="acceptEssential" class="btn-essential" data-i18n="cookie.essential">Csak szükséges</button>
+                <button id="acceptAll" class="btn-accept" data-i18n="cookie.acceptAll">Összes elfogadása</button>
             </div>
         </div>
     </div>
-    
+
     <!-- Cookie Settings Modal -->
     <div id="cookieModal" class="cookie-modal">
         <div class="cookie-modal-content">
             <div class="cookie-modal-header">
-                <h2>Süti beállítások</h2>
-                <button id="closeCookieModal" class="cookie-close">&times;</button>
+                <h2 data-i18n="cookie.modal.title">Süti beállítások</h2>
+                <button id="closeCookieModal" class="cookie-close">×</button>
             </div>
-            
             <div class="cookie-modal-body">
                 <div class="cookie-category">
                     <div class="cookie-category-header">
@@ -430,12 +433,11 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Szükséges sütik</h4>
-                            <p>Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
+                            <h4 data-i18n="cookie.essential.title">Szükséges sütik</h4>
+                            <p data-i18n="cookie.essential.desc">Ezek a sütik elengedhetetlenek a weboldal alapvető funkcióihoz.</p>
                         </div>
                     </div>
                 </div>
-                
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -443,12 +445,11 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Elemzési sütik</h4>
-                            <p>Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
+                            <h4 data-i18n="cookie.analytics.title">Elemzési sütik</h4>
+                            <p data-i18n="cookie.analytics.desc">Segítenek megérteni, hogyan használják látogatóink a weboldalt (Google Analytics).</p>
                         </div>
                     </div>
                 </div>
-                
                 <div class="cookie-category">
                     <div class="cookie-category-header">
                         <label class="cookie-switch">
@@ -456,21 +457,21 @@
                             <span class="cookie-slider"></span>
                         </label>
                         <div>
-                            <h4>Marketing sütik</h4>
-                            <p>Személyre szabott reklámok és közösségi média funkciók.</p>
+                            <h4 data-i18n="cookie.marketing.title">Marketing sütik</h4>
+                            <p data-i18n="cookie.marketing.desc">Személyre szabott reklámok és közösségi média funkciók.</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
             <div class="cookie-modal-footer">
-                <button id="saveSettings" class="btn-save">Beállítások mentése</button>
-                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link">Adatvédelmi tájékoztató</a>
+                <button id="saveSettings" class="btn-save" data-i18n="cookie.save">Beállítások mentése</button>
+                <a href="documents/Zásady ochrany osobných údajov.pdf" target="_blank" class="cookie-privacy-link" data-i18n="cookie.privacy">Adatvédelmi tájékoztató</a>
             </div>
         </div>
     </div>
     
     <script src="config.js"></script>
+    <script src="i18n.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
     <script src="order-confirmation.js"></script>
     <script src="cookies.js"></script>

@@ -365,5 +365,29 @@
 
     "casherrormes": "Chyba pri vytváraní objednávky",
     "casherrornoti": "Chyba pri vytváraní objednávky. Skúste to znova!"
+  },
+  "oc": {
+    "herotitle": "Ďakujeme za objednávku!",
+    "herosubtitle": "Vaša objednávka bola úspešne odoslaná a spracováva sa",
+    "ordernumber": "Číslo objednávky:",
+    "confirmed": "Potvrdené",
+    "loading": "Načítava sa...",
+    "preparing": "Príprava dokončenia",
+    "underprocess": "Objednávka sa spracováva...",
+    "orderdetails": "Detaily objednávky",
+    "orderloading": "Načítavanie detailov objednávky...",
+    "deliveryinfoloading": "Načítavanie informácií o doručení...",
+    "customerdataload": "Načítavanie údajov zákazníka...",
+    "paymentinfo": "Informácie o platbe",
+    "paymentinfoload": "Načítavanie údajov o platbe...",
+    "question": "Máte otázku?",
+    "phone": "Telefón:",
+    "email": "Email:",
+    "openhourstitle": "Otváracie hodiny:",
+    "openhours": "St-Št: 11:00-20:00<br>Pi-So: 11:00-22:00",
+    "print": "Vytlačiť objednávku",
+    "new": "Nová objednávka",
+    "backtoindex": "Späť na domovskú stránku",
+    "toasterror": "Chyba pri načítaní objednávky"
   }
 }

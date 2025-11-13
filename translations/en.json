@@ -365,6 +365,30 @@
 
     "casherrormes": "Error placing order",
     "casherrornoti": "Error placing order. Please try again!"
+  },
+  "oc": {
+    "herotitle": "Thank you for your order!",
+    "herosubtitle": "Your order has been successfully placed and is being processed",
+    "ordernumber": "Order number:",
+    "confirmed": "Confirmed",
+    "loading": "Loading...",
+    "preparing": "Ready in",
+    "underprocess": "Order is being processed...",
+    "orderdetails": "Order details",
+    "orderloading": "Loading order details...",
+    "deliveryinfoloading": "Loading delivery information...",
+    "customerdataload": "Loading customer data...",
+    "paymentinfo": "Payment information",
+    "paymentinfoload": "Loading payment data...",
+    "question": "Have a question?",
+    "phone": "Phone:",
+    "email": "Email:",
+    "openhourstitle": "Open hours:",
+    "openhours": "Wed-Thu: 11:00-20:00<br>Fri-Sat: 11:00-22:00",
+    "print": "Print order",
+    "new": "New order",
+    "backtoindex": "Back to homepage",
+    "toasterror": "Error loading order"
   }
 }
 
