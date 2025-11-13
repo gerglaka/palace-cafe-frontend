@@ -277,7 +277,94 @@
       "other": "Other notes:",
       "save": "Save changes"
     },
-    "quant": "Quantity:"
+    "quant": "Quantity:",
+    "addresstitle": "Shipping address"
+  },
+  "chjs": {
+    "cartempty": "Cart is empty. Redirecting to order page...",
+    "addbutton": "Add",
+    "drink": "Drink",
+    "drinkadded": "Drink added to order!",
+    "geonot": "Geolocation is not supported in this browser",
+    "geonottwo": "Geolocation is not supported. Please enter address manually!",
+    "geosearch": "Searching...",
+    "geosorry": "Unfortunately, your current location is outside the delivery area (Komárno)",
+    "geoonly": "Delivery is only available to Komárno area!",
+    "geosuccess": "Location found successfully!",
+    "geomanual": "Could not find address. Please enter manually!",
+    "geosorrytwo": "Error determining location. Please enter address manually!",
+    "geofindme": "Find me",
+    "timeaccepted": "Time accepted",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "closed": "Closed",
+    "cartemptyshort": "Cart is empty",
+    "alright": "OK",
+    "allfield": "Please fill in all required fields!",
+    "itemupdated": "Item updated!",
+    "loadingtext": "Placing order...",
+    "loadingtexttwo": "Place order",
+
+    "time": {
+      "invalid": "Invalid format. Use: HH:MM (e.g. 14:30)",
+      "notopen": "We are closed today",
+      "open": "we are open",
+      "later": "Please select a time at least 30 minutes later (earliest"
+    },
+
+    "stripe": {
+      "min": "Order total must be at least €0.50",
+      "notavailable": "Card payment not available",
+      "failed": "Payment failed. Please try again."
+    },
+
+    "cart": {
+      "edit": "Edit",
+      "remove": "Remove",
+      "sure": "Are you sure you want to remove this item from cart?",
+      "removednotif": "Item removed!",
+      "itemnotfound": "Food not found!",
+      "customizationnotfound": "Customization window not found!",
+      "modalnotfound": "Customization form not found!"
+    },
+
+    "fries": {
+      "included": "Included",
+      "nosides": "No sides"
+    },
+
+    "validate": {
+      "phone": "Please enter a valid phone number",
+      "email": "Invalid email format"
+    },
+
+    "validation": {
+      "postalOnlyTo": "Sorry, we currently deliver only to postal codes",
+      "postalCodesDeliver": "",
+      "postalInvalid": "Invalid postal code format (5 digits required)",
+      "cartEmpty": "Cart is empty",
+      "cartOk": "Cart is OK",
+      "minOrder": "Minimum order amount",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone number",
+      "email": "Email address",
+      "required": "required",
+      "emailInvalid": "Invalid email format (example@domain.com)",
+      "phoneFormat": "Phone format: +421 XXX XXX XXX",
+      "street": "Street and house number",
+      "city": "City",
+      "postalCode": "Postal code",
+      "requiredForDelivery": "required for delivery",
+      "onlyDeliverTo": "We only deliver to postal codes",
+      "selectPayment": "Select payment method",
+      "paymentSelected": "Payment method selected",
+      "termsRequired": "Accepting Terms and Conditions is required",
+      "privacyRequired": "Accepting Privacy Policy is required"
+    },
+
+    "casherrormes": "Error placing order",
+    "casherrornoti": "Error placing order. Please try again!"
   }
 }
 

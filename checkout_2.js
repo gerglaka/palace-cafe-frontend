@@ -65,6 +65,14 @@ class PalaceCheckout {
         this.init();
     }
 
+    t(key, vars = {}) {
+        if (typeof window.i18n === 'undefined' || typeof window.i18n.t !== 'function') {
+            console.warn('i18n not loaded, returning key:', key);
+            return key;
+        }
+        return window.i18n.t(key, vars);
+    }
+
     /**
      * Initialize the checkout system
      */
@@ -231,7 +239,7 @@ class PalaceCheckout {
      * Redirect to order page if no valid cart data
      */
     redirectToOrderPage() {
-        this.showNotification('A kosár üres. Átirányítunk a rendelési oldalra...', 'info');
+        this.showNotification(this.testStripe('chjs.cartempty'), 'info');
         setTimeout(() => {
             window.location.href = 'order.html'; // Adjust path as needed
         }, 2000);
@@ -254,7 +262,9 @@ class PalaceCheckout {
 
             console.log('🥤 Loading drink suggestions from API...');
 
-            const response = await fetch(`${this.config.apiBaseUrl}/menu?lang=hu`);
+            const currentLang = window.i18n?.currentLang || 'hu';
+
+            const response = await fetch(`${this.config.apiBaseUrl}/menu?lang=${currentLang}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -307,7 +317,10 @@ class PalaceCheckout {
         try {
             console.log('🎛️ Loading customization options from API...');
 
-            const response = await fetch(`${this.config.apiBaseUrl}/customization?lang=hu`);
+
+
+            const currentLang = window.i18n?.currentLang || 'hu';
+            const response = await fetch(`${this.config.apiBaseUrl}/customization?lang=${currentLang}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -391,7 +404,7 @@ class PalaceCheckout {
             return `
                 <button class="add-drink-btn" 
                         onclick="checkout.addDrinkToOrder('${drinkId}', '${name}', ${price}, '${imageUrl}')">
-                    Hozzáadás
+                    ${this.t('chjs.addbutton')}
                 </button>
             `;
         } else {
@@ -522,7 +535,7 @@ class PalaceCheckout {
             id: `drink-${Date.now()}`,
             originalId: drinkId,
             name: this.sanitizeInput(name),
-            description: 'Ital',
+            description: this.t('chjs.drink'),
             price: parseFloat(price),
             quantity: 1,
             image: imageUrl || 'photos/default-drink.jpg',
@@ -538,7 +551,7 @@ class PalaceCheckout {
         this.updateOrderSummary();
         this.saveCartToStorage();
 
-        this.showNotification('Ital hozzáadva a rendeléshez!', 'success');
+        this.showNotification(this.t('chjs.drinkadded'), 'success');
     }
 
     /**
@@ -676,17 +689,17 @@ class PalaceCheckout {
 
         if (!navigator.geolocation) {
             if (validationMessage) {
-                validationMessage.textContent = 'A geolokáció nem támogatott ebben a böngészőben';
+                validationMessage.textContent = this.t('chjs.geonot');
                 validationMessage.classList.add('show', 'error');
             }
-            this.showNotification('A geolokáció nem támogatott. Kérjük, add meg a címet manuálisan!', 'error');
+            this.showNotification(this.t(chjs.geonottwo), 'error');
             return;
         }
 
         const locateMeBtn = document.getElementById('locateMeBtn');
         if (locateMeBtn) {
             locateMeBtn.disabled = true;
-            locateMeBtn.textContent = 'Keresés...';
+            locateMeBtn.textContent = this.t('chjs.geosearch');
         }
 
         try {
@@ -710,10 +723,10 @@ class PalaceCheckout {
 
             if (distance > this.config.maxDeliveryDistance) {
                 if (validationMessage) {
-                    validationMessage.textContent = 'Sajnos a jelenlegi helyed kívül esik a kiszállítási területen (Komárno)';
+                    validationMessage.textContent = this.t('chjs.geosorry');
                     validationMessage.classList.add('show', 'error');
                 }
-                this.showNotification('A kiszállítás csak Komárno területére lehetséges!', 'error');
+                this.showNotification(this.t('chjs.geoonly'), 'error');
                 return;
             }
 
@@ -728,10 +741,10 @@ class PalaceCheckout {
                 postalCodeInput.value = this.sanitizeInput((postcode || '').replace(/\s/g, ''));
 
                 if (validationMessage) {
-                    validationMessage.textContent = 'Helyszín sikeresen megtalálva!';
+                    validationMessage.textContent = this.t('chjs.geosuccess');
                     validationMessage.classList.add('show', 'success');
                 }
-                this.showNotification('Helyszín sikeresen megtalálva!', 'success');
+                this.showNotification(this.t('chjs.geosuccess'), 'success');
 
                 // Validate fields
                 this.validateField(streetInput);
@@ -739,22 +752,22 @@ class PalaceCheckout {
                 this.validateField(postalCodeInput);
             } else {
                 if (validationMessage) {
-                    validationMessage.textContent = 'Nem sikerült címet találni. Kérjük, add meg manuálisan!';
+                    validationMessage.textContent = this.t('chjs.geomanual');
                     validationMessage.classList.add('show', 'error');
                 }
-                this.showNotification('Nem sikerült címet találni. Kérjük, add meg manuálisan!', 'error');
+                this.showNotification(this.t('chjs.geomanual'), 'error');
             }
         } catch (error) {
             console.error('Geolocation error:', error);
             if (validationMessage) {
-                validationMessage.textContent = 'Hiba történt a helymeghatározás során. Kérjük, add meg a címet manuálisan!';
+                validationMessage.textContent = this.t('chjs.geosorrytwo');
                 validationMessage.classList.add('show', 'error');
             }
-            this.showNotification('Hiba történt a helymeghatározás során!', 'error');
+            this.showNotification(this.t('chjs.geosorrytwo'), 'error');
         } finally {
             if (locateMeBtn) {
                 locateMeBtn.disabled = false;
-                locateMeBtn.textContent = 'Találj meg';
+                locateMeBtn.textContent = this.t('chjs.geofindme');
             }
         }
     }
@@ -870,7 +883,7 @@ class PalaceCheckout {
         if (validation.isValid) {
             timeInput.classList.add('valid');
             if (validationMessage) {
-                validationMessage.textContent = `Időpont elfogadva: ${timeValue}`;
+                validationMessage.textContent = `${this.t('chjs.timeaccepted')}: ${timeValue}`;
                 validationMessage.classList.add('show', 'success');
             }
 
@@ -903,7 +916,7 @@ class PalaceCheckout {
         if (!timeRegex.test(timeString)) {
             return {
                 isValid: false,
-                message: 'Helytelen formátum. Használd: ÓÓ:PP (pl. 14:30)'
+                message: this.t('chjs.time.invalid')
             };
         }
 
@@ -918,7 +931,7 @@ class PalaceCheckout {
         if (!todayHours) {
             return {
                 isValid: false,
-                message: 'Ma nincs nyitvatartási idő'
+                message: this.t('chjs.time.notopen')
             };
         }
 
@@ -937,7 +950,7 @@ class PalaceCheckout {
         if (requestedTime < openTime || requestedTime >= closeTime) {
             return {
                 isValid: false,
-                message: `Ma ${todayHours.open}-${todayHours.close} között vagyunk nyitva`
+                message: `${this.t('chjs.today')} ${todayHours.open}-${todayHours.close} ${this.t('chjs.time.open')}`
             };
         }
 
@@ -950,7 +963,7 @@ class PalaceCheckout {
             });
             return {
                 isValid: false,
-                message: `A rendeléshez legalább 30 perccel későbbi időpontot válassz (legkorábbi: ${minTimeStr})`
+                message: `${this.t(chjs.time.later)}: ${minTimeStr})`
             };
         }
 
@@ -967,8 +980,8 @@ class PalaceCheckout {
     getOperatingHours() {
         return {
             0: null, // Sunday - closed
-            1: { open: '11:00', close: '20:00' }, // Monday
-            2: { open: '11:00', close: '20:00' }, // Tuesday  
+            1: null, // Monday
+            2: null, // Tuesday  
             3: { open: '11:00', close: '20:00' }, // Wednesday
             4: { open: '11:00', close: '20:00' }, // Thursday
             5: { open: '11:00', close: '22:00' }, // Friday
@@ -998,12 +1011,12 @@ class PalaceCheckout {
         const tomorrowName = tomorrow.toLocaleDateString('hu-HU', { weekday: 'long' });
         
         todayHoursEl.textContent = todayHours 
-            ? `Ma (${todayName}): ${todayHours.open} - ${todayHours.close}`
-            : `Ma (${todayName}): Zárva`;
+            ? `${this.t('chjs.today')} (${todayName}): ${todayHours.open} - ${todayHours.close}`
+            : ` (${todayName}): ${this.t('chjs.closed')}`;
             
         tomorrowHoursEl.textContent = tomorrowHours 
-            ? `Holnap (${tomorrowName}): ${tomorrowHours.open} - ${tomorrowHours.close}`
-            : `Holnap (${tomorrowName}): Zárva`;
+            ? `${this.t('chjs.tomorrow')} (${tomorrowName}): ${tomorrowHours.open} - ${tomorrowHours.close}`
+            : `${this.t('chjs.tomorrow')} (${tomorrowName}): ${this.t('chjs.closed')}`;
     }
     
     /**
@@ -1023,7 +1036,6 @@ class PalaceCheckout {
     
     // Temporary test method
     testStripe() {
-        console.log('🧪 Testing Stripe setup...');
         console.log('Stripe object:', this.stripe);
         console.log('Elements object:', this.stripeElements);
         console.log('Card element:', this.cardElement);
@@ -1046,7 +1058,7 @@ class PalaceCheckout {
 
         if (!this.stripe) {
             console.error('❌ Stripe not initialized');
-            this.showNotification('Card payment not available', 'error');
+            this.showNotification(this.t('chjs.stripe.notavailable'), 'error');
             return;
         }
 
@@ -1074,7 +1086,7 @@ class PalaceCheckout {
 
             if (totalInCents < 50) {
                 console.error('❌ Amount below Stripe minimum');
-                this.showNotification('Order total must be at least €0.50', 'error');
+                this.showNotification(this.t('chjs.stripe.min'), 'error');
                 return;
             }
 
@@ -1423,7 +1435,7 @@ class PalaceCheckout {
 
         if (item.customization?.sauce && this.customizationOptions?.sauces) {
             const sauce = this.customizationOptions.sauces.find(s => s.slug === item.customization.sauce);
-            if (sauce) customizations.push(`Szósz: ${sauce.name}`);
+            if (sauce) customizations.push(`${this.t('customization.sauce')}: ${sauce.name}`);
         }
 
         if (item.customization?.fries && this.customizationOptions?.friesOptions) {
@@ -1450,36 +1462,38 @@ class PalaceCheckout {
         if (item.customization?.extras?.length > 0) {
             const extraPrice = 0.30; // Hardcoded price matching your order page
 
-            // Mapping of English slugs to Hungarian names
-            const extraTranslations = {
-                'bacon': ' Bacon',
-                'cheese': 'Cheddar Sajt', 
-                'cheddar': 'Olvadt Cheddar',
-                'onion': 'Pirított Hagyma',
-                'tomato': 'Paradicsom',
-                'jalapeno': 'Jalapeno'
+            // Mapping of slugs to translation keys
+            const extraTranslationKeys = {
+                'bacon': 'customization.extraBacon',
+                'cheese': 'customization.extraCheddar', 
+                'cheddar': 'customization.extraMeltedCheddar',
+                'onion': 'customization.extraOnion',
+                'tomato': 'customization.extraTomato',
+                'lettuce': 'customization.extraLettuce',
+                'pickle': 'customization.extraPickle',
+                'jalapeno': 'customization.extraJalapeno'
             };
 
             const extraLabels = item.customization.extras.map(extra => {
-                // Try to get name from API first, then fallback to translation map, then slug
+                // Try to get name from API first, then fallback to translation, then slug
                 let extraName = extra;
                 if (this.customizationOptions?.extras) {
                     const extraData = this.customizationOptions.extras.find(e => e.slug === extra);
-                    extraName = extraData ? extraData.name : (extraTranslations[extra] || extra);
+                    extraName = extraData ? extraData.name : (extraTranslationKeys[extra] ? this.t(extraTranslationKeys[extra]) : extra);
                 } else {
-                    extraName = extraTranslations[extra] || extra;
+                    extraName = extraTranslationKeys[extra] ? this.t(extraTranslationKeys[extra]) : extra;
                 }
                 return `${extraName} (+€${extraPrice.toFixed(2)})`;
             });
-            customizations.push(`Extrák: ${extraLabels.join(', ')}`);
+            customizations.push(`${this.t('customization.extras')}: ${extraLabels.join(', ')}`);
         }
 
         if (item.customization?.removeInstructions) {
-            customizations.push(`Eltávolítás: ${item.customization.removeInstructions}`);
+            customizations.push(`${this.t('customization.remove')}: ${item.customization.removeInstructions}`);
         }
 
         if (item.customization?.specialInstructions) {
-            customizations.push(`Megjegyzés: ${item.customization.specialInstructions}`);
+            customizations.push(`${this.t('customization.note')}: ${item.customization.specialInstructions}`);
         }
 
         return customizations.join(' • ');
@@ -1537,7 +1551,7 @@ class PalaceCheckout {
         if (!cartContainer) return;
 
         if (this.state.cart.length === 0) {
-            cartContainer.innerHTML = '<p class="empty-cart">A kosár üres</p>';
+            cartContainer.innerHTML = '<p class="empty-cart">${this.t("chjs.cartemptyshort")}</p>';
             return;
         }
 
@@ -1583,8 +1597,8 @@ class PalaceCheckout {
                         <span class="item-price-checkout-js">€${itemTotal.toFixed(2)}</span>
                     </div>
                     <div class="item-actions-checkout-js">
-                        ${canBeCustomized ? `<button class="edit-item-btn-checkout-js" onclick="checkout.editItem('${item.id}')">Szerkesztés</button>` : ''}
-                        <button class="remove-item-btn-checkout-js" onclick="checkout.removeItemFromCart('${item.id}')">Eltávolítás</button>
+                        ${canBeCustomized ? `<button class="edit-item-btn-checkout-js" onclick="checkout.editItem('${item.id}')">${this.t('chjs.cart.edit')}</button>` : ''}
+                        <button class="remove-item-btn-checkout-js" onclick="checkout.removeItemFromCart('${item.id}')">${this.t('chjs.cart.remove')}</button>
                     </div>
                 </div>
             `;
@@ -1799,7 +1813,7 @@ class PalaceCheckout {
         this.saveCartToStorage();
         this.closeModal();
 
-        this.showNotification('Tétel frissítve!', 'success');
+        this.showNotification(this.t('chjs.itemupdated'), 'success');
     }
 
     /**
@@ -1810,7 +1824,7 @@ class PalaceCheckout {
             itemId = this.state.currentEditingItem.id;
         }
 
-        if (confirm('Biztosan eltávolítod ezt a tételt a kosárból?')) {
+        if (confirm(this.t('chjs.cart.sure'))) {
             // Find and remove item
             const itemIndex = this.state.cart.findIndex(item => item.id === itemId);
             if (itemIndex !== -1) {
@@ -1829,7 +1843,7 @@ class PalaceCheckout {
                             drinkSuggestion.classList.remove('selected');
                             const btn = drinkSuggestion.querySelector('.add-drink-btn');
                             if (btn) {
-                                btn.textContent = 'Hozzáadás';
+                                btn.textContent = this.t('chjs.addbutton');
                                 btn.disabled = false;
                             }
                         }
@@ -1847,7 +1861,7 @@ class PalaceCheckout {
             if (this.state.cart.length === 0) {
                 this.redirectToOrderPage();
             } else {
-                this.showNotification('Tétel eltávolítva!', 'success');
+                this.showNotification(this.t('chjs.cart.removednotif'), 'success');
             }
         }
     }
@@ -1859,7 +1873,7 @@ class PalaceCheckout {
     openCustomizationModal(item) {
         if (!item) {
             console.error('Item not found');
-            this.showNotification('Étel nem található!', 'error');
+            this.showNotification(this.t('chjs.cart.itemnotfound'), 'error');
             return;
         }
 
@@ -1867,7 +1881,7 @@ class PalaceCheckout {
         const modal = document.getElementById('customizationModal');
         if (!modal) {
             console.error('Customization modal not found in HTML');
-            this.showNotification('A szerkesztési ablak nem található!', 'error');
+            this.showNotification(this.t('chjs.cart.customizationnotfound'), 'error');
             return;
         }
 
@@ -1905,7 +1919,7 @@ class PalaceCheckout {
         // Check that sections exist
         if (!sauceSection || !friesSection || !extrasSection) {
             console.error('Modal sections not found in HTML');
-            this.showNotification('A szerkesztési űrlap nem található!', 'error');
+            this.showNotification(this.t('chjs.cart.modalnotfound'), 'error');
             return;
         }
 
@@ -1989,7 +2003,7 @@ class PalaceCheckout {
             // Items WITH sides included - regular fries free, others show addon price
             optionsHTML = this.customizationOptions.friesOptions.map(option => {
                 const isRegularFries = option.slug === 'regular-fries';
-                const priceLabel = isRegularFries ? 'Alapár' : `+€${option.priceAddon.toFixed(2)}`;
+                const priceLabel = isRegularFries ? this.t('chjs.fries.included') : `+€${option.priceAddon.toFixed(2)}`;
                 const isChecked = isRegularFries ? 'checked' : '';
 
                 return `
@@ -2008,8 +2022,8 @@ class PalaceCheckout {
                 <label class="upgrade-option">
                     <input type="radio" name="fries" value="none" checked>
                     <span class="upgrade-label">
-                        <span class="upgrade-name">Nem kérek köretet</span>
-                        <span class="upgrade-price">Alapár</span>
+                        <span class="upgrade-name">${this.t('chjs.fries.nosides')}</span>
+                        <span class="upgrade-price">${this.t('chjs.fries.included')}</span>
                     </span>
                 </label>
             `;
@@ -2045,47 +2059,61 @@ class PalaceCheckout {
                 </label>
             `).join('');
         } else {
-            // Fallback to hardcoded extras (same as order page)
+            // Fallback to hardcoded extras (EXACT MATCH with order page)
             extrasContainer.innerHTML = `
                 <label class="extra-option">
                     <input type="checkbox" name="extras" value="bacon">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Bacon</span>
+                        <span class="extra-name">${this.t('customization.extraBacon')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
                 <label class="extra-option">
                     <input type="checkbox" name="extras" value="cheese">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Sajt</span>
+                        <span class="extra-name">${this.t('customization.extraCheddar')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
                 <label class="extra-option">
-                    <input type="checkbox" name="extras" value="tomato">
+                    <input type="checkbox" name="extras" value="cheddar">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Paradicsom</span>
+                        <span class="extra-name">${this.t('customization.extraMeltedCheddar')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
                 <label class="extra-option">
                     <input type="checkbox" name="extras" value="onion">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Hagyma</span>
+                        <span class="extra-name">${this.t('customization.extraOnion')}</span>
+                        <span class="extra-price">+€0.30</span>
+                    </span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" name="extras" value="tomato">
+                    <span class="extra-label">
+                        <span class="extra-name">${this.t('customization.extraTomato')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
                 <label class="extra-option">
                     <input type="checkbox" name="extras" value="lettuce">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Saláta</span>
+                        <span class="extra-name">${this.t('customization.extraLettuce')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
                 <label class="extra-option">
                     <input type="checkbox" name="extras" value="pickle">
                     <span class="extra-label">
-                        <span class="extra-name">Extra Savanyúság</span>
+                        <span class="extra-name">${this.t('customization.extraPickle')}</span>
+                        <span class="extra-price">+€0.30</span>
+                    </span>
+                </label>
+                <label class="extra-option">
+                    <input type="checkbox" name="extras" value="jalapeno">
+                    <span class="extra-label">
+                        <span class="extra-name">${this.t('customization.extraJalapeno')}</span>
                         <span class="extra-price">+€0.30</span>
                     </span>
                 </label>
@@ -2311,7 +2339,7 @@ class PalaceCheckout {
         const isValid = this.isValidPhone(phone);
 
         if (!isValid) {
-            this.showFieldError(event.target, 'Kérjük, adj meg egy érvényes telefonszámot');
+            this.showFieldError(event.target, this.t('chjs.validate.phone'));
         } else {
             this.clearFieldError(event.target);
         }
@@ -2325,7 +2353,7 @@ class PalaceCheckout {
         const isValid = this.isValidEmail(email);
         
         if (email && !isValid) {
-            this.showFieldError(event.target, 'Érvénytelen email formátum');
+            this.showFieldError(event.target, this.t('chjs.validate.email'));
         } else {
             this.clearFieldError(event.target);
         }
@@ -2391,11 +2419,11 @@ class PalaceCheckout {
                 // Valid format but wrong delivery area
                 this.showFieldError(
                     event.target, 
-                    `Sajnáljuk, jelenleg csak ${this.allowedPostalCodes.join(' és ')} irányítószámokba szállítunk`
+                    `${this.t('chjs.validation.postalOnlyTo')} ${this.allowedPostalCodes.join(' és ')} ${this.t('chjs.validation.postalCodesDeliver')}`
                 );
             } else {
                 // Invalid format
-                this.showFieldError(event.target, 'Érvénytelen irányítószám formátum (5 számjegy szükséges)');
+                this.showFieldError(event.target, this.t('chjs.validation.postalInvalid'));
             }
         } else {
             this.clearFieldError(event.target);
@@ -2419,7 +2447,7 @@ class PalaceCheckout {
     /**
      * Enhanced form validation with detailed feedback
      */
-    validateForm() {
+validateForm() {
         const validationIssues = [];
         let isValid = true;
 
@@ -2427,14 +2455,14 @@ class PalaceCheckout {
         if (this.state.cart.length === 0) {
             validationIssues.push({
                 field: 'cart',
-                message: 'A kosár üres',
+                message: this.t('chjs.validation.cartEmpty'),
                 isValid: false
             });
             isValid = false;
         } else {
             validationIssues.push({
                 field: 'cart',
-                message: 'Kosár rendben',
+                message: this.t('chjs.validation.cartOk'),
                 isValid: true
             });
         }
@@ -2444,7 +2472,7 @@ class PalaceCheckout {
         if (subtotal < this.config.minOrderAmount) {
             validationIssues.push({
                 field: 'minOrder',
-                message: `Minimum rendelési összeg: €${this.config.minOrderAmount.toFixed(2)}`,
+                message: `${this.t('chjs.validation.minOrder')}: €${this.config.minOrderAmount.toFixed(2)}`,
                 isValid: false
             });
             isValid = false;
@@ -2452,10 +2480,10 @@ class PalaceCheckout {
 
         // 3. Validate customer information fields
         const customerFields = [
-            { id: 'firstName', label: 'Keresztnév', required: true },
-            { id: 'lastName', label: 'Vezetéknév', required: true },
-            { id: 'phone', label: 'Telefonszám', required: true, type: 'phone' },
-            { id: 'email', label: 'Email cím', required: true, type: 'email' }
+            { id: 'firstName', label: this.t('chjs.validation.firstName'), required: true },
+            { id: 'lastName', label: this.t('chjs.validation.lastName'), required: true },
+            { id: 'phone', label: this.t('chjs.validation.phone'), required: true, type: 'phone' },
+            { id: 'email', label: this.t('chjs.validation.email'), required: true, type: 'email' }
         ];
 
         customerFields.forEach(fieldConfig => {
@@ -2469,16 +2497,16 @@ class PalaceCheckout {
             // Check if required and empty
             if (fieldConfig.required && !value) {
                 fieldValid = false;
-                errorMessage = `${fieldConfig.label} kötelező`;
+                errorMessage = `${fieldConfig.label} ${this.t('chjs.validation.required')}`;
             } 
             // Validate specific field types
             else if (value) {
                 if (fieldConfig.type === 'email' && !this.isValidEmail(value)) {
                     fieldValid = false;
-                    errorMessage = 'Érvénytelen email formátum (példa@domain.com)';
+                    errorMessage = this.t('chjs.validation.emailInvalid');
                 } else if (fieldConfig.type === 'phone' && !this.isValidPhone(value)) {
                     fieldValid = false;
-                    errorMessage = 'Telefonszám formátum: +421 XXX XXX XXX';
+                    errorMessage = this.t('chjs.validation.phoneFormat');
                 }
             }
 
@@ -2504,9 +2532,9 @@ class PalaceCheckout {
         // 4. Validate delivery fields (only if delivery selected)
         if (this.state.orderType === 'delivery') {
             const deliveryFields = [
-                { id: 'street', label: 'Utca és házszám', required: true },
-                { id: 'city', label: 'Város', required: true },
-                { id: 'postalCode', label: 'Irányítószám', required: true, type: 'postal' }
+                { id: 'street', label: this.t('chjs.validation.street'), required: true },
+                { id: 'city', label: this.t('chjs.validation.city'), required: true },
+                { id: 'postalCode', label: this.t('chjs.validation.postalCode'), required: true, type: 'postal' }
             ];
 
             deliveryFields.forEach(fieldConfig => {
@@ -2519,11 +2547,11 @@ class PalaceCheckout {
 
                 if (fieldConfig.required && !value) {
                     fieldValid = false;
-                    errorMessage = `${fieldConfig.label} kötelező szállításhoz`;
+                    errorMessage = `${fieldConfig.label} ${this.t('chjs.validation.requiredForDelivery')}`;
                 } else if (value && fieldConfig.type === 'postal') {
                     if (!this.isValidSlovakPostalCode(value)) {
                         fieldValid = false;
-                        errorMessage = `Csak ${this.allowedPostalCodes.join(' és ')} irányítószámokba szállítunk`;
+                        errorMessage = `${this.t('chjs.validation.onlyDeliverTo')} ${this.allowedPostalCodes.join(' és ')}`;
                     }
                 }
 
@@ -2551,14 +2579,14 @@ class PalaceCheckout {
         if (!paymentMethod) {
             validationIssues.push({
                 field: 'payment',
-                message: 'Válassz fizetési módot',
+                message: this.t('chjs.validation.selectPayment'),
                 isValid: false
             });
             isValid = false;
         } else {
             validationIssues.push({
                 field: 'payment',
-                message: 'Fizetési mód kiválasztva',
+                message: this.t('chjs.validation.paymentSelected'),
                 isValid: true
             });
         }
@@ -2570,7 +2598,7 @@ class PalaceCheckout {
         if (!termsAccept?.checked) {
             validationIssues.push({
                 field: 'terms',
-                message: 'Általános Szerződési Feltételek elfogadása kötelező',
+                message: this.t('chjs.validation.termsRequired'),
                 isValid: false
             });
             isValid = false;
@@ -2579,7 +2607,7 @@ class PalaceCheckout {
         if (!privacyAccept?.checked) {
             validationIssues.push({
                 field: 'privacy',
-                message: 'Adatvédelmi Tájékoztató elfogadása kötelező',
+                message: this.t('chjs.validation.privacyRequired'),
                 isValid: false
             });
             isValid = false;
@@ -2614,7 +2642,7 @@ class PalaceCheckout {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2"/>
             </svg>
-            <span>Rendben</span>
+            <span>${this.t('chjs.alright')}</span>
         `;
 
         field.parentNode.appendChild(successElement);
@@ -2656,7 +2684,7 @@ class PalaceCheckout {
      */
     async handlePlaceOrder() {
         if (!this.validateForm()) {
-            this.showNotification('Kérjük, töltsd ki az összes kötelező mezőt!', 'error');
+            this.showNotification(this.t('chjs.allfield'), 'error');
             return;
         }
 
@@ -2673,7 +2701,7 @@ class PalaceCheckout {
      */
     async processStripePayment() {
         if (!this.stripe || !this.paymentElement) {
-            this.showNotification('Card payment not available', 'error');
+            this.showNotification(this.t(chjs.stripenotavailable), 'error');
             return;
         }
 
@@ -2777,7 +2805,7 @@ class PalaceCheckout {
 
         } catch (error) {
             console.error('❌ Stripe payment error:', error);
-            this.showNotification(error.message || 'Payment failed. Please try again.', 'error');
+            this.showNotification(error.message || this.t('chjs.stripefailed'), 'error');
         } finally {
             this.setLoadingState(false);
         }
@@ -2798,11 +2826,11 @@ class PalaceCheckout {
                 this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${response.data.orderNumber}`;
             } else {
-                throw new Error(response.message || 'Hiba történt a rendelés leadásakor');
+                throw new Error(response.message || this.t('chjs.casherrormes'));
             }
         } catch (error) {
             console.error('Order submission error:', error);
-            this.showNotification('Hiba történt a rendelés leadásakor. Kérjük, próbáld újra!', 'error');
+            this.showNotification(this.t('chjhs.casherrornoti'), 'error');
         } finally {
             this.setLoadingState(false);
         }
@@ -2956,11 +2984,11 @@ class PalaceCheckout {
             placeOrderBtn.disabled = isLoading;
             
             if (isLoading) {
-                if (btnText) btnText.textContent = 'Rendelés leadása...';
+                if (btnText) btnText.textContent = this.t('chjs.loadingtext');
                 if (btnIcon) btnIcon.style.display = 'none';
                 placeOrderBtn.classList.add('loading');
             } else {
-                if (btnText) btnText.textContent = 'Rendelés leadása';
+                if (btnText) btnText.textContent = this.t('chjs.loadingtexttwo');
                 if (btnIcon) btnIcon.style.display = 'block';
                 placeOrderBtn.classList.remove('loading');
             }

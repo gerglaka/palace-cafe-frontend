@@ -277,6 +277,93 @@
       "other": "Egyéb megjegyzések:",
       "save": "Módosítások mentése"
     },
-    "quant": "Mennyiség:"
+    "quant": "Mennyiség:",
+    "addresstitle": "Szállítási cím"
+  },
+  "chjs": {
+    "cartempty": "A kosár üres. Átirányítunk a rendelési oldalra...",
+    "addbutton": "Hozzáadás",
+    "drink": "Ital",
+    "drinkadded": "Ital hozzáadva a rendeléshez!",
+    "geonot": "A geolokáció nem támogatott ebben a böngészőben",
+    "geonottwo": "A geolokáció nem támogatott. Kérjük, add meg a címet manuálisan!",
+    "geosearch": "Keresés...",
+    "geosorry": "Sajnos a jelenlegi helyed kívül esik a kiszállítási területen (Komárno)",
+    "geoonly": "A kiszállítás csak Komárno területére lehetséges!",
+    "geosuccess": "Helyszín sikeresen megtalálva!",
+    "geomanual": "Nem sikerült címet találni. Kérjük, add meg manuálisan!",
+    "geosorrytwo": "Hiba történt a helymeghatározás során. Kérjük, add meg a címet manuálisan!",
+    "geofindme": "Találj meg",
+    "timeaccepted": "Időpont elfogadva",
+    "today": "Ma",
+    "tomorrow": "Holnap",
+    "closed": "Zárva",
+    "cartemptyshort": "A kosár üres",
+    "alright": "Rendben",
+    "allfield": "Kérjük, töltsd ki az összes kötelező mezőt!",
+    "itemupdated": "Tétel frissítve!",
+    "loadingtext": "Rendelés leadása...",
+    "loadingtexttwo": "Rendelés leadása",
+
+    "time": {
+      "invalid": "Helytelen formátum. Használd: ÓÓ:PP (pl. 14:30)",
+      "notopen": "Ma nincs nyitvatartási idő",
+      "open": "között vagyunk nyitva",
+      "later": "A rendeléshez legalább 30 perccel későbbi időpontot válassz (legkorábbi"
+    },
+
+    "stripe": {
+      "min": "Order total must be at least €0.50",
+      "notavailable": "Card payment not available",
+      "failed": "Payment failed. Please try again."
+    },
+
+    "cart": {
+      "edit": "Szerkesztés",
+      "remove": "Eltávolítás",
+      "sure": "Biztosan eltávolítod ezt a tételt a kosárból?",
+      "removednotif": "Tétel eltávolítva!",
+      "itemnotfound": "Étel nem található!",
+      "customizationnotfound": "A szerkesztési ablak nem található!",
+      "modalnotfound": "A szerkesztési űrlap nem található!"
+    },
+
+    "fries": {
+      "included": "Alapár",
+      "nosides": "Nem kérek köretet"
+    },
+
+    "validate": {
+      "phone": "Kérjük, adj meg egy érvényes telefonszámot",
+      "email": "Érvénytelen email formátum"
+    },
+
+    "validation": {
+      "postalOnlyTo": "Sajnáljuk, jelenleg csak",
+      "postalCodesDeliver": "irányítószámokba szállítunk",
+      "postalInvalid": "Érvénytelen irányítószám formátum (5 számjegy szükséges)",
+      "cartEmpty": "A kosár üres",
+      "cartOk": "Kosár rendben",
+      "minOrder": "Minimum rendelési összeg",
+      "firstName": "Keresztnév",
+      "lastName": "Vezetéknév",
+      "phone": "Telefonszám",
+      "email": "Email cím",
+      "required": "kötelező",
+      "emailInvalid": "Érvénytelen email formátum (példa@domain.com)",
+      "phoneFormat": "Telefonszám formátum: +421 XXX XXX XXX",
+      "street": "Utca és házszám",
+      "city": "Város",
+      "postalCode": "Irányítószám",
+      "requiredForDelivery": "kötelező szállításhoz",
+      "onlyDeliverTo": "Csak",
+      "selectPayment": "Válassz fizetési módot",
+      "paymentSelected": "Fizetési mód kiválasztva",
+      "termsRequired": "Általános Szerződési Feltételek elfogadása kötelező",
+      "privacyRequired": "Adatvédelmi Tájékoztató elfogadása kötelező"
+    },
+
+    "casherrormes": "Hiba történt a rendelés leadásakor",
+    "casherrornoti": "Hiba történt a rendelés leadásakor. Kérjük, próbáld újra!"
   }
 }

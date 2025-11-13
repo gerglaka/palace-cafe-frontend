@@ -277,6 +277,93 @@
       "other": "Iné poznámky:",
       "save": "Uložiť zmeny"
     },
-    "quant": "Množstvo:"
+    "quant": "Množstvo:",
+    "addresstitle": "Dodacia adresa"
+  },
+  "chjs": {
+    "cartempty": "Košík je prázdny. Presmerujeme na stránku objednávky...",
+    "addbutton": "Pridať",
+    "drink": "Nápoj",
+    "drinkadded": "Nápoj pridaný do objednávky!",
+    "geonot": "Geolokácia nie je podporovaná v tomto prehliadači",
+    "geonottwo": "Geolokácia nie je podporovaná. Zadajte adresu manuálne!",
+    "geosearch": "Hľadanie...",
+    "geosorry": "Bohužiaľ, vaša súčasná poloha je mimo doručovacej oblasti (Komárno)",
+    "geoonly": "Doručenie je možné iba na území Komárna!",
+    "geosuccess": "Poloha úspešne nájdená!",
+    "geomanual": "Nepodarilo sa nájsť adresu. Zadajte ju manuálne!",
+    "geosorrytwo": "Chyba pri určovaní polohy. Zadajte adresu manuálne!",
+    "geofindme": "Nájdi ma",
+    "timeaccepted": "Čas prijatý",
+    "today": "Dnes",
+    "tomorrow": "Zajtra",
+    "closed": "Zatvorené",
+    "cartemptyshort": "Košík je prázdny",
+    "alright": "V poriadku",
+    "allfield": "Vyplňte všetky povinné polia!",
+    "itemupdated": "Položka aktualizovaná!",
+    "loadingtext": "Odosielanie objednávky...",
+    "loadingtexttwo": "Odoslať objednávku",
+
+    "time": {
+      "invalid": "Neplatný formát. Použite: HH:MM (napr. 14:30)",
+      "notopen": "Dnes nemáme otvorené",
+      "open": "sme otvorení",
+      "later": "Vyberte čas aspoň o 30 minút neskôr (najskôr"
+    },
+
+    "stripe": {
+      "min": "Celková suma musí byť aspoň €0.50",
+      "notavailable": "Platba kartou nie je k dispozícii",
+      "failed": "Platba zlyhala. Skúste to znova."
+    },
+
+    "cart": {
+      "edit": "Upraviť",
+      "remove": "Odstrániť",
+      "sure": "Naozaj chcete odstrániť túto položku z košíka?",
+      "removednotif": "Položka odstránená!",
+      "itemnotfound": "Jedlo sa nenašlo!",
+      "customizationnotfound": "Okno úprav sa nenašlo!",
+      "modalnotfound": "Formulár úprav sa nenašiel!"
+    },
+
+    "fries": {
+      "included": "Zahrnuté",
+      "nosides": "Bez prílohy"
+    },
+
+    "validate": {
+      "phone": "Zadajte platné telefónne číslo",
+      "email": "Neplatný formát emailu"
+    },
+
+    "validation": {
+      "postalOnlyTo": "Ospravedlňujeme sa, v súčasnosti doručujeme iba do PSČ",
+      "postalCodesDeliver": "",
+      "postalInvalid": "Neplatný formát PSČ (vyžaduje sa 5 číslic)",
+      "cartEmpty": "Košík je prázdny",
+      "cartOk": "Košík v poriadku",
+      "minOrder": "Minimálna suma objednávky",
+      "firstName": "Meno",
+      "lastName": "Priezvisko",
+      "phone": "Telefónne číslo",
+      "email": "Emailová adresa",
+      "required": "povinné",
+      "emailInvalid": "Neplatný formát emailu (priklad@domena.sk)",
+      "phoneFormat": "Formát telefónu: +421 XXX XXX XXX",
+      "street": "Ulica a číslo domu",
+      "city": "Mesto",
+      "postalCode": "PSČ",
+      "requiredForDelivery": "povinné pre doručenie",
+      "onlyDeliverTo": "Doručujeme iba do PSČ",
+      "selectPayment": "Vyberte spôsob platby",
+      "paymentSelected": "Spôsob platby vybraný",
+      "termsRequired": "Súhlas s Obchodnými podmienkami je povinný",
+      "privacyRequired": "Súhlas s Ochranou súkromia je povinný"
+    },
+
+    "casherrormes": "Chyba pri vytváraní objednávky",
+    "casherrornoti": "Chyba pri vytváraní objednávky. Skúste to znova!"
   }
 }
