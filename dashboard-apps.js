@@ -2807,13 +2807,13 @@ class InvoicesApp extends BaseApp {
             });
         }
 
-        // VAT report
-        const vatReportBtn = document.getElementById('vatReportBtn');
-        if (vatReportBtn) {
-            vatReportBtn.addEventListener('click', () => {
-                const month = document.getElementById('vatReportMonth').value;
-                const year = document.getElementById('vatReportYear').value;
-                this.generateVATReport(year, month);
+        // Monthly comprehensive report 
+        const monthlyReportBtn = document.getElementById('monthlyReportBtn');
+        if (monthlyReportBtn) {
+            monthlyReportBtn.addEventListener('click', () => {
+                const month = document.getElementById('monthlyReportMonth').value;
+                const year = document.getElementById('monthlyReportYear').value;
+                this.generateMonthlyReport(year, month);
             });
         }
 
@@ -3784,38 +3784,59 @@ renderInvoicesTable() {
         }
     }
 
-    async generateVATReport(year, month) {
+    /**
+     * Generate comprehensive monthly business report
+     * Includes: revenue by payment method, top/bottom items, delivery stats, timing analysis
+     */
+    async generateMonthlyReport(year, month) {
         try {
+            // Show loading indicator to user
             this.showLoading();
             
-            const response = await fetch(`${this.config.apiUrl}/invoices/vat-report?year=${year}&month=${month}`, {
+            // Call the backend endpoint for monthly report generation
+            const response = await fetch(`${this.config.apiUrl}/invoices/monthly-report?year=${year}&month=${month}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('adminToken')}`,
                     'Content-Type': 'application/json'
                 }
             });
-
+        
+            // Check if request was successful
             if (!response.ok) {
-                throw new Error('Failed to generate VAT report');
+                throw new Error('Failed to generate monthly report');
             }
-
+        
+            // Convert response to blob (binary PDF data)
             const blob = await response.blob();
+            
+            // Create a temporary URL for the PDF blob
             const url = window.URL.createObjectURL(blob);
+            
+            // Create an invisible download link
             const a = document.createElement('a');
             a.href = url;
-            a.download = `vat-report-${year}-${month.toString().padStart(2, '0')}.pdf`;
+            
+            // Set the filename with Hungarian naming and proper date formatting
+            a.download = `havi-osszefoglalo-${year}-${month.toString().padStart(2, '0')}.pdf`;
+            
+            // Trigger the download
             document.body.appendChild(a);
             a.click();
+            
+            // Cleanup: remove temporary URL and link element
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-
-            this.showNotification('ÁFA jelentés sikeresen letöltve', 'success');
-
+        
+            // Show success message in Hungarian
+            this.showNotification('Havi összefoglaló sikeresen letöltve', 'success');
+        
         } catch (error) {
-            console.error('Failed to generate VAT report:', error);
-            this.showNotification('Nem sikerült generálni az ÁFA jelentést', 'error');
+            console.error('Failed to generate monthly report:', error);
+            // Show error message in Hungarian
+            this.showNotification('Nem sikerült generálni a havi összefoglalót', 'error');
         } finally {
+            // Always hide loading indicator
             this.hideLoading();
         }
     }
