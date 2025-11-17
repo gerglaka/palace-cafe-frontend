@@ -2480,21 +2480,21 @@ class InvoicesApp extends BaseApp {
 
                     <div class="export-card">
                         <div class="export-icon">
-                            <i class="fas fa-chart-bar"></i>
+                            <i class="fas fa-chart-line"></i>
                         </div>
                         <div class="export-content">
-                            <h4>ÁFA összefoglaló</h4>
-                            <p>Havi ÁFA jelentés adóhivatal számára</p>
+                            <h4>Havi Összefoglaló</h4>
+                            <p>Részletes havi üzleti jelentés bevételekkel és statisztikákkal</p>
                             <div class="export-controls">
-                                <select id="vatReportMonth" class="export-select">
+                                <select id="monthlyReportMonth" class="export-select">
                                     <!-- Will be populated with months -->
                                 </select>
-                                <select id="vatReportYear" class="export-select">
+                                <select id="monthlyReportYear" class="export-select">
                                     <!-- Will be populated with years -->
                                 </select>
-                                <button class="btn-success" id="vatReportBtn">
+                                <button class="btn-success" id="monthlyReportBtn">
                                     <i class="fas fa-file-pdf"></i>
-                                    Jelentés
+                                    Letöltés
                                 </button>
                             </div>
                         </div>
@@ -3222,7 +3222,7 @@ renderInvoicesTable() {
         ];
 
         // Populate export month selectors
-        const exportMonthSelectors = ['exportMonth', 'vatReportMonth'];
+        const exportMonthSelectors = ['exportMonth', 'monthlyReportMonth'];
         exportMonthSelectors.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
@@ -3233,9 +3233,9 @@ renderInvoicesTable() {
                 ).join('');
             }
         });
-
+        
         // Populate year selectors
-        const yearSelectors = ['exportYear', 'vatReportYear'];
+        const yearSelectors = ['exportYear', 'monthlyReportYear'];
         yearSelectors.forEach(id => {
             const select = document.getElementById(id);
             if (select) {
@@ -3792,7 +3792,7 @@ renderInvoicesTable() {
         try {
             // Show loading indicator to user
             this.showLoading();
-            
+
             // Call the backend endpoint for monthly report generation
             const response = await fetch(`${this.config.apiUrl}/invoices/monthly-report?year=${year}&month=${month}`, {
                 method: 'GET',
@@ -3801,36 +3801,36 @@ renderInvoicesTable() {
                     'Content-Type': 'application/json'
                 }
             });
-        
+
             // Check if request was successful
             if (!response.ok) {
                 throw new Error('Failed to generate monthly report');
             }
-        
+
             // Convert response to blob (binary PDF data)
             const blob = await response.blob();
-            
+
             // Create a temporary URL for the PDF blob
             const url = window.URL.createObjectURL(blob);
-            
+
             // Create an invisible download link
             const a = document.createElement('a');
             a.href = url;
-            
+
             // Set the filename with Hungarian naming and proper date formatting
             a.download = `havi-osszefoglalo-${year}-${month.toString().padStart(2, '0')}.pdf`;
-            
+
             // Trigger the download
             document.body.appendChild(a);
             a.click();
-            
+
             // Cleanup: remove temporary URL and link element
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-        
+
             // Show success message in Hungarian
             this.showNotification('Havi összefoglaló sikeresen letöltve', 'success');
-        
+
         } catch (error) {
             console.error('Failed to generate monthly report:', error);
             // Show error message in Hungarian
