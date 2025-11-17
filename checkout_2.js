@@ -1569,7 +1569,7 @@ class PalaceCheckout {
 
             const safeNotes = item.specialNotes ? `<p class="item-special-notes">${this.sanitizeInput(item.specialNotes)}</p>` : '';
         
-            const nonCustomizableCategories = ['sides', 'nonalcoholic', 'sauces', 'drink'];
+            const nonCustomizableCategories = ['sides', 'nonalcoholic', 'sauces', 'drink','deliverabledesserts','snacks'];
 
             // Check if item should have edit button
             const itemCategory = this.getItemCategory(item.originalId || item.id);

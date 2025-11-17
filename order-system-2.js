@@ -388,7 +388,7 @@ class OrderSystem {
         this.operatingHours = {
             0: null, // Sunday - CLOSED
             1: null, // Monday - CLOSED
-            2: { open: '11:00', close: '19:30' },//null, // Tuesday - CLOSED
+            2: null, // Tuesday - CLOSED
             3: { open: '11:00', close: '19:30' }, // Wednesday
             4: { open: '11:00', close: '19:30' }, // Thursday
             5: { open: '11:00', close: '21:00' }, // Friday
@@ -1312,7 +1312,7 @@ class OrderSystem {
         console.log('Item category:', itemCategory, 'for item:', item.name);
 
         // Categories that should bypass customization modal
-        const directAddCategories = ['sides', 'nonalcoholic', 'sauces'];
+        const directAddCategories = ['sides', 'nonalcoholic', 'sauces', 'deliverabledesserts','snacks'];
 
         if (directAddCategories.includes(itemCategory)) {
             // Add directly to cart without customization
@@ -2445,6 +2445,7 @@ class MenuDataLoader {
             'sides-items': 'sides',
             'desserts-items': 'desserts',
             'sauces-items': 'sauces',
+            'snacks-items': 'snacks',
             'nonalcoholic-items': 'nonalcoholic',
             'cocktails-items': 'cocktails',
             'alcohol-items': 'alcohol',
@@ -2463,15 +2464,43 @@ class MenuDataLoader {
             console.log(`🎯 Grid element found:`, !!grid);
             
             if (grid) {
-                // Find the category by slug instead of by translated name
-                const categoryData = this.findCategoryBySlug(menuData, targetSlug);
-                
-                if (categoryData && categoryData.items && categoryData.items.length > 0) {
-                    console.log(`✅ Rendering ${categoryData.items.length} items for ${categoryData.name} (${targetSlug})`);
-                    this.renderCategoryItems(grid, categoryData);
+                // Special handling for desserts - combine desserts and deliverabledesserts
+                if (gridId === 'desserts-items') {
+                    const dessertsData = this.findCategoryBySlug(menuData, 'desserts');
+                    const deliverableDessertsData = this.findCategoryBySlug(menuData, 'deliverabledesserts');
+                    
+                    // Combine items from both categories
+                    const combinedItems = [];
+                    if (dessertsData && dessertsData.items) {
+                        combinedItems.push(...dessertsData.items);
+                    }
+                    if (deliverableDessertsData && deliverableDessertsData.items) {
+                        combinedItems.push(...deliverableDessertsData.items);
+                    }
+                    
+                    if (combinedItems.length > 0) {
+                        console.log(`✅ Rendering ${combinedItems.length} combined dessert items`);
+                        const combinedCategory = {
+                            name: 'Desserts',
+                            slug: 'desserts',
+                            items: combinedItems
+                        };
+                        this.renderCategoryItems(grid, combinedCategory);
+                    } else {
+                        console.log(`⚠️ No dessert items found`);
+                        grid.innerHTML = `<div class="menu-loading">Nincs elérhető tétel: desserts</div>`;
+                    }
                 } else {
-                    console.log(`⚠️ No items found for slug: ${targetSlug}`);
-                    grid.innerHTML = `<div class="menu-loading">Nincs elérhető tétel: ${targetSlug}</div>`;
+                    // Normal handling for all other categories
+                    const categoryData = this.findCategoryBySlug(menuData, targetSlug);
+                    
+                    if (categoryData && categoryData.items && categoryData.items.length > 0) {
+                        console.log(`✅ Rendering ${categoryData.items.length} items for ${categoryData.name} (${targetSlug})`);
+                        this.renderCategoryItems(grid, categoryData);
+                    } else {
+                        console.log(`⚠️ No items found for slug: ${targetSlug}`);
+                        grid.innerHTML = `<div class="menu-loading">Nincs elérhető tétel: ${targetSlug}</div>`;
+                    }
                 }
             } else {
                 console.warn(`❌ Grid element not found: ${gridId}`);
