@@ -324,9 +324,10 @@ class StatsApp extends BaseApp {
         // Revenue grouping change
         const revenueGroupBy = document.getElementById('revenueGroupBy');
         if (revenueGroupBy) {
-            revenueGroupBy.addEventListener('change', (e) => {
+            revenueGroupBy.addEventListener('change', async (e) => {
                 this.filters.groupBy = e.target.value;
-                this.loadRevenueTrends();
+                await this.loadRevenueTrends();
+                this.renderRevenueTrendsChart(); // Re-render chart after data loads
             });
         }
 
@@ -335,6 +336,7 @@ class StatsApp extends BaseApp {
         if (topItemsSort) {
             topItemsSort.addEventListener('change', (e) => {
                 this.loadTopItems(e.target.value);
+                this.renderTopItemsChart();
             });
         }
 
@@ -790,24 +792,41 @@ class StatsApp extends BaseApp {
 
     renderPeakHoursHeatmap() {
         const container = document.getElementById('peakHoursHeatmap');
-        if (!container || !this.statsData.orderTiming || !this.statsData.orderTiming.peakHours) {
+        if (!container) return;
+        
+        if (!this.statsData.orderTiming || !this.statsData.orderTiming.peakHours) {
             container.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
 
         const peakHours = this.statsData.orderTiming.peakHours;
 
-        // Create 7x24 grid from peak hours data
-        const heatmapData = Array.from({length: 7}, () => Array(24).fill(0));
+        // Create data grid only for open days (Wed=3, Thu=4, Fri=5, Sat=6)
+        // Using object to map dayOfWeek to our display order
+        const openDays = [
+            { dayOfWeek: 3, name: 'Szerda' },
+            { dayOfWeek: 4, name: 'Csütörtök' },
+            { dayOfWeek: 5, name: 'Péntek' },
+            { dayOfWeek: 6, name: 'Szombat' }
+        ];
 
+        // Initialize heatmap data for 4 days x 24 hours
+        const heatmapData = openDays.map(day => ({
+            name: day.name,
+            dayOfWeek: day.dayOfWeek,
+            hours: Array(24).fill(0)
+        }));
+
+        // Fill in the order counts
         peakHours.forEach(entry => {
-            if (entry.dayOfWeek >= 0 && entry.dayOfWeek < 7 && 
-                entry.hour >= 0 && entry.hour < 24) {
-                heatmapData[entry.dayOfWeek][entry.hour] = entry.orderCount;
+            const dayIndex = heatmapData.findIndex(d => d.dayOfWeek === entry.dayOfWeek);
+            if (dayIndex !== -1 && entry.hour >= 0 && entry.hour < 24) {
+                heatmapData[dayIndex].hours[entry.hour] = entry.orderCount;
             }
         });
 
-        const maxOrders = Math.max(...peakHours.map(h => h.orderCount));
+        // Find max orders for color scaling
+        const maxOrders = Math.max(...peakHours.map(h => h.orderCount), 1);
 
         container.innerHTML = `
             <div class="heatmap-grid">
@@ -820,17 +839,15 @@ class StatsApp extends BaseApp {
                     </div>
                 </div>
                 <div class="heatmap-body">
-                    ${heatmapData.map((dayData, dayIndex) => `
+                    ${heatmapData.map(dayData => `
                         <div class="heatmap-row">
-                            <div class="day-label">
-                                ${['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'][dayIndex]}
-                            </div>
+                            <div class="day-label">${dayData.name}</div>
                             <div class="hour-cells">
-                                ${dayData.map((orderCount, hourIndex) => `
+                                ${dayData.hours.map((orderCount, hourIndex) => `
                                     <div class="heatmap-cell" 
                                          style="background-color: ${this.getHeatmapColor(orderCount, maxOrders)}"
                                          data-orders="${orderCount}"
-                                         data-day="${dayIndex}"
+                                         data-day="${dayData.name}"
                                          data-hour="${hourIndex}"
                                          title="${orderCount} rendelés ${hourIndex}:00-kor">
                                         ${orderCount > 0 ? orderCount : ''}
@@ -1387,6 +1404,8 @@ class StatsApp extends BaseApp {
         if (!container) return;
         
         const button = document.getElementById('toggleHeatmapView');
+        if (!button) return;
+        
         const isTableView = container.classList.contains('table-view');
         
         if (isTableView) {
@@ -1404,12 +1423,31 @@ class StatsApp extends BaseApp {
     
     renderPeakHoursTable() {
         const container = document.getElementById('peakHoursHeatmap');
-        if (!container || !this.statsData.orderTiming || !this.statsData.orderTiming.peakHours) {
+        if (!container) return;
+        
+        if (!this.statsData.orderTiming || !this.statsData.orderTiming.peakHours) {
             container.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
     
         const peakHours = this.statsData.orderTiming.peakHours;
+        
+        // Only show open days (Wed=3, Thu=4, Fri=5, Sat=6)
+        const openDayNumbers = [3, 4, 5, 6];
+        const dayNames = {
+            3: 'Szerda',
+            4: 'Csütörtök',
+            5: 'Péntek',
+            6: 'Szombat'
+        };
+        
+        // Filter to only open days and sort by day then hour
+        const filteredHours = peakHours
+            .filter(entry => openDayNumbers.includes(entry.dayOfWeek))
+            .sort((a, b) => {
+                if (a.dayOfWeek !== b.dayOfWeek) return a.dayOfWeek - b.dayOfWeek;
+                return a.hour - b.hour;
+            });
         
         container.innerHTML = `
             <div class="peak-hours-table">
@@ -1423,9 +1461,9 @@ class StatsApp extends BaseApp {
                         </tr>
                     </thead>
                     <tbody>
-                        ${peakHours.map(entry => `
+                        ${filteredHours.map(entry => `
                             <tr>
-                                <td>${['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'][entry.dayOfWeek]}</td>
+                                <td>${dayNames[entry.dayOfWeek]}</td>
                                 <td>${entry.hour.toString().padStart(2, '0')}:00</td>
                                 <td>${entry.orderCount}</td>
                                 <td>
@@ -1472,6 +1510,20 @@ class StatsApp extends BaseApp {
         const avgOrderValueEl = document.getElementById('avgOrderValue');
         if (avgOrderValueEl) {
             avgOrderValueEl.textContent = this.formatCurrency(avgOrderValue);
+        }
+
+        // Update average preparation time
+        const avgPrepTimeEl = document.getElementById('avgPrepTime');
+        if (avgPrepTimeEl && this.statsData.orderTiming) {
+            const avgPrepTimes = this.statsData.orderTiming.avgPrepTimes || [];
+            if (avgPrepTimes.length > 0) {
+                // Calculate average prep time in minutes
+                const totalPrepTime = avgPrepTimes.reduce((sum, item) => sum + item.prepTime, 0);
+                const avgMinutes = Math.round(totalPrepTime / avgPrepTimes.length);
+                avgPrepTimeEl.textContent = `${avgMinutes} perc`;
+            } else {
+                avgPrepTimeEl.textContent = '--';
+            }
         }
 
         // TODO: Calculate and display trends (we'll implement this in step 2)
