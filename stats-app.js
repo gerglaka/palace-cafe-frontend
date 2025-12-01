@@ -83,6 +83,7 @@ class StatsApp extends BaseApp {
                             <option value="today">Ma</option>
                             <option value="week">Ez a hét</option>
                             <option value="month" selected>Ez a hónap</option>
+                            <option value="year">Ez az év</option>
                             <option value="custom">Egyedi</option>
                         </select>
                     </div>
@@ -511,12 +512,23 @@ class StatsApp extends BaseApp {
     renderRevenueTrendsChart() {        
         this.destroyChart('revenueTrends');
 
-        const ctx = document.getElementById('revenueTrendsChart');
-        if (!ctx || !this.statsData.revenueTrends || this.statsData.revenueTrends.length === 0) {
-            // Show empty state
-            ctx.parentElement.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
+        let ctx = document.getElementById('revenueTrendsChart');
+        // Get or restore canvas element
+        const container = document.querySelector('.revenue-trends .chart-content');
+        if (!container) return;
+
+        // Restore canvas if it was replaced with empty state
+        if (!ctx) {
+            container.innerHTML = '<canvas id="revenueTrendsChart"></canvas>';
+            ctx = document.getElementById('revenueTrendsChart');
+        }
+
+        // Show empty state if no data available
+        if (!this.statsData.revenueTrends || this.statsData.revenueTrends.length === 0) {
+            container.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
+
 
         const chart = new Chart(ctx, {
             type: 'line',
@@ -570,9 +582,22 @@ class StatsApp extends BaseApp {
     renderTopItemsChart() {
         this.destroyChart('topItems');
 
-        const ctx = document.getElementById('topItemsChart');
-        if (!ctx || !this.statsData.topItems || this.statsData.topItems.length === 0) {
-            ctx.parentElement.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
+
+        let ctx = document.getElementById('topItemsChart');
+        
+        // Get or restore canvas element
+        const container = document.querySelector('.top-items .chart-content');
+        if (!container) return;
+
+        // Restore canvas if it was replaced with empty state
+        if (!ctx) {
+            container.innerHTML = '<canvas id="topItemsChart"></canvas>';
+            ctx = document.getElementById('topItemsChart');
+        }
+
+        // Show empty state if no data available
+        if (!this.statsData.topItems || this.statsData.topItems.length === 0) {
+            container.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
 
@@ -634,7 +659,11 @@ class StatsApp extends BaseApp {
         this.destroyChart('orderTypes');
 
         const ctx = document.getElementById('orderTypesChart');
-        if (!ctx || !this.statsData.overview || !this.statsData.overview.revenueByType) {
+        // Exit early if chart element doesn't exist in DOM
+        if (!ctx) return;
+
+        // Show empty state if no data available
+        if (!this.statsData.overview || !this.statsData.overview.revenueByType) {
             ctx.parentElement.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
@@ -687,9 +716,21 @@ class StatsApp extends BaseApp {
     renderPaymentMethodsChart() {
         this.destroyChart('paymentMethods');
 
-        const ctx = document.getElementById('paymentMethodsChart');
-        if (!ctx || !this.statsData.paymentMethods || this.statsData.paymentMethods.length === 0) {
-            ctx.parentElement.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
+        let ctx = document.getElementById('paymentMethodsChart');
+        
+        // Get or restore canvas element
+        const container = document.querySelector('.payment-methods .chart-content');
+        if (!container) return;
+
+        // Restore canvas if it was replaced with empty state
+        if (!ctx) {
+            container.innerHTML = '<canvas id="paymentMethodsChart"></canvas>';
+            ctx = document.getElementById('paymentMethodsChart');
+        }
+
+        // Show empty state if no data available
+        if (!this.statsData.paymentMethods || this.statsData.paymentMethods.length === 0) {
+            container.innerHTML = '<div class="chart-empty">Nincs elérhető adat</div>';
             return;
         }
 
