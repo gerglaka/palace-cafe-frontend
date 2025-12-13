@@ -478,6 +478,7 @@ class OrdersApp extends BaseApp {
         modalBody.innerHTML = this.renderOrderModal(order);
         
         modal.classList.add('active');
+        document.body.classList.add('modal-open');
         
         // Clean up previous listeners
         this.cleanupModalListeners();
@@ -888,6 +889,7 @@ class OrdersApp extends BaseApp {
         const modal = document.getElementById('orderModal');
         if (modal) {
             modal.classList.remove('active');
+            document.body.classList.remove('modal-open');
             this.cleanupModalListeners();
         }
     }
