@@ -56,7 +56,8 @@ class PalaceCheckout {
             currentEditingItem: null,
             formData: {},
             addedDrinks: [],
-            nonAlcoholicDrinks: []
+            nonAlcoholicDrinks: [],
+            orderSubmitted: false
         };
 
         // Security: CSRF token placeholder (will be set by backend)
@@ -608,7 +609,7 @@ class PalaceCheckout {
 
         // Handle page unload
         window.addEventListener('beforeunload', (event) => {
-            if (this.state.cart.length > 0) {
+            if (this.state.cart.length > 0 && !this.state.orderSubmitted) {
                 const message = 'Rendelésedet még nincs leadva. Biztosan elhagyod az oldalt?';
                 event.returnValue = message;
                 return message;
@@ -2823,6 +2824,7 @@ validateForm() {
             const response = await this.submitOrder(orderData);
 
             if (response.success) {
+                this.state.orderSubmitted = true;
                 this.clearCartFromStorage();
                 window.location.href = `/order-confirmation.html?order=${response.data.orderNumber}`;
             } else {
