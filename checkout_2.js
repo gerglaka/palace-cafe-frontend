@@ -265,7 +265,7 @@ class PalaceCheckout {
 
             const currentLang = window.i18n?.currentLang || 'hu';
 
-            const response = await fetch(`${this.config.apiBaseUrl}/menu?lang=${currentLang}`);
+            const response = await fetch(`${this.config.apiBaseUrl}/menu/deliverable?lang=${currentLang}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -291,20 +291,22 @@ class PalaceCheckout {
 
                     if (this.state.nonAlcoholicDrinks.length > 0) {
                         this.displayDrinkSuggestions();
-                        console.log('✅ Loaded', this.state.nonAlcoholicDrinks.length, 'drink suggestions');
+                        console.log('Loaded', this.state.nonAlcoholicDrinks.length, 'drink suggestions');
                     } else {
-                        throw new Error('No drinks available in NonAlcoholic category');
+                        console.log('No drinks available, hiding drink suggestions section');
+                        this.hideDrinkSuggestions();
                     }
                 } else {
-                    console.log('Available categories:', Object.keys(data.data));
-                    throw new Error('NonAlcoholic category not found');
+                    console.log('NonAlcoholic category not found, hiding drink suggestions section');
+                    this.hideDrinkSuggestions();
                 }
             } else {
-                throw new Error('Invalid API response structure');
+                console.log('Invalid API response, hiding drink suggestions section');
+                this.hideDrinkSuggestions();
             }
         } catch (error) {
-            console.error('❌ Error loading drink suggestions:', error);
-            this.showDrinkError();
+            console.error('Error loading drink suggestions:', error);
+            this.hideDrinkSuggestions();
         } finally {
             // Hide loading state
             if (drinkLoading) drinkLoading.style.display = 'none';
@@ -354,11 +356,12 @@ class PalaceCheckout {
         const drinkSection = document.getElementById('drinkSuggestions');
 
         if (!drinkOptionsContainer || !this.state.nonAlcoholicDrinks.length) {
-            this.showDrinkError();
+            this.hideDrinkSuggestions();
             return;
         }
 
-        // Show the options container
+        // Show the drink section and options container
+        if (drinkSection) drinkSection.style.display = 'block';
         drinkOptionsContainer.style.display = 'grid';
 
         // Take first 4 drinks for suggestions
