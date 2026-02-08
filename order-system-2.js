@@ -386,7 +386,7 @@ class OrderSystem {
         this.deliveryFee = 2.50;
         this.menuData = null;
         this.operatingHours = {
-            0: { open: '11:00', close: '23:59' },// Sunday - CLOSED
+            0: null,// Sunday - CLOSED
             1: null, // Monday - CLOSED
             2: null, // Tuesday - CLOSED
             3: { open: '11:00', close: '19:30' }, // Wednesday
